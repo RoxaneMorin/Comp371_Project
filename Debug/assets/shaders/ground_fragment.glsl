@@ -17,6 +17,11 @@ uniform sampler2D textureSamplerB;
 uniform sampler2D depthSamplerA;
 uniform sampler2D depthSamplerB;
 
+uniform float heightblend_factor;
+
+// add specular and gloss params for both heights. https://learnopengl.com/Lighting/Lighting-maps
+// add normal or parallax maps for both heights. https://learnopengl.com/Advanced-Lighting/Normal-Mapping
+
 //
 
 uniform vec3 ambient_colour;
@@ -25,8 +30,6 @@ uniform vec3 light_position;
 uniform vec3 view_position;
 
 uniform bool render_shadows;
-
-uniform float heightblend_factor;
 
 //
 

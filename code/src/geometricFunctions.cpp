@@ -1,4 +1,5 @@
 #include "geometricFunctions.h"
+#include "PerlinNoise.h"
 
 
 // Structs.
@@ -606,8 +607,9 @@ std::map<vec2, TexturedColoredNormalVertex, CompareVec2> createGroundVertexMap(u
     {
         for (int x = 0; x <= sizeX; x++) // Rows.
         {
-            // To do: find a real noise function or library.
+            // To do: find a real noise function or library. https://github.com/Reputeless/PerlinNoise ?
             yCoord = (sin((float)x)/2 + (rand() % 12 + 1))/14;
+            yCoord += generateHeightCoord(x, z, 0.05f);
             
             position = vec3((float)x, yCoord, (float)z);
             uv = generateUVCoords(x, z, uvTiling);
@@ -620,6 +622,18 @@ std::map<vec2, TexturedColoredNormalVertex, CompareVec2> createGroundVertexMap(u
     }
 
     return vertexMap;
+}
+
+// We are using this noise library: https://github.com/Reputeless/PerlinNoise.
+float generateHeightCoord(unsigned int xCoord, unsigned int zCoord, float noiseScaling)
+{
+    // Do the perlin noise ~~
+    const siv::PerlinNoise::seed_type seed = 42069u;
+    const siv::PerlinNoise perlin{seed};
+
+    const float noise = perlin.normalizedOctave2D((float)xCoord * noiseScaling, (float)zCoord * noiseScaling, 5);
+
+    return noise * 5;
 }
 
 vec2 generateUVCoords(unsigned int posX, unsigned int posZ, float uvTiling)
@@ -710,13 +724,4 @@ int createGroundVBO(unsigned int sizeX, unsigned int sizeZ, float uvTiling)
     glEnableVertexAttribArray(3);
 
     return vertexArrayObject;
-}
-
-void generateNoise(float posX, float posY, float scaling)
-{
-    posX *= scaling;
-    posY *= scaling;
-    
-
-
 }

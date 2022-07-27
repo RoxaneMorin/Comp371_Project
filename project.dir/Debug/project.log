@@ -1,12 +1,10 @@
-﻿  project.cpp
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\include\shaderloader.h(29,10): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'std::string'
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\project.cpp(296,25): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\project.cpp(317,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\project.cpp(661,32): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\project.cpp(676,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\project.cpp(688,38): warning C4244: '+=': conversion from 'double' to 'T', possible loss of data
-          with
-          [
-              T=float
-          ]
+﻿  geometricFunctions.cpp
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(275,26): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(275,20): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(606,23): warning C4018: '<=': signed/unsigned mismatch
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(608,27): warning C4018: '<=': signed/unsigned mismatch
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(634,50): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(634,23): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(651,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(653,27): warning C4018: '<': signed/unsigned mismatch
   project.vcxproj -> C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\Debug\project.exe
