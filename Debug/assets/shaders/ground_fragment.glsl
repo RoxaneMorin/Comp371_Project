@@ -1,5 +1,4 @@
 #version 330 core
-out vec4 FragColor;
 
 in VS_OUT {
     vec3 FragPos;
@@ -91,16 +90,27 @@ float shadowCalculationFiltered(vec4 fragPosLightSpace)
 
 // 
 
-float heightblend(float input1, float height1, float input2, float height2, float _HeightblendFactor)
+// Texture blending functions based on http://untitledgam.es/2017/01/height-blending-shader/.
+
+vec3 heightblend(vec3 textureColorA, float textureDepthA, vec3 textureColorB, float textureDepthB)
 {
-	float height_start = max(height1, height2) - _HeightblendFactor;
-    float level1 = max(height1 - height_start, 0);
-    float level2 = max(height2 - height_start, 0);
-    return ((input1 * level1) + (input2 * level2)) / (level1 + level2);
+	float height_start = max(textureDepthA, textureDepthB) - heightblend_factor;
+	
+    float level1 = max(textureDepthA - height_start, 0);
+    float level2 = max(textureDepthB - height_start, 0);
+	
+    return ((textureColorA * level1) + (textureColorB * level2)) / (level1 + level2);
 }
 
+vec3 heightlerp(vec3 textureColorA, float textureDepthA, vec3 textureColorB, float textureDepthB, float heightCoord)
+{
+	heightCoord = clamp(heightCoord, 0, 1);
+	return heightblend(textureColorA, textureDepthA * (1 - heightCoord), textureColorB, textureDepthB * heightCoord);
+}
 
 //
+
+out vec4 FragColor;
 
 void main()
 {           
@@ -112,17 +122,13 @@ void main()
 	vec3 combinedLighting = ambient_colour + shadow * (diffuseLighting + specularLighting) * light_color;
    
 	vec3 textureColorA = texture(textureSamplerA, fs_in.TexCoords).rgb;
+	float textureDepthA = texture(depthSamplerA, fs_in.TexCoords).r;
+	
 	vec3 textureColorB = texture(textureSamplerB, fs_in.TexCoords).rgb;
+	float textureDepthB = texture(depthSamplerB, fs_in.TexCoords).r;
 	
-	vec3 textureDepthA = texture(depthSamplerA, fs_in.TexCoords).rgb;
-	vec3 textureDepthB = texture(depthSamplerB, fs_in.TexCoords).rgb;
+	vec3 textureMix = heightlerp(textureColorA, textureDepthA, textureColorB, textureDepthB, fs_in.FragPos.y);
 	
-	
-	vec3 normalizeFragPos = normalize(fs_in.FragPos);
-	
-	
-	vec3 textureMix = mix(textureColorA, textureColorB, normalizeFragPos.y + 0.5f);
-	
-	FragColor = vec4(textureMix * combinedLighting * heightblend_factor, 1.0); 
+	FragColor = vec4(textureMix * combinedLighting, 1.0); 
 }
 

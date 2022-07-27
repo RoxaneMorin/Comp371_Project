@@ -1,24 +1,12 @@
-﻿  Building Custom Rule C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/code/CMakeLists.txt
-  drawFunctions.cpp
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\drawFunctions.cpp(14,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\drawFunctions.cpp(16,27): warning C4018: '<': signed/unsigned mismatch
-  geometricFunctions.cpp
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(274,26): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(274,20): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(605,23): warning C4018: '<=': signed/unsigned mismatch
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(607,27): warning C4018: '<=': signed/unsigned mismatch
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(636,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(638,27): warning C4018: '<': signed/unsigned mismatch
-  project.cpp
+﻿  project.cpp
 C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\include\shaderloader.h(29,10): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'std::string'
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\project.cpp(295,25): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\project.cpp(316,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\project.cpp(649,32): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\project.cpp(664,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\project.cpp(676,38): warning C4244: '+=': conversion from 'double' to 'T', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\project.cpp(296,25): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\project.cpp(317,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\project.cpp(661,32): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\project.cpp(676,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\project.cpp(688,38): warning C4244: '+=': conversion from 'double' to 'T', possible loss of data
           with
           [
               T=float
           ]
-  Generating Code...
   project.vcxproj -> C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\Debug\project.exe

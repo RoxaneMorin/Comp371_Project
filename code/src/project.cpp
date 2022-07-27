@@ -117,6 +117,7 @@ void setProjectionMatrix(int shaderProgram, mat4 projectionMatrix)
     glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, &projectionMatrix[0][0]);
 }
 
+// To do : fix the functions using the allShaders vector so they actually update stuff.
 void setProjectionMatrix(vector<GLuint> shaderPrograms, mat4 projectionMatrix)
 {
     for (int shaderProgram : shaderPrograms)
@@ -241,7 +242,7 @@ float dt;
 // Ground info
 GLuint groundSizeX = 50;
 GLuint groundSizeZ = 50;
-float groundUVTiling = 5.0f;
+float groundUVTiling = 10.0f;
 
 
 // Handle window resizing.
@@ -469,7 +470,7 @@ void initScene()
     SetUniform1Value(groundShaderProgram, "light_near_plane", lightNearPlane);
     SetUniform1Value(groundShaderProgram, "light_far_plane", lightFarPlane);
 
-    SetUniform1Value(groundShaderProgram, "heightblend_factor", 0.5f);
+    SetUniform1Value(groundShaderProgram, "heightblend_factor", 0.45f);
 
     
     // Other OpenGL states to set once
@@ -529,29 +530,29 @@ void renderScene(GLuint shaderProgram)
 
     // -> Texture A.
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, snowTextureID);
+    glBindTexture(GL_TEXTURE_2D, carrotTextureID);
     GLuint textureLocation = glGetUniformLocation(shaderProgram, "textureSamplerA");
     glUniform1i(textureLocation, 1);
 
     glActiveTexture(GL_TEXTURE3);
-    glBindTexture(GL_TEXTURE_2D, snowDepthTextureID);
+    glBindTexture(GL_TEXTURE_2D, stoneDepthTextureID);
     textureLocation = glGetUniformLocation(shaderProgram, "depthSamplerA");
     glUniform1i(textureLocation, 3);
 
     // -> Texture B.
     glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, stoneTextureID);
+    glBindTexture(GL_TEXTURE_2D, snowTextureID);
     textureLocation = glGetUniformLocation(shaderProgram, "textureSamplerB");
     glUniform1i(textureLocation, 2);
 
     glActiveTexture(GL_TEXTURE4);
-    glBindTexture(GL_TEXTURE_2D, stoneDepthTextureID);
+    glBindTexture(GL_TEXTURE_2D, snowDepthTextureID);
     textureLocation = glGetUniformLocation(shaderProgram, "depthSamplerB");
     glUniform1i(textureLocation, 4);
 
 
 
-    // Draw floor grid.
+    // Draw ground.
     glBindVertexArray(groundVAO);
     
     // > Base.
@@ -563,6 +564,16 @@ void renderScene(GLuint shaderProgram)
     glUniformMatrix4fv(worldMatrixLocation, 1, GL_FALSE, &groundBaseMatrix[0][0]);
     glDrawArrays(cubeRenderMode, 0, 6*groundSizeX*groundSizeZ);
 
+
+
+    // Draw test cube.
+    glBindVertexArray(cubeVAO);
+
+    mat4 cubeBaseMatrix = translate(mat4(1.0f), vec3(0.0f, 2.0f, 0.0f));
+    worldMatrixLocation = glGetUniformLocation(shaderProgram, "worldMatrix");
+    glUniformMatrix4fv(worldMatrixLocation, 1, GL_FALSE, &cubeBaseMatrix[0][0]);
+    glDrawArrays(cubeRenderMode, 0, 36);
+
     
 
     // Unbind vertex array.
@@ -570,6 +581,7 @@ void renderScene(GLuint shaderProgram)
 }
 
 
+// To do: better camera controls.
 void handleInputs()
 {
     // Detect inputs
@@ -732,9 +744,3 @@ void handleInputs()
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         glfwSetWindowShouldClose(window, true);
 }
-
-
-// TO DO:
-// -> Shadows using two pass algorithm.
-
-

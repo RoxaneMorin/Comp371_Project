@@ -606,7 +606,8 @@ std::map<vec2, TexturedColoredNormalVertex, CompareVec2> createGroundVertexMap(u
     {
         for (int x = 0; x <= sizeX; x++) // Rows.
         {
-            yCoord = sin((float)x)/2 + cos((float)z)/2 + (rand() % 10 + 1)/10;
+            // To do: find a real noise function or library.
+            yCoord = (sin((float)x)/2 + (rand() % 12 + 1))/14;
             
             position = vec3((float)x, yCoord, (float)z);
             uv = generateUVCoords(x, z, uvTiling);
