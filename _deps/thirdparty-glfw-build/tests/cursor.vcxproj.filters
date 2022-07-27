@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\_deps\thirdparty-glfw-src\tests\cursor.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\_deps\thirdparty-glfw-src\deps\glad_gl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\_deps\thirdparty-glfw-src\deps\glad\gl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\_deps\thirdparty-glfw-src\tests\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{2AADA215-7890-3B14-A799-8DA0F4A45E7B}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{C0AA6CAD-D55C-337C-94C2-634CCA86AFCA}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

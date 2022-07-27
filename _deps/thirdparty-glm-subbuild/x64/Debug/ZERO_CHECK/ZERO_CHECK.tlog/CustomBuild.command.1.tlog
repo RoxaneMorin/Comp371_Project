@@ -1,0 +1,10 @@
+^C:\USERS\ROXANE\DOCUMENTS\COMP371_ALL\PROJECTREPO\COMP371_PROJECT\_DEPS\THIRDPARTY-GLM-SUBBUILD\CMAKEFILES\CBC8E6537CAB0BB3ED3806CC3598D12E\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/_deps/thirdparty-glm-subbuild -BC:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/_deps/thirdparty-glm-subbuild --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/_deps/thirdparty-glm-subbuild/thirdparty-glm-populate.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

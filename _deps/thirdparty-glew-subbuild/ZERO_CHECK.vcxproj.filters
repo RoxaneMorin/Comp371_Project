@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\_deps\thirdparty-glew-subbuild\CMakeFiles\02d136ae16479ab8df4b800eaac58144\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{CC9E2170-EB32-3308-9E89-C514FB3BE9A1}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

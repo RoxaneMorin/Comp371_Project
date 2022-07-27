@@ -1,0 +1,32 @@
+# CMake generation dependency list for this directory.
+C:/Program Files/CMake/share/cmake-3.22/Modules/CMakeCInformation.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/CMakeCXXInformation.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/CMakeCommonLanguageInclude.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/CMakeGenericSystem.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/CMakeInitializeConfigs.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/CMakeLanguageInformation.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/CMakeRCInformation.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/CMakeSystemSpecificInformation.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/CMakeSystemSpecificInitialize.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/Compiler/CMakeCommonCompilerMacros.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/Compiler/MSVC-C.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/Compiler/MSVC-CXX.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/ExternalProject.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/FetchContent.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/FetchContent/CMakeLists.cmake.in
+C:/Program Files/CMake/share/cmake-3.22/Modules/FindOpenGL.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/FindPackageHandleStandardArgs.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/FindPackageMessage.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/Platform/Windows-MSVC-C.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/Platform/Windows-MSVC-CXX.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/Platform/Windows-MSVC.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/Platform/Windows.cmake
+C:/Program Files/CMake/share/cmake-3.22/Modules/Platform/WindowsPaths.cmake
+C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/CMakeFiles/3.22.1/CMakeCCompiler.cmake
+C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/CMakeFiles/3.22.1/CMakeCXXCompiler.cmake
+C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/CMakeFiles/3.22.1/CMakeRCCompiler.cmake
+C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/CMakeFiles/3.22.1/CMakeSystem.cmake
+C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/code/CMakeLists.txt
+C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/code/cmake/BuildGLEW.cmake
+C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/code/cmake/BuildGLFW.cmake
+C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/code/cmake/BuildGLM.cmake

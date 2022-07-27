@@ -1,0 +1,150 @@
+^C:\USERS\ROXANE\DOCUMENTS\COMP371_ALL\PROJECTREPO\COMP371_PROJECT\_DEPS\THIRDPARTY-GLM-SUBBUILD\CMAKEFILES\FB190C7D595F2088F57E9605EF0D6640\THIRDPARTY-GLM-POPULATE-MKDIR.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/_deps/thirdparty-glm-src
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/_deps/thirdparty-glm-build
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/_deps/thirdparty-glm-subbuild/thirdparty-glm-populate-prefix
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/_deps/thirdparty-glm-subbuild/thirdparty-glm-populate-prefix/tmp
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/_deps/thirdparty-glm-subbuild/thirdparty-glm-populate-prefix/src/thirdparty-glm-populate-stamp/Debug
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/_deps/thirdparty-glm-subbuild/thirdparty-glm-populate-prefix/src
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/_deps/thirdparty-glm-subbuild/thirdparty-glm-populate-prefix/src/thirdparty-glm-populate-stamp
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/_deps/thirdparty-glm-subbuild/thirdparty-glm-populate-prefix/src/thirdparty-glm-populate-stamp/Debug/thirdparty-glm-populate-mkdir
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\ROXANE\DOCUMENTS\COMP371_ALL\PROJECTREPO\COMP371_PROJECT\_DEPS\THIRDPARTY-GLM-SUBBUILD\CMAKEFILES\FB190C7D595F2088F57E9605EF0D6640\THIRDPARTY-GLM-POPULATE-DOWNLOAD.RULE
+setlocal
+cd C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\_deps
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -P C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/_deps/thirdparty-glm-subbuild/thirdparty-glm-populate-prefix/src/thirdparty-glm-populate-stamp/verify-thirdparty-glm-populate.cmake
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -P C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/_deps/thirdparty-glm-subbuild/thirdparty-glm-populate-prefix/src/thirdparty-glm-populate-stamp/extract-thirdparty-glm-populate.cmake
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/_deps/thirdparty-glm-subbuild/thirdparty-glm-populate-prefix/src/thirdparty-glm-populate-stamp/Debug/thirdparty-glm-populate-download
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\ROXANE\DOCUMENTS\COMP371_ALL\PROJECTREPO\COMP371_PROJECT\_DEPS\THIRDPARTY-GLM-SUBBUILD\CMAKEFILES\FB190C7D595F2088F57E9605EF0D6640\THIRDPARTY-GLM-POPULATE-PATCH.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/_deps/thirdparty-glm-subbuild/thirdparty-glm-populate-prefix/src/thirdparty-glm-populate-stamp/Debug/thirdparty-glm-populate-patch
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\ROXANE\DOCUMENTS\COMP371_ALL\PROJECTREPO\COMP371_PROJECT\_DEPS\THIRDPARTY-GLM-SUBBUILD\CMAKEFILES\FB190C7D595F2088F57E9605EF0D6640\THIRDPARTY-GLM-POPULATE-CONFIGURE.RULE
+setlocal
+cd C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\_deps\thirdparty-glm-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/_deps/thirdparty-glm-subbuild/thirdparty-glm-populate-prefix/src/thirdparty-glm-populate-stamp/Debug/thirdparty-glm-populate-configure
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\ROXANE\DOCUMENTS\COMP371_ALL\PROJECTREPO\COMP371_PROJECT\_DEPS\THIRDPARTY-GLM-SUBBUILD\CMAKEFILES\FB190C7D595F2088F57E9605EF0D6640\THIRDPARTY-GLM-POPULATE-BUILD.RULE
+setlocal
+cd C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\_deps\thirdparty-glm-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/_deps/thirdparty-glm-subbuild/thirdparty-glm-populate-prefix/src/thirdparty-glm-populate-stamp/Debug/thirdparty-glm-populate-build
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\ROXANE\DOCUMENTS\COMP371_ALL\PROJECTREPO\COMP371_PROJECT\_DEPS\THIRDPARTY-GLM-SUBBUILD\CMAKEFILES\FB190C7D595F2088F57E9605EF0D6640\THIRDPARTY-GLM-POPULATE-INSTALL.RULE
+setlocal
+cd C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\_deps\thirdparty-glm-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/_deps/thirdparty-glm-subbuild/thirdparty-glm-populate-prefix/src/thirdparty-glm-populate-stamp/Debug/thirdparty-glm-populate-install
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\ROXANE\DOCUMENTS\COMP371_ALL\PROJECTREPO\COMP371_PROJECT\_DEPS\THIRDPARTY-GLM-SUBBUILD\CMAKEFILES\FB190C7D595F2088F57E9605EF0D6640\THIRDPARTY-GLM-POPULATE-TEST.RULE
+setlocal
+cd C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\_deps\thirdparty-glm-build
+if %errorlevel% neq 0 goto :cmEnd
+C:
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E echo_append
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/_deps/thirdparty-glm-subbuild/thirdparty-glm-populate-prefix/src/thirdparty-glm-populate-stamp/Debug/thirdparty-glm-populate-test
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\ROXANE\DOCUMENTS\COMP371_ALL\PROJECTREPO\COMP371_PROJECT\_DEPS\THIRDPARTY-GLM-SUBBUILD\CMAKEFILES\150FF2A7E8889682991F7968E159CC5B\THIRDPARTY-GLM-POPULATE-COMPLETE.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -E make_directory C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/_deps/thirdparty-glm-subbuild/CMakeFiles/Debug
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/_deps/thirdparty-glm-subbuild/CMakeFiles/Debug/thirdparty-glm-populate-complete
+if %errorlevel% neq 0 goto :cmEnd
+"C:\Program Files\CMake\bin\cmake.exe" -E touch C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/_deps/thirdparty-glm-subbuild/thirdparty-glm-populate-prefix/src/thirdparty-glm-populate-stamp/Debug/thirdparty-glm-populate-done
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\ROXANE\DOCUMENTS\COMP371_ALL\PROJECTREPO\COMP371_PROJECT\_DEPS\THIRDPARTY-GLM-SUBBUILD\CMAKEFILES\CBC8E6537CAB0BB3ED3806CC3598D12E\THIRDPARTY-GLM-POPULATE.RULE
+setlocal
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
+^C:\USERS\ROXANE\DOCUMENTS\COMP371_ALL\PROJECTREPO\COMP371_PROJECT\_DEPS\THIRDPARTY-GLM-SUBBUILD\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/_deps/thirdparty-glm-subbuild -BC:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/_deps/thirdparty-glm-subbuild --check-stamp-file C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/_deps/thirdparty-glm-subbuild/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

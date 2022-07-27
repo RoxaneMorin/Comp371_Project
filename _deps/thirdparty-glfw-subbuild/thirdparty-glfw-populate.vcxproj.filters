@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\_deps\thirdparty-glfw-subbuild\CMakeFiles\e80420f6758c986881ff29a50756d617\thirdparty-glfw-populate-mkdir.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\_deps\thirdparty-glfw-subbuild\CMakeFiles\e80420f6758c986881ff29a50756d617\thirdparty-glfw-populate-download.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\_deps\thirdparty-glfw-subbuild\CMakeFiles\e80420f6758c986881ff29a50756d617\thirdparty-glfw-populate-patch.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\_deps\thirdparty-glfw-subbuild\CMakeFiles\e80420f6758c986881ff29a50756d617\thirdparty-glfw-populate-configure.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\_deps\thirdparty-glfw-subbuild\CMakeFiles\e80420f6758c986881ff29a50756d617\thirdparty-glfw-populate-build.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\_deps\thirdparty-glfw-subbuild\CMakeFiles\e80420f6758c986881ff29a50756d617\thirdparty-glfw-populate-install.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\_deps\thirdparty-glfw-subbuild\CMakeFiles\e80420f6758c986881ff29a50756d617\thirdparty-glfw-populate-test.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\_deps\thirdparty-glfw-subbuild\CMakeFiles\f27841f4566b2163fbc006af1dc0f81d\thirdparty-glfw-populate-complete.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\_deps\thirdparty-glfw-subbuild\CMakeFiles\b51e572509f948c47b9ac1f3e15b2b8d\thirdparty-glfw-populate.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\_deps\thirdparty-glfw-subbuild\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\_deps\thirdparty-glfw-subbuild\CMakeFiles\thirdparty-glfw-populate" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{04F1DDDE-6FF9-397F-B8C6-ED56C717DDAA}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
