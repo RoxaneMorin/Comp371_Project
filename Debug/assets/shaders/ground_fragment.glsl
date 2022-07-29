@@ -5,11 +5,12 @@ in VS_OUT {
     vec3 Normal;
     vec2 TexCoords;
     vec4 FragPosLightSpace;
+    vec4 FragPosLight2Space;
 } fs_in;
 
 //
 
-uniform sampler2D depthMap;
+uniform sampler2D shadowMap;
 
 uniform sampler2D textureSamplerA;
 uniform sampler2D textureSamplerB;
@@ -24,39 +25,58 @@ uniform float heightblend_factor;
 
 //
 
-uniform vec3 ambient_colour;
-uniform vec3 light_color;
-uniform vec3 light_position;
+
 uniform vec3 view_position;
 
-uniform bool render_shadows;
+uniform vec3 colour = vec3(1.0f, 1.0f, 1.0f); // Colour value to multiply the textures by.
+uniform vec3 ambient_colour;
+
+uniform vec3 light_color;
+uniform vec3 light_position;
+uniform vec3 light_direction;
+
+uniform float shadingSpecularStrength = 0.1;
+uniform float shadingSpecularPower = 2;
 
 //
 
-const float shadingDiffuseStrength = 0.9;
-const float shadingSpecularStrength = 0.5;
-const float shadingSpecularPower = 10;
-
+const float shadingDiffuseStrength = 1.0f;
+//
 
 // Lighting
 
-float diffuse(vec3 light_position)
+float diffuse(vec3 lightDir)
 {	
 	vec3 normal = normalize(fs_in.Normal);
-	vec3 lightDirection = normalize(light_position - fs_in.FragPos);
+	vec3 normlalizedLightDirection = normalize(lightDir);
 	
-	return shadingDiffuseStrength * max(dot(normal, lightDirection), 0.0f);
+	return shadingDiffuseStrength * max(dot(normal, normlalizedLightDirection), 0.0f);
 }
 
-float specular(vec3 light_position)
+float specular(vec3 lightDir)
 {
 	vec3 normal = normalize(fs_in.Normal);
-	vec3 lightDirection = normalize(light_position - fs_in.FragPos);
+	vec3 normlalizedLightDirection = normalize(lightDir);
+	
 	vec3 viewDirection = normalize(view_position - fs_in.FragPos);
 	
-	vec3 reflectLightDirection = reflect(-lightDirection, normal);
+	vec3 reflectLightDirection = reflect(-normlalizedLightDirection, normal);
 	
-	return shadingSpecularStrength * pow(max(dot(reflectLightDirection, viewDirection), 0.0f), shadingSpecularPower);
+	return shadingSpecularStrength * pow(max(dot(reflectLightDirection, viewDirection), 0.0f), shadingSpecularPower) * 2;
+}
+
+float shadowCalculation(vec4 fragPosLightSpace)
+{
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+    projCoords = projCoords * 0.5 + 0.5;
+	
+    float closestDepth = texture(shadowMap, projCoords.xy).r; 
+    float currentDepth = projCoords.z;
+
+    float bias = 0.001f;
+	float shadow = (currentDepth - bias > closestDepth) ? 1.0f : 0.0f;
+
+    return shadow;
 }
 
 float shadowCalculationFiltered(vec4 fragPosLightSpace)
@@ -64,20 +84,20 @@ float shadowCalculationFiltered(vec4 fragPosLightSpace)
 	vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
     projCoords = projCoords * 0.5 + 0.5;
 	
-    float closestDepth = texture(depthMap, projCoords.xy).r; 
+    float closestDepth = texture(shadowMap, projCoords.xy).r; 
     float currentDepth = projCoords.z;
 	
     vec3 normal = normalize(fs_in.Normal);
     vec3 lightDir = normalize(light_position - fs_in.FragPos);
-    float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005);
+    float bias = 0.005f;
 
     float shadow = 0.0;
-    vec2 texelSize = 1.0 / textureSize(depthMap, 0);
+    vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
     for(int x = -1; x <= 1; x++)
     {
         for(int y = -1; y <= 1; y++)
         {
-            float pcfDepth = texture(depthMap, projCoords.xy + vec2(x, y) * texelSize).r; 
+            float pcfDepth = texture(shadowMap, projCoords.xy + vec2(x, y) * texelSize).r; 
             shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;        
         }    
     }
@@ -90,8 +110,7 @@ float shadowCalculationFiltered(vec4 fragPosLightSpace)
     return shadow;
 }
 
-
-// 
+// Terrain height features.
 
 // Texture blending functions based on http://untitledgam.es/2017/01/height-blending-shader/.
 
@@ -111,19 +130,22 @@ vec3 heightlerp(vec3 textureColorA, float textureDepthA, vec3 textureColorB, flo
 	return heightblend(textureColorA, textureDepthA * (1 - heightCoord), textureColorB, textureDepthB * heightCoord);
 }
 
-//
+// Main
 
 out vec4 FragColor;
 
 void main()
 {           
-    float diffuseLighting = diffuse(light_position);
-	float specularLighting = specular(light_position);
-	
-	float shadow = render_shadows ? (1.0f - shadowCalculationFiltered(fs_in.FragPosLightSpace)) : 1.0f;
+    // Lighting.
+	float diffuseLighting = diffuse(light_direction);
+	//float specularLighting = specular(light_direction);
+	float shadow = 1.0f - shadowCalculationFiltered(fs_in.FragPosLightSpace);
 
-	vec3 combinedLighting = ambient_colour + shadow * (diffuseLighting + specularLighting) * light_color;
+	//vec3 combinedLighting = ambient_colour + light_color * shadow * (diffuseLighting + specularLighting); // Specular lighting doesn't look very good on terrain.
+	vec3 combinedLighting = ambient_colour + light_color * shadow * (diffuseLighting);
    
+   
+   // Height Blending.
 	vec3 textureColorA = texture(textureSamplerA, fs_in.TexCoords).rgb;
 	float textureDepthA = texture(depthSamplerA, fs_in.TexCoords).r;
 	
@@ -132,6 +154,9 @@ void main()
 	
 	vec3 textureMix = heightlerp(textureColorA, textureDepthA, textureColorB, textureDepthB, fs_in.FragPos.y);
 	
-	FragColor = vec4(textureMix * combinedLighting, 1.0); 
+	
+	// Final.
+	vec3 screenColor = colour * textureMix * combinedLighting;
+	FragColor = vec4(screenColor, 1.0);
 }
 

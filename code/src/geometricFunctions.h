@@ -1,15 +1,3 @@
-//
-// Roxane Morin (40191881)
-// Assignment 02
-//
-// COMP 371 Assignment Framework
-//
-// Created by Nicolas Bergeron on 20/06/2019.
-//
-// Inspired by the following tutorials:
-// - https://learnopengl.com/Getting-started/Hello-Window
-// - https://learnopengl.com/Getting-started/Hello-Triangle
-
 #include <iostream>
 #include <list>
 #include <vector>

@@ -1,6 +1,5 @@
 ﻿//
-// Roxane Morin (40191881)
-// Assignment 02
+// Final Project.
 //
 // COMP 371 Assignment Framework
 //
@@ -32,6 +31,7 @@
 
 #include "geometricFunctions.h"
 #include "drawFunctions.h"
+#include "light.h"
 
 using namespace std;
 using namespace glm;
@@ -160,6 +160,7 @@ vec3 updateCameraPosition(float cameraTheta, float cameraPhi, float cameraRadius
 // Functions.
 void initScene();
 void initShadows();
+void setUpLightForShadows(Light light);
 void renderScene(GLuint shaderProgram);
 void handleInputs();
 
@@ -192,23 +193,15 @@ int sphereVertexCount;
 
 // Light parameters.
 vec3 ambientColour = vec3(0.5, 0.5, 0.55);
-vec3 lightColour = vec3(0.75, 0.75, 1.0);
-vec3 lightPosition = vec3(0.0f, 10.0f, 5.0f);;
+Light sunLight;
 
 // Shadow data.
 bool useShadows = true;
 
-const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
-GLuint depthMap;
-GLuint depthMapFBO;
-
+const unsigned int SHADOW_TEXTURE_WIDTH = 1024, SHADOW_TEXTURE_HEIGHT = 1024;
+GLuint shadowMapTexture;
+GLuint shadowMapFBO;
 float aspect;
-float lightNearPlane = 0.1f;
-float lightFarPlane = 100.0f;
-
-glm::mat4 lightProjection;
-glm::mat4 lightView;
-glm::mat4 lightSpaceMatrix;
 
 
 // Camera parameters.
@@ -322,12 +315,13 @@ int main(int argc, char* argv[])
         
         // Shadows.
         // Size viewport, clear buffers, and render the depth cubemap.
-        glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-        glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+        glViewport(0, 0, SHADOW_TEXTURE_WIDTH, SHADOW_TEXTURE_HEIGHT);
+        glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFBO);
         glClear(GL_DEPTH_BUFFER_BIT);
 
         glCullFace(GL_FRONT);
         renderScene(shadowShaderProgram);
+
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 
@@ -336,22 +330,18 @@ int main(int argc, char* argv[])
         glViewport(0, 0, windowWidth, windowHeigth);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Draw colourful lines.
-        glUseProgram(colourShaderProgram);
-        glBindVertexArray(lineVAO);
-        DawAxisStar(colourShaderProgram);
-
         // Prepare textures.
+        // To do : either move this to its own function, or make it a loop over all relevant shaders.
         glUseProgram(texturedShaderProgram);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, depthMap);
-        GLuint textureLocation = glGetUniformLocation(texturedShaderProgram, "depthMap");
+        glBindTexture(GL_TEXTURE_2D, shadowMapTexture);
+        GLuint textureLocation = glGetUniformLocation(texturedShaderProgram, "shadowMap");
         glUniform1i(textureLocation, 0);
 
         glUseProgram(groundShaderProgram);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, depthMap);
-        textureLocation = glGetUniformLocation(groundShaderProgram, "depthMap");
+        glBindTexture(GL_TEXTURE_2D, shadowMapTexture);
+        textureLocation = glGetUniformLocation(groundShaderProgram, "shadowMap");
         glUniform1i(textureLocation, 0);
 
         // Draw the main scene.
@@ -400,12 +390,13 @@ void initScene()
     texturedShaderProgram = loadSHADER(shaderPathPrefix + "textured_vertex.glsl", shaderPathPrefix + "textured_fragment.glsl");
     groundShaderProgram = loadSHADER(shaderPathPrefix + "textured_vertex.glsl", shaderPathPrefix + "ground_fragment.glsl");
 
-    shadowShaderProgram = loadSHADER(shaderPathPrefix + "shadow_vertex.glsl", shaderPathPrefix + "shadow_fragment.glsl"); //,  shaderPathPrefix + "shadow_geometry.glsl");
+    shadowShaderProgram = loadSHADER(shaderPathPrefix + "shadow_vertex.glsl", shaderPathPrefix + "shadow_fragment.glsl");
 
+    /*
     allShaders.push_back(colourShaderProgram);
     allShaders.push_back(texturedShaderProgram);
     allShaders.push_back(groundShaderProgram);
-
+    */
 
 
 
@@ -440,16 +431,27 @@ void initScene()
 
 
     // Set View and Projection matrices.
-    setViewMatrix(allShaders, viewMatrix);
+    //setViewMatrix(allShaders, viewMatrix);
     setViewMatrix(groundShaderProgram, viewMatrix);
     setViewMatrix(shadowShaderProgram, viewMatrix);
 
-    setProjectionMatrix(allShaders, projectionMatrix);
+    //setProjectionMatrix(allShaders, projectionMatrix);
     setProjectionMatrix(groundShaderProgram, projectionMatrix);
     setProjectionMatrix(shadowShaderProgram, projectionMatrix);
 
 
-    // Set parameters in textured shader program.
+    // Initialize main light.
+    sunLight = Light(vec3(0.95f, 0.95f, 1.0f), vec3(0.0f, 5.0f, 5.0f), vec3(0.0f, 1.0f, 0.0f));
+
+    setUpLightForShadows(sunLight);
+
+    // Set constant light related parameters in texture shader.
+    SetUniformVec3(texturedShaderProgram, "light_color", sunLight.color);
+    SetUniformVec3(groundShaderProgram, "light_color", sunLight.color);
+
+
+    // Set other parameters in textured shader program.
+    // To do: loop these over shaders.
 
     SetUniformVec3(texturedShaderProgram, "view_position", cameraPosition);
     SetUniformVec3(groundShaderProgram, "view_position", cameraPosition);
@@ -457,18 +459,11 @@ void initScene()
     SetUniformVec3(texturedShaderProgram, "ambient_colour", ambientColour);
     SetUniformVec3(groundShaderProgram, "ambient_colour", ambientColour);
 
-    SetUniformVec3(texturedShaderProgram, "light_color", lightColour);
-    SetUniformVec3(groundShaderProgram, "light_color", lightColour);
+    SetUniform1Value(texturedShaderProgram, "light_near_plane", light_near_plane);
+    SetUniform1Value(texturedShaderProgram, "light_far_plane", light_far_plane);
 
-    SetUniformVec3(texturedShaderProgram, "light_position", lightPosition);
-    SetUniformVec3(groundShaderProgram, "light_position", lightPosition);
-    SetUniformVec3(shadowShaderProgram, "light_position", lightPosition);
-
-    SetUniform1Value(texturedShaderProgram, "light_near_plane", lightNearPlane);
-    SetUniform1Value(texturedShaderProgram, "light_far_plane", lightFarPlane);
-
-    SetUniform1Value(groundShaderProgram, "light_near_plane", lightNearPlane);
-    SetUniform1Value(groundShaderProgram, "light_far_plane", lightFarPlane);
+    SetUniform1Value(groundShaderProgram, "light_near_plane", light_near_plane);
+    SetUniform1Value(groundShaderProgram, "light_far_plane", light_far_plane);
 
     SetUniform1Value(groundShaderProgram, "heightblend_factor", 0.45f);
 
@@ -479,50 +474,55 @@ void initScene()
     glEnable(GL_PROGRAM_POINT_SIZE);
 }
 
+void setUpLightForShadows(Light light)
+{
+    // Set the light projection matrix in the textured shader.
+    SetUniformMat4(texturedShaderProgram, "lightSpaceMatrix", light.lightSpaceMatrix);
+    SetUniformMat4(groundShaderProgram, "lightSpaceMatrix", light.lightSpaceMatrix);
+
+    SetUniformVec3(texturedShaderProgram, "light_position", light.position);
+    SetUniformVec3(groundShaderProgram, "light_position", light.position);
+
+    SetUniformVec3(texturedShaderProgram, "light_direction", light.direction);
+    SetUniformVec3(groundShaderProgram, "light_direction", light.direction);
+
+    // Set light related parameters in shadow shader.
+    glUseProgram(shadowShaderProgram);
+    SetUniformMat4(shadowShaderProgram, "lightSpaceMatrix", light.lightSpaceMatrix);
+}
+
 void initShadows() // All shadowcasting code references https://learnopengl.com/Advanced-Lighting/Shadows/Point-Shadows.
 {
-    glGenFramebuffers(1, &depthMapFBO);    
+    // Create and configure the depth map.
+    glGenTextures(1, &shadowMapTexture);
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, shadowMapTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_TEXTURE_WIDTH, SHADOW_TEXTURE_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 
-     // Create and configure the depth map.
-    glGenTextures(1, &depthMap);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, depthMap);
-
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
     // Attach depth cubemap to framebuffer.
-    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+    glGenFramebuffers(1, &shadowMapFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFBO);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowMapTexture, 0);
     glDrawBuffer(GL_NONE);
-    glReadBuffer(GL_NONE);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-    // Prepare light space transforms.
-    lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, lightNearPlane, lightFarPlane);
-    lightView = glm::lookAt(lightPosition, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
-    lightSpaceMatrix = lightProjection * lightView;
 
-    SetUniformMat4(shadowShaderProgram, "lightSpaceMatrix", lightSpaceMatrix);
-    SetUniformMat4(texturedShaderProgram, "lightSpaceMatrix", lightSpaceMatrix);
-    SetUniformMat4(groundShaderProgram, "lightSpaceMatrix", lightSpaceMatrix);
-
-    // Set parameters in shadow shader program.
-    glUseProgram(texturedShaderProgram);
-    glUniform1i(glGetUniformLocation(texturedShaderProgram, "render_shadows"), useShadows);
-    glUseProgram(groundShaderProgram);
-    glUniform1i(glGetUniformLocation(groundShaderProgram, "render_shadows"), useShadows);
-
-    SetUniform1Value(shadowShaderProgram, "light_near_plane", lightNearPlane);
-    SetUniform1Value(shadowShaderProgram, "light_far_plane", lightFarPlane);
+    // Set up light clip information in shadow shader.
+    glUseProgram(shadowShaderProgram);
+    SetUniform1Value(shadowShaderProgram, "light_near_plane", light_near_plane);
+    SetUniform1Value(shadowShaderProgram, "light_far_plane", light_far_plane);
 }
+
 
 void renderScene(GLuint shaderProgram)
 {
+    // Update light.
+    
+     
     // Draw geometry
 
     // Handle textures.

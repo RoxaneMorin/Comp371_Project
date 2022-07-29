@@ -8,18 +8,23 @@ out VS_OUT {
     vec3 Normal;
     vec2 TexCoords;
     vec4 FragPosLightSpace;
+    vec4 FragPosLight2Space;
 } vs_out;
 
 uniform mat4 projectionMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 worldMatrix;
 uniform mat4 lightSpaceMatrix;
+uniform mat4 light2SpaceMatrix;
 
 void main()
 {    
     vs_out.FragPos = vec3(worldMatrix * vec4(aPos, 1.0));
     vs_out.Normal = transpose(inverse(mat3(worldMatrix))) * aNormals;
     vs_out.TexCoords = aUV;
+	
     vs_out.FragPosLightSpace = lightSpaceMatrix * vec4(vs_out.FragPos, 1.0);
+    vs_out.FragPosLight2Space = light2SpaceMatrix * vec4(vs_out.FragPos, 1.0);
+	
     gl_Position = projectionMatrix * viewMatrix * vec4(vs_out.FragPos, 1.0);
 }
