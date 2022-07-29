@@ -656,6 +656,8 @@ vector<TexturedColoredNormalVertex> createGroundVertexVector(std::map<vec2, Text
             // Bottom triangle. |\
 
             // update normals
+            // the vertices will likely have to be copied :/
+            // https://www.khronos.org/opengl/wiki/Calculating_a_Surface_Normal
 
             vertexVector.push_back(terrainVertexMap[vec2(x, z)]); // (0, 0).
             vertexVector.push_back(terrainVertexMap[vec2(x, z + 1)]); // (0, 1).
