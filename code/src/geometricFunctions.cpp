@@ -1,7 +1,6 @@
 #include "geometricFunctions.h"
 #include "PerlinNoise.h"
 
-
 // Structs.
 
 // Code based on https://stackoverflow.com/questions/23042947/how-to-create-a-stdset-with-custom-comparator-in-c
@@ -595,6 +594,8 @@ int createSphereVBO(float radius, float heightOffset, int radialSubdivisions, in
 // uvTiling = how many quads does the texture stretch across before being repeated?
 std::map<vec2, TexturedColoredNormalVertex, CompareVec2> createGroundVertexMap(unsigned int sizeX, unsigned int sizeZ, float uvTiling)
 {
+    std::map<vec2, TexturedColoredNormalVertex, CompareVec2> terrainVertexMap;
+    
     // Vertex parameters.
     vec3 position;
     vec3 color = vec3(1.0f, 1.0f, 1.0f);

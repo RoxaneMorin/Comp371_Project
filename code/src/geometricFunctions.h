@@ -40,8 +40,6 @@ int createSphereVBO(float radius, float heightOffset, int sectorCount, int stack
 
 
 // Terrain generation.
-std::map<vec2, TexturedColoredNormalVertex, CompareVec2> terrainVertexMap;
-
 std::map<vec2, TexturedColoredNormalVertex, CompareVec2> createGroundVertexMap(unsigned int sizeX, unsigned int sizeZ, float uvTiling = 1);
 
 float generateHeightCoord(unsigned int xCoord, unsigned int zCoord, float noiseScaling);
