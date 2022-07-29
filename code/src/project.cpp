@@ -233,8 +233,8 @@ float dt;
 
 
 // Ground info
-GLuint groundSizeX = 50;
-GLuint groundSizeZ = 50;
+GLuint groundSizeX = 100;
+GLuint groundSizeZ = 100;
 float groundUVTiling = 10.0f;
 
 
@@ -250,9 +250,11 @@ void window_size_callback(GLFWwindow* window, int width, int height)
 
 
     setProjectionMatrix(allShaders, projectionMatrix);
+    setProjectionMatrix(texturedShaderProgram, projectionMatrix);
+    setProjectionMatrix(colourShaderProgram, projectionMatrix);
     setProjectionMatrix(groundShaderProgram, projectionMatrix);
 
-    cout << "Window resized.\n";
+    //cout << "Window resized.\n";
 }
 
 int main(int argc, char* argv[])
@@ -329,6 +331,11 @@ int main(int argc, char* argv[])
         // Size viewport, clear buffers, and render the scene itself.
         glViewport(0, 0, windowWidth, windowHeigth);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // Draw colourful lines.
+        glUseProgram(colourShaderProgram);
+        glBindVertexArray(lineVAO);
+        DawAxisStar(colourShaderProgram);
 
         // Prepare textures.
         // To do : either move this to its own function, or make it a loop over all relevant shaders.
@@ -431,11 +438,11 @@ void initScene()
 
 
     // Set View and Projection matrices.
-    //setViewMatrix(allShaders, viewMatrix);
+    setViewMatrix(colourShaderProgram, viewMatrix);
     setViewMatrix(groundShaderProgram, viewMatrix);
     setViewMatrix(shadowShaderProgram, viewMatrix);
 
-    //setProjectionMatrix(allShaders, projectionMatrix);
+    setProjectionMatrix(colourShaderProgram, projectionMatrix);
     setProjectionMatrix(groundShaderProgram, projectionMatrix);
     setProjectionMatrix(shadowShaderProgram, projectionMatrix);
 
@@ -601,6 +608,7 @@ void handleInputs()
         viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
 
         setViewMatrix(groundShaderProgram, viewMatrix);
+        setViewMatrix(colourShaderProgram, viewMatrix);
         //setViewMatrix(allShaders, viewMatrix);
     }
     // Pressing the left arrow key rotates the camera clockwise.
@@ -614,6 +622,7 @@ void handleInputs()
         viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
 
         setViewMatrix(groundShaderProgram, viewMatrix);
+        setViewMatrix(colourShaderProgram, viewMatrix);
         //setViewMatrix(allShaders, viewMatrix);
     }
 
@@ -630,6 +639,7 @@ void handleInputs()
         viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
 
         setViewMatrix(groundShaderProgram, viewMatrix);
+        setViewMatrix(colourShaderProgram, viewMatrix);
         //setViewMatrix(allShaders, viewMatrix);
     }
     /// Pressing the down arrow key rotates the camera downward.
@@ -643,6 +653,7 @@ void handleInputs()
         viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
 
         setViewMatrix(groundShaderProgram, viewMatrix);
+        setViewMatrix(colourShaderProgram, viewMatrix);
         //setViewMatrix(allShaders, viewMatrix);
     }
 
@@ -664,6 +675,7 @@ void handleInputs()
         viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
 
         setViewMatrix(groundShaderProgram, viewMatrix);
+        setViewMatrix(colourShaderProgram, viewMatrix);
         //setViewMatrix(allShaders, viewMatrix);
     }
 
@@ -678,6 +690,7 @@ void handleInputs()
         viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
 
         setViewMatrix(groundShaderProgram, viewMatrix);
+        setViewMatrix(colourShaderProgram, viewMatrix);
         //setViewMatrix(allShaders, viewMatrix);
     }
 
@@ -691,6 +704,7 @@ void handleInputs()
         viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
 
         setViewMatrix(groundShaderProgram, viewMatrix);
+        setViewMatrix(colourShaderProgram, viewMatrix);
         //setViewMatrix(allShaders, viewMatrix);
     }
 
@@ -707,6 +721,7 @@ void handleInputs()
         viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
 
         setViewMatrix(groundShaderProgram, viewMatrix);
+        setViewMatrix(colourShaderProgram, viewMatrix);
         //setViewMatrix(allShaders, viewMatrix);
     }
 

@@ -590,11 +590,12 @@ int createSphereVBO(float radius, float heightOffset, int radialSubdivisions, in
 
 
 // Terrain generation.
+std::map<vec2, TexturedColoredNormalVertex, CompareVec2> terrainVertexMap; // This wouldn't let me declare it in the .h file :/
 
 // uvTiling = how many quads does the texture stretch across before being repeated?
 std::map<vec2, TexturedColoredNormalVertex, CompareVec2> createGroundVertexMap(unsigned int sizeX, unsigned int sizeZ, float uvTiling)
 {
-    std::map<vec2, TexturedColoredNormalVertex, CompareVec2> terrainVertexMap;
+    //std::map<vec2, TexturedColoredNormalVertex, CompareVec2> terrainVertexMap;
     
     // Vertex parameters.
     vec3 position;
@@ -652,15 +653,25 @@ vector<TexturedColoredNormalVertex> createGroundVertexVector(std::map<vec2, Text
     {
         for (int x = 0; x < sizeX; x++) // Rows.
         {
-            // Bottom triangle.
+            // Bottom triangle. |\
+
+            // update normals
+
             vertexVector.push_back(terrainVertexMap[vec2(x, z)]); // (0, 0).
             vertexVector.push_back(terrainVertexMap[vec2(x, z + 1)]); // (0, 1).
             vertexVector.push_back(terrainVertexMap[vec2(x + 1, z)]); // (1, 0).
 
-            // Top triangle.
+
+
+
+            // Top triangle. \|
+
+            // update normals
+            
             vertexVector.push_back(terrainVertexMap[vec2(x + 1, z)]); // (1, 0).
             vertexVector.push_back(terrainVertexMap[vec2(x, z + 1)]); // (0, 1).
             vertexVector.push_back(terrainVertexMap[vec2(x + 1, z + 1)]); // (1, 1). 
+            
         }
     }
 
@@ -725,7 +736,81 @@ int createGroundVBO(unsigned int sizeX, unsigned int sizeZ, float uvTiling)
     return vertexArrayObject;
 }
 
+
+
 float returnHeightAtPoint(vec2 pointCoords)
 {
-    return 0.0f;
+    float heightAtPoint;
+    cout << "Calculating ground height at point: " << pointCoords.x << ", " << pointCoords.y << ".\n";
+    
+    float closestLowX = floor(pointCoords.x);
+    float closestHighX = closestLowX + 1;
+    float xCoordDelta = pointCoords.x - closestLowX;
+
+    /*
+    cout << "Closest low x: " << closestLowX << ".\n";
+    cout << "Closest high x: " << closestHighX << ".\n";
+    cout << "Distance from closest low x: " << xCoordDelta << ".\n";
+    */
+
+    float closestLowZ = floor(pointCoords.y);
+    float closestHighZ = closestLowZ + 1;
+    float zCoordDelta = pointCoords.y - closestLowZ;
+
+    /*
+    cout << "Closest low z: " << closestLowZ << ".\n";
+    cout << "Closest high z: " << closestHighZ << ".\n";
+    cout << "Distance from closest low z: " << zCoordDelta << ".\n";
+    */
+
+    float lowXlowZHeight = terrainVertexMap[vec2(closestLowX, closestLowZ)].position.y;
+    //cout << "Height at low x, low z: " << lowXlowZHeight << ".\n";
+    float highXlowZHeight = terrainVertexMap[vec2(closestHighX, closestLowZ)].position.y;
+    //cout << "Height at high x, low z: " << highXlowZHeight << ".\n";
+    float lowXhighZHeight = terrainVertexMap[vec2(closestLowX, closestHighZ)].position.y;
+    //cout << "Height at low x, high z: " << lowXhighZHeight << ".\n";
+    float highXhighZHeight = terrainVertexMap[vec2(closestHighX, closestHighZ)].position.y;
+    //cout << "Height at high x, high z: " << highXhighZHeight << ".\n";
+    
+
+    // Verify whether the point exists as is in the ground vertex map.
+    if (pointCoords.x == closestLowX && pointCoords.y == closestLowZ)
+    {
+        return lowXlowZHeight;
+    }
+    if (pointCoords.x == closestHighX && pointCoords.y == closestLowZ)
+    {
+        return highXlowZHeight;
+    }
+    if (pointCoords.x == closestLowX && pointCoords.y == closestHighZ)
+    {
+        return lowXhighZHeight;
+    }
+    if (pointCoords.x == closestHighX && pointCoords.y == closestHighZ)
+    {
+        return highXhighZHeight;
+    }
+
+
+    // Otherwise,
+    if (pointCoords.y > (1 - pointCoords.x)) // Point situated inside the top triangle.
+    {
+        //cout << "We are in the top triangle.\n";
+
+        float heightAtXEdge = lerp(lowXhighZHeight, highXhighZHeight, xCoordDelta);
+        //cout << "The midpoint height on the X edge is: " << heightAtXEdge << ".\n";
+        heightAtPoint = lerp(highXlowZHeight, heightAtXEdge, zCoordDelta);
+        
+    }
+    else // Point situated inside the bottom triangle.
+    {
+        //cout << "We are in the bottom triangle.\n";
+
+        float heightAtXEdge = lerp(lowXlowZHeight, highXlowZHeight, xCoordDelta);
+        //cout << "The midpoint height on the X edge is: " << heightAtXEdge << ".\n";
+        heightAtPoint = lerp(heightAtXEdge, lowXhighZHeight, zCoordDelta);
+    }
+
+    cout << "The height at this point is: " << heightAtPoint << ".\n";
+    return heightAtPoint;
 }
