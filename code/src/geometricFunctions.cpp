@@ -607,9 +607,8 @@ std::map<vec2, TexturedColoredNormalVertex, CompareVec2> createGroundVertexMap(u
     {
         for (int x = 0; x <= sizeX; x++) // Rows.
         {
-            // To do: find a real noise function or library. https://github.com/Reputeless/PerlinNoise ?
-            yCoord = (sin((float)x)/2 + (rand() % 12 + 1))/14;
-            yCoord += generateHeightCoord(x, z, 0.05f);
+            yCoord = generateHeightCoord(x, z, 0.05f); // Generate basic height variation using a perlin noise.
+            yCoord += (sin((float)x) / 2 + (rand() % 12 + 1)) / 20; // Generate aditional variations using random numbers and a sin wave.
             
             position = vec3((float)x, yCoord, (float)z);
             uv = generateUVCoords(x, z, uvTiling);
