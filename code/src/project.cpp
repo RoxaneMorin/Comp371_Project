@@ -562,7 +562,7 @@ void renderScene(GLuint shaderProgram)
     mat4 groundBaseMatrix = translate(mat4(1.0f), vec3(groundCenterX, 0.0f, groundCenterZ));
     GLuint worldMatrixLocation = glGetUniformLocation(shaderProgram, "worldMatrix");
     glUniformMatrix4fv(worldMatrixLocation, 1, GL_FALSE, &groundBaseMatrix[0][0]);
-    glDrawArrays(cubeRenderMode, 0, 6*groundSizeX*groundSizeZ);
+    glDrawArrays(meshRenderMode, 0, 6*groundSizeX*groundSizeZ);
 
 
 
@@ -572,7 +572,7 @@ void renderScene(GLuint shaderProgram)
     mat4 cubeBaseMatrix = translate(mat4(1.0f), vec3(0.0f, 2.0f, 0.0f));
     worldMatrixLocation = glGetUniformLocation(shaderProgram, "worldMatrix");
     glUniformMatrix4fv(worldMatrixLocation, 1, GL_FALSE, &cubeBaseMatrix[0][0]);
-    glDrawArrays(cubeRenderMode, 0, 36);
+    glDrawArrays(meshRenderMode, 0, 36);
 
     
 
@@ -715,17 +715,17 @@ void handleInputs()
     // Press 'P' to change the snowman's rendering mode to points.
     if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
     {
-        cubeRenderMode = GL_POINTS;
+        meshRenderMode = GL_POINTS;
     }
     // Press 'L' to change the snowman's rendering mode to lines.
     if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
     {
-        cubeRenderMode = GL_LINE_LOOP;
+        meshRenderMode = GL_LINE_LOOP;
     }
     // Press 'T' to change the snowman's rendering mode to triangles.
     if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
     {
-        cubeRenderMode = GL_TRIANGLES;
+        meshRenderMode = GL_TRIANGLES;
     }
 
     // Press 'B' to switch whether shadows are rendered.

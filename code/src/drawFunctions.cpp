@@ -39,7 +39,7 @@ void DawAxisStar(int shaderProgram)
     glDrawArrays(GL_LINE_STRIP, 0, 6);
 }
 
-int cubeRenderMode = GL_TRIANGLES; // Declaring the variable here as it is used in multiple methods.
+int meshRenderMode = GL_TRIANGLES; // Declaring the variable here as it is used in multiple methods.
 
 mat4 DrawParentedMesh(int shaderProgram, mat4 parentMatrix, vec3 translation, vec3 scale, unsigned int numberOfVerts)
 {
@@ -49,7 +49,7 @@ mat4 DrawParentedMesh(int shaderProgram, mat4 parentMatrix, vec3 translation, ve
     GLuint worldMatrixLocation = glGetUniformLocation(shaderProgram, "worldMatrix");
     glUniformMatrix4fv(worldMatrixLocation, 1, GL_FALSE, &worldMatrix[0][0]);
 
-    glDrawArrays(cubeRenderMode, 0, numberOfVerts);
+    glDrawArrays(meshRenderMode, 0, numberOfVerts);
 
     return worldMatrix; // Return the resulting matrix so it can be used for further parenting.
 }
@@ -62,7 +62,7 @@ mat4 DrawParentedMesh(int shaderProgram, mat4 parentMatrix, vec3 translation, ve
     GLuint worldMatrixLocation = glGetUniformLocation(shaderProgram, "worldMatrix");
     glUniformMatrix4fv(worldMatrixLocation, 1, GL_FALSE, &worldMatrix[0][0]);
 
-    glDrawArrays(cubeRenderMode, 0, numberOfVerts);
+    glDrawArrays(meshRenderMode, 0, numberOfVerts);
 
     return worldMatrix; // Return the resulting matrix so it can be used for further parenting.
 } // To do: fix wonky nested rotations.
