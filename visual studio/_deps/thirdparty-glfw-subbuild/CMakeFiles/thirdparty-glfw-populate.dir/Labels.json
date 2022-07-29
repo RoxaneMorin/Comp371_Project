@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/visual studio/_deps/thirdparty-glfw-subbuild/CMakeFiles/thirdparty-glfw-populate"
+		},
+		{
+			"file" : "C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/visual studio/_deps/thirdparty-glfw-subbuild/CMakeFiles/ff1e1670fbf79a10a09add50dc8cdb70/thirdparty-glfw-populate.rule"
+		},
+		{
+			"file" : "C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/visual studio/_deps/thirdparty-glfw-subbuild/CMakeFiles/50bccfa8a5829cd0cd76b3e73e60dcfa/thirdparty-glfw-populate-complete.rule"
+		},
+		{
+			"file" : "C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/visual studio/_deps/thirdparty-glfw-subbuild/CMakeFiles/4300ddef2f4fba86ad9845523d932286/thirdparty-glfw-populate-build.rule"
+		},
+		{
+			"file" : "C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/visual studio/_deps/thirdparty-glfw-subbuild/CMakeFiles/4300ddef2f4fba86ad9845523d932286/thirdparty-glfw-populate-configure.rule"
+		},
+		{
+			"file" : "C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/visual studio/_deps/thirdparty-glfw-subbuild/CMakeFiles/4300ddef2f4fba86ad9845523d932286/thirdparty-glfw-populate-download.rule"
+		},
+		{
+			"file" : "C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/visual studio/_deps/thirdparty-glfw-subbuild/CMakeFiles/4300ddef2f4fba86ad9845523d932286/thirdparty-glfw-populate-install.rule"
+		},
+		{
+			"file" : "C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/visual studio/_deps/thirdparty-glfw-subbuild/CMakeFiles/4300ddef2f4fba86ad9845523d932286/thirdparty-glfw-populate-mkdir.rule"
+		},
+		{
+			"file" : "C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/visual studio/_deps/thirdparty-glfw-subbuild/CMakeFiles/4300ddef2f4fba86ad9845523d932286/thirdparty-glfw-populate-patch.rule"
+		},
+		{
+			"file" : "C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/visual studio/_deps/thirdparty-glfw-subbuild/CMakeFiles/4300ddef2f4fba86ad9845523d932286/thirdparty-glfw-populate-test.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"thirdparty-glfw-populate"
+		],
+		"name" : "thirdparty-glfw-populate"
+	}
+}

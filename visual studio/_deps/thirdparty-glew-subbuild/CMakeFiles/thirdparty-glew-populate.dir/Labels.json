@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/visual studio/_deps/thirdparty-glew-subbuild/CMakeFiles/thirdparty-glew-populate"
+		},
+		{
+			"file" : "C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/visual studio/_deps/thirdparty-glew-subbuild/CMakeFiles/aae3748ced76a3723671dad67b4a31c2/thirdparty-glew-populate.rule"
+		},
+		{
+			"file" : "C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/visual studio/_deps/thirdparty-glew-subbuild/CMakeFiles/92a45bd20995a81659c8a589a3a591a4/thirdparty-glew-populate-complete.rule"
+		},
+		{
+			"file" : "C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/visual studio/_deps/thirdparty-glew-subbuild/CMakeFiles/454469c14d58e22d0134ad15333de574/thirdparty-glew-populate-build.rule"
+		},
+		{
+			"file" : "C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/visual studio/_deps/thirdparty-glew-subbuild/CMakeFiles/454469c14d58e22d0134ad15333de574/thirdparty-glew-populate-configure.rule"
+		},
+		{
+			"file" : "C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/visual studio/_deps/thirdparty-glew-subbuild/CMakeFiles/454469c14d58e22d0134ad15333de574/thirdparty-glew-populate-download.rule"
+		},
+		{
+			"file" : "C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/visual studio/_deps/thirdparty-glew-subbuild/CMakeFiles/454469c14d58e22d0134ad15333de574/thirdparty-glew-populate-install.rule"
+		},
+		{
+			"file" : "C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/visual studio/_deps/thirdparty-glew-subbuild/CMakeFiles/454469c14d58e22d0134ad15333de574/thirdparty-glew-populate-mkdir.rule"
+		},
+		{
+			"file" : "C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/visual studio/_deps/thirdparty-glew-subbuild/CMakeFiles/454469c14d58e22d0134ad15333de574/thirdparty-glew-populate-patch.rule"
+		},
+		{
+			"file" : "C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/visual studio/_deps/thirdparty-glew-subbuild/CMakeFiles/454469c14d58e22d0134ad15333de574/thirdparty-glew-populate-test.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"thirdparty-glew-populate"
+		],
+		"name" : "thirdparty-glew-populate"
+	}
+}

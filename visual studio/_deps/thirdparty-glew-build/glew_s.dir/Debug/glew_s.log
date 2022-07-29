@@ -1,0 +1,4 @@
+﻿  Building Custom Rule C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/visual studio/_deps/thirdparty-glew-src/build/cmake/CMakeLists.txt
+  glew.c
+C:\Program Files (x86)\Windows Kits\8.1\Include\um\winbase.h(8816,5): warning C5105: macro expansion producing 'defined' has undefined behavior
+  glew_s.vcxproj -> C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\lib\Debug\libglew32d.lib

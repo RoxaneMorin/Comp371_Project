@@ -1,0 +1,198 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <PreferredToolArchitecture>x64</PreferredToolArchitecture>
+  </PropertyGroup>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{8A1CF5F2-3EAD-3122-8CBE-937CADC03D34}</ProjectGuid>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <Keyword>Win32Proj</Keyword>
+    <Platform>x64</Platform>
+    <ProjectName>ALL_BUILD</ProjectName>
+    <VCProjectUpgraderObjectName>NoUpgrade</VCProjectUpgraderObjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Utility</ConfigurationType>
+    <CharacterSet>MultiByte</CharacterSet>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.20506.1</_ProjectFileVersion>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <OutputDirectory>$(ProjectDir)/$(IntDir)</OutputDirectory>
+      <HeaderFileName>%(Filename).h</HeaderFileName>
+      <TypeLibraryName>%(Filename).tlb</TypeLibraryName>
+      <InterfaceIdentifierFileName>%(Filename)_i.c</InterfaceIdentifierFileName>
+      <ProxyFileName>%(Filename)_p.c</ProxyFileName>
+    </Midl>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-src\CMakeLists.txt">
+      <UseUtf8Encoding>Always</UseUtf8Encoding>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Building Custom Rule C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/visual studio/_deps/thirdparty-glfw-src/CMakeLists.txt</Message>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/code "-BC:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/visual studio" --check-stamp-file "C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/visual studio/_deps/thirdparty-glfw-build/CMakeFiles/generate.stamp"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal &amp; call :cmErrorLevel %errorlevel% &amp; goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd</Command>
+      <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Program Files\CMake\share\cmake-3.22\Modules\BasicConfigVersion-SameMajorVersion.cmake.in;C:\Program Files\CMake\share\cmake-3.22\Modules\CMakeDependentOption.cmake;C:\Program Files\CMake\share\cmake-3.22\Modules\CMakePackageConfigHelpers.cmake;C:\Program Files\CMake\share\cmake-3.22\Modules\CheckCSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.22\Modules\CheckIncludeFile.cmake;C:\Program Files\CMake\share\cmake-3.22\Modules\CheckLibraryExists.cmake;C:\Program Files\CMake\share\cmake-3.22\Modules\FindDoxygen.cmake;C:\Program Files\CMake\share\cmake-3.22\Modules\FindPackageHandleStandardArgs.cmake;C:\Program Files\CMake\share\cmake-3.22\Modules\FindPackageMessage.cmake;C:\Program Files\CMake\share\cmake-3.22\Modules\FindThreads.cmake;C:\Program Files\CMake\share\cmake-3.22\Modules\GNUInstallDirs.cmake;C:\Program Files\CMake\share\cmake-3.22\Modules\Internal\CheckSourceCompiles.cmake;C:\Program Files\CMake\share\cmake-3.22\Modules\WriteBasicConfigVersionFile.cmake;C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-src\src\glfw3.pc.in;C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-src\src\glfw3Config.cmake.in;C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-src\src\glfw_config.h.in;%(AdditionalInputs)</AdditionalInputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\CMakeFiles\generate.stamp</Outputs>
+      <LinkObjects Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</LinkObjects>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\ZERO_CHECK.vcxproj">
+      <Project>{4DC49A1C-A15F-3459-8646-245C3650982A}</Project>
+      <Name>ZERO_CHECK</Name>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\examples\boing.vcxproj">
+      <Project>{DC3FC6AE-B9F4-3169-80CB-BE2F352CA804}</Project>
+      <Name>boing</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\tests\clipboard.vcxproj">
+      <Project>{7DBC59C5-F94C-3E52-A266-04DF78A705CB}</Project>
+      <Name>clipboard</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\tests\cursor.vcxproj">
+      <Project>{F77EF607-7B2F-322C-A78E-7CD91DC44AD1}</Project>
+      <Name>cursor</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\tests\empty.vcxproj">
+      <Project>{7850D7CD-1364-31C5-9321-31549190A317}</Project>
+      <Name>empty</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\tests\events.vcxproj">
+      <Project>{17D8A749-8A65-3AA8-94B0-3F1350B69E12}</Project>
+      <Name>events</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\tests\gamma.vcxproj">
+      <Project>{FF0313AF-330D-3EBB-B5CB-D74710C720AD}</Project>
+      <Name>gamma</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\examples\gears.vcxproj">
+      <Project>{3E511BC1-86A9-3F94-B3E9-6B80B400C042}</Project>
+      <Name>gears</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\src\glfw.vcxproj">
+      <Project>{CE3FCD6A-8ABA-3222-B9F1-61904FB1DEDE}</Project>
+      <Name>glfw</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\tests\glfwinfo.vcxproj">
+      <Project>{ED8ACA52-FF01-3001-9935-3ED62892BDC8}</Project>
+      <Name>glfwinfo</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\examples\heightmap.vcxproj">
+      <Project>{92FBCB0A-0C39-33B4-A863-C3726BD80C51}</Project>
+      <Name>heightmap</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\tests\icon.vcxproj">
+      <Project>{30C4E964-1F9B-315B-8B7D-79A745BE2DDA}</Project>
+      <Name>icon</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\tests\iconify.vcxproj">
+      <Project>{9B0B3302-195E-3D9F-88EF-47D26F82EAB2}</Project>
+      <Name>iconify</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\tests\inputlag.vcxproj">
+      <Project>{0347D67A-9C14-3C49-9EBD-865C6FB34A43}</Project>
+      <Name>inputlag</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\tests\joysticks.vcxproj">
+      <Project>{D64693A4-D53E-3DD0-B6A1-5D03ABEB93F9}</Project>
+      <Name>joysticks</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\tests\monitors.vcxproj">
+      <Project>{F25CBC97-F50E-31AF-BF50-630F634B0FCB}</Project>
+      <Name>monitors</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\tests\msaa.vcxproj">
+      <Project>{785FDC4B-1D1D-3CA1-B667-31EF2E7964FD}</Project>
+      <Name>msaa</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\examples\offscreen.vcxproj">
+      <Project>{AFA09CF2-470F-3D93-9B98-D1FC2827D04D}</Project>
+      <Name>offscreen</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\tests\opacity.vcxproj">
+      <Project>{BED121F2-5EF4-3E28-8E3A-77E2F49A8EE6}</Project>
+      <Name>opacity</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\examples\particles.vcxproj">
+      <Project>{43C3D2C5-8B51-3535-9F3C-D493BC7B34F8}</Project>
+      <Name>particles</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\tests\reopen.vcxproj">
+      <Project>{6209290A-162E-3E83-AE19-10AB6963B14F}</Project>
+      <Name>reopen</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\examples\sharing.vcxproj">
+      <Project>{A7AA3483-6B15-34A2-96AE-71BF1BA72384}</Project>
+      <Name>sharing</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\examples\simple.vcxproj">
+      <Project>{71AEAB12-D795-309C-87D2-FC3463660465}</Project>
+      <Name>simple</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\examples\splitview.vcxproj">
+      <Project>{C87B8D08-B9EF-36FF-9195-E7BBFA337F05}</Project>
+      <Name>splitview</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\tests\tearing.vcxproj">
+      <Project>{9B66BC33-2930-3FFF-861B-D9FBFB298F2F}</Project>
+      <Name>tearing</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\tests\threads.vcxproj">
+      <Project>{0E62B74F-8F92-3182-916B-74B3F61D5C6C}</Project>
+      <Name>threads</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\tests\timeout.vcxproj">
+      <Project>{D981148D-AB77-337A-BD9F-F25514010383}</Project>
+      <Name>timeout</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\tests\title.vcxproj">
+      <Project>{1FE7016B-CB22-3126-8A2F-ECA26AFCE474}</Project>
+      <Name>title</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\tests\triangle-vulkan.vcxproj">
+      <Project>{A7A8B21F-7862-3940-A1CD-928499DD961D}</Project>
+      <Name>triangle-vulkan</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\examples\wave.vcxproj">
+      <Project>{6857C9C5-2F40-32F3-AF89-8325EC4F5977}</Project>
+      <Name>wave</Name>
+    </ProjectReference>
+    <ProjectReference Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glfw-build\tests\windows.vcxproj">
+      <Project>{853DA740-498E-3517-ABAE-3380CEC59B40}</Project>
+      <Name>windows</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

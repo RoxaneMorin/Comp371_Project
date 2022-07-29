@@ -1,0 +1,75 @@
+﻿  Building Custom Rule C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/code/CMakeLists.txt
+  drawFunctions.cpp
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\drawFunctions.cpp(14,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\drawFunctions.cpp(16,27): warning C4018: '<': signed/unsigned mismatch
+  geometricFunctions.cpp
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\type_traits(525,28): error C2139: 'CompareVec2': an undefined class is not allowed as an argument to compiler intrinsic type trait '__is_empty'
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.h(23): message : see declaration of 'CompareVec2'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\xmemory(1380): message : see reference to variable template 'const bool is_empty_v<CompareVec2>' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\map(75): message : see reference to class template instantiation 'std::_Tree<std::_Tmap_traits<_Kty,_Ty,_Pr,_Alloc,false>>' being compiled
+          with
+          [
+              _Kty=glm::vec2,
+              _Ty=TexturedColoredNormalVertex,
+              _Pr=CompareVec2,
+              _Alloc=std::allocator<std::pair<const glm::vec2,TexturedColoredNormalVertex>>
+          ]
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.h(43): message : see reference to class template instantiation 'std::map<glm::vec2,TexturedColoredNormalVertex,CompareVec2,std::allocator<std::pair<const glm::vec2,TexturedColoredNormalVertex>>>' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\type_traits(546,28): error C2139: 'CompareVec2': an undefined class is not allowed as an argument to compiler intrinsic type trait '__is_empty'
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.h(23): message : see declaration of 'CompareVec2'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\xmemory(1380): message : see reference to variable template 'const bool is_final_v<CompareVec2>' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\xmemory(1409,10): error C2079: 'std::_Compressed_pair<CompareVec2,std::_Compressed_pair<std::allocator<std::_Tree_node<std::pair<const glm::vec2,TexturedColoredNormalVertex>,std::_Default_allocator_traits<_Alloc>::void_pointer>>,std::_Tree_val<std::_Tree_simple_types<std::pair<const glm::vec2,TexturedColoredNormalVertex>>>,true>,false>::_Myval1' uses undefined struct 'CompareVec2'
+          with
+          [
+              _Alloc=std::allocator<std::pair<const glm::vec2,TexturedColoredNormalVertex>>
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\xtree(1959): message : see reference to class template instantiation 'std::_Compressed_pair<CompareVec2,std::_Compressed_pair<std::allocator<std::_Tree_node<std::pair<const glm::vec2,TexturedColoredNormalVertex>,std::_Default_allocator_traits<_Alloc>::void_pointer>>,std::_Tree_val<std::_Tree_simple_types<std::pair<const glm::vec2,TexturedColoredNormalVertex>>>,true>,false>' being compiled
+          with
+          [
+              _Alloc=std::allocator<std::pair<const glm::vec2,TexturedColoredNormalVertex>>
+          ]
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(275,26): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(275,20): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(606,23): warning C4018: '<=': signed/unsigned mismatch
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(608,27): warning C4018: '<=': signed/unsigned mismatch
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(633,50): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(633,23): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(650,23): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(652,27): warning C4018: '<': signed/unsigned mismatch
+  project.cpp
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\include\shaderloader.h(29,10): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'std::string'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\type_traits(525,28): error C2139: 'CompareVec2': an undefined class is not allowed as an argument to compiler intrinsic type trait '__is_empty'
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.h(23): message : see declaration of 'CompareVec2'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\xmemory(1380): message : see reference to variable template 'const bool is_empty_v<CompareVec2>' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\map(75): message : see reference to class template instantiation 'std::_Tree<std::_Tmap_traits<_Kty,_Ty,_Pr,_Alloc,false>>' being compiled
+          with
+          [
+              _Kty=glm::vec2,
+              _Ty=TexturedColoredNormalVertex,
+              _Pr=CompareVec2,
+              _Alloc=std::allocator<std::pair<const glm::vec2,TexturedColoredNormalVertex>>
+          ]
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.h(43): message : see reference to class template instantiation 'std::map<glm::vec2,TexturedColoredNormalVertex,CompareVec2,std::allocator<std::pair<const glm::vec2,TexturedColoredNormalVertex>>>' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\type_traits(546,28): error C2139: 'CompareVec2': an undefined class is not allowed as an argument to compiler intrinsic type trait '__is_empty'
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.h(23): message : see declaration of 'CompareVec2'
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\xmemory(1380): message : see reference to variable template 'const bool is_final_v<CompareVec2>' being compiled
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\xmemory(1409,10): error C2079: 'std::_Compressed_pair<CompareVec2,std::_Compressed_pair<std::allocator<std::_Tree_node<std::pair<const glm::vec2,TexturedColoredNormalVertex>,std::_Default_allocator_traits<_Alloc>::void_pointer>>,std::_Tree_val<std::_Tree_simple_types<std::pair<const glm::vec2,TexturedColoredNormalVertex>>>,true>,false>::_Myval1' uses undefined struct 'CompareVec2'
+          with
+          [
+              _Alloc=std::allocator<std::pair<const glm::vec2,TexturedColoredNormalVertex>>
+          ]
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include\xtree(1959): message : see reference to class template instantiation 'std::_Compressed_pair<CompareVec2,std::_Compressed_pair<std::allocator<std::_Tree_node<std::pair<const glm::vec2,TexturedColoredNormalVertex>,std::_Default_allocator_traits<_Alloc>::void_pointer>>,std::_Tree_val<std::_Tree_simple_types<std::pair<const glm::vec2,TexturedColoredNormalVertex>>>,true>,false>' being compiled
+          with
+          [
+              _Alloc=std::allocator<std::pair<const glm::vec2,TexturedColoredNormalVertex>>
+          ]
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\project.cpp(289,25): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\project.cpp(310,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\project.cpp(661,32): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\project.cpp(676,21): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\project.cpp(688,38): warning C4244: '+=': conversion from 'double' to 'T', possible loss of data
+          with
+          [
+              T=float
+          ]
+  Generating Code...

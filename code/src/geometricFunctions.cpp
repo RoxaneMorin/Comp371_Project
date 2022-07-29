@@ -9,7 +9,7 @@ struct CompareVec2
 {
     bool operator()(const glm::vec2& leftHandSide, const glm::vec2& rightHandSide) const
     {
-        return leftHandSide.x > rightHandSide.x || leftHandSide.x == rightHandSide.x && (leftHandSide.y > rightHandSide.y);
+        return (leftHandSide.x > rightHandSide.x) || (leftHandSide.x == rightHandSide.x && (leftHandSide.y > rightHandSide.y));
     }
 };
 
@@ -590,11 +590,11 @@ int createSphereVBO(float radius, float heightOffset, int radialSubdivisions, in
 }
 
 
+// Terrain generation.
+
 // uvTiling = how many quads does the texture stretch across before being repeated?
 std::map<vec2, TexturedColoredNormalVertex, CompareVec2> createGroundVertexMap(unsigned int sizeX, unsigned int sizeZ, float uvTiling)
 {
-    std::map<vec2, TexturedColoredNormalVertex, CompareVec2> vertexMap;
-
     // Vertex parameters.
     vec3 position;
     vec3 color = vec3(1.0f, 1.0f, 1.0f);
@@ -616,11 +616,11 @@ std::map<vec2, TexturedColoredNormalVertex, CompareVec2> createGroundVertexMap(u
             vec2 currentKey = vec2(x, z);
             TexturedColoredNormalVertex currentVertex = TexturedColoredNormalVertex(position, color, uv, normals);
 
-            vertexMap.insert(std::make_pair(currentKey, currentVertex));
+            terrainVertexMap.insert(std::make_pair(currentKey, currentVertex));
         }
     }
 
-    return vertexMap;
+    return terrainVertexMap;
 }
 
 // We are using this noise library: https://github.com/Reputeless/PerlinNoise.
@@ -643,7 +643,7 @@ vec2 generateUVCoords(unsigned int posX, unsigned int posZ, float uvTiling)
     return vec2(uvPosX, uvPosY);
 }
 
-vector<TexturedColoredNormalVertex> createGroundVertexVector(std::map<vec2, TexturedColoredNormalVertex, CompareVec2> vertexMap, unsigned int sizeX, unsigned int sizeZ)
+vector<TexturedColoredNormalVertex> createGroundVertexVector(std::map<vec2, TexturedColoredNormalVertex, CompareVec2> terrainVertexMap, unsigned int sizeX, unsigned int sizeZ)
 {
     vector<TexturedColoredNormalVertex> vertexVector;
 
@@ -652,20 +652,19 @@ vector<TexturedColoredNormalVertex> createGroundVertexVector(std::map<vec2, Text
         for (int x = 0; x < sizeX; x++) // Rows.
         {
             // Bottom triangle.
-            vertexVector.push_back(vertexMap[vec2(x, z)]); // (0, 0).
-            vertexVector.push_back(vertexMap[vec2(x, z + 1)]); // (0, 1).
-            vertexVector.push_back(vertexMap[vec2(x + 1, z)]); // (1, 0).
+            vertexVector.push_back(terrainVertexMap[vec2(x, z)]); // (0, 0).
+            vertexVector.push_back(terrainVertexMap[vec2(x, z + 1)]); // (0, 1).
+            vertexVector.push_back(terrainVertexMap[vec2(x + 1, z)]); // (1, 0).
 
             // Top triangle.
-            vertexVector.push_back(vertexMap[vec2(x + 1, z)]); // (1, 0).
-            vertexVector.push_back(vertexMap[vec2(x, z + 1)]); // (0, 1).
-            vertexVector.push_back(vertexMap[vec2(x + 1, z + 1)]); // (1, 1). 
+            vertexVector.push_back(terrainVertexMap[vec2(x + 1, z)]); // (1, 0).
+            vertexVector.push_back(terrainVertexMap[vec2(x, z + 1)]); // (0, 1).
+            vertexVector.push_back(terrainVertexMap[vec2(x + 1, z + 1)]); // (1, 1). 
         }
     }
 
     return vertexVector;
 }
-
 
 int createGroundVBO(unsigned int sizeX, unsigned int sizeZ, float uvTiling)
 {
@@ -723,4 +722,9 @@ int createGroundVBO(unsigned int sizeX, unsigned int sizeZ, float uvTiling)
     glEnableVertexAttribArray(3);
 
     return vertexArrayObject;
+}
+
+float returnHeightAtPoint(vec2 pointCoords)
+{
+    return 0.0f;
 }

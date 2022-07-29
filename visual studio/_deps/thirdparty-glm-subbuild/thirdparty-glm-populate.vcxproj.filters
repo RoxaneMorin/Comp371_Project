@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glm-subbuild\CMakeFiles\ccdc102f46984e385d8fbdf7d7b5f5b9\thirdparty-glm-populate-mkdir.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glm-subbuild\CMakeFiles\ccdc102f46984e385d8fbdf7d7b5f5b9\thirdparty-glm-populate-download.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glm-subbuild\CMakeFiles\ccdc102f46984e385d8fbdf7d7b5f5b9\thirdparty-glm-populate-patch.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glm-subbuild\CMakeFiles\ccdc102f46984e385d8fbdf7d7b5f5b9\thirdparty-glm-populate-configure.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glm-subbuild\CMakeFiles\ccdc102f46984e385d8fbdf7d7b5f5b9\thirdparty-glm-populate-build.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glm-subbuild\CMakeFiles\ccdc102f46984e385d8fbdf7d7b5f5b9\thirdparty-glm-populate-install.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glm-subbuild\CMakeFiles\ccdc102f46984e385d8fbdf7d7b5f5b9\thirdparty-glm-populate-test.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glm-subbuild\CMakeFiles\bdab9a0eecfa0e276f25d43d16b28b9d\thirdparty-glm-populate-complete.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glm-subbuild\CMakeFiles\59f967eeb1a6241794496a86df83e30c\thirdparty-glm-populate.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glm-subbuild\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\_deps\thirdparty-glm-subbuild\CMakeFiles\thirdparty-glm-populate" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{8189C5D7-F29F-339D-8AA9-124330CA5F6D}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,10 @@
+^C:\USERS\ROXANE\DOCUMENTS\COMP371_ALL\PROJECTREPO\COMP371_PROJECT\VISUAL STUDIO\CMAKEFILES\128A1C0EDA5A468582A9C72FE2F665DE\GENERATE.STAMP.RULE
+setlocal
+"C:\Program Files\CMake\bin\cmake.exe" -SC:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/code "-BC:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/visual studio" --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file "C:/Users/Roxane/Documents/COMP371_all/ProjectRepo/COMP371_Project/visual studio/Final_Project.sln"
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

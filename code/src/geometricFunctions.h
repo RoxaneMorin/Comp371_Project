@@ -38,13 +38,17 @@ int createPlaneVBO();
 
 int createSphereVBO(float radius, float heightOffset, int sectorCount, int stackCount);
 
+
+// Terrain generation.
+std::map<vec2, TexturedColoredNormalVertex, CompareVec2> terrainVertexMap;
+
 std::map<vec2, TexturedColoredNormalVertex, CompareVec2> createGroundVertexMap(unsigned int sizeX, unsigned int sizeZ, float uvTiling = 1);
 
 float generateHeightCoord(unsigned int xCoord, unsigned int zCoord, float noiseScaling);
 
 vec2 generateUVCoords(unsigned int posX, unsigned int posY, float uvTiling = 1);
 
-vector<TexturedColoredNormalVertex> createGroundVertexVector(std::map<vec2, TexturedColoredNormalVertex, CompareVec2> vertexMap, unsigned int sizeX, unsigned int sizeZ);
+vector<TexturedColoredNormalVertex> createGroundVertexVector(std::map<vec2, TexturedColoredNormalVertex, CompareVec2> terrainVertexMap, unsigned int sizeX, unsigned int sizeZ);
 
 int createGroundVBO(unsigned int sizeX, unsigned int sizeZ, float uvTiling = 1);
 
