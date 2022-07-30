@@ -47,6 +47,8 @@ float generateHeightCoord(unsigned int xCoord, unsigned int zCoord, float noiseS
 
 vec2 generateUVCoords(unsigned int posX, unsigned int posY, float uvTiling = 1);
 
+vec3 generateFaceNormals(vec3 pointAPos, vec3 pointBPos, vec3 pointCPos);
+
 vector<TexturedColoredNormalVertex> createGroundVertexVector(std::map<vec2, TexturedColoredNormalVertex, CompareVec2> terrainVertexMap, unsigned int sizeX, unsigned int sizeZ);
 
 int createGroundVBO(unsigned int sizeX, unsigned int sizeZ, float uvTiling = 1);

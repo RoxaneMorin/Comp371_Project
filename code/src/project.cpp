@@ -233,8 +233,8 @@ float dt;
 
 
 // Ground info
-GLuint groundSizeX = 100;
-GLuint groundSizeZ = 100;
+GLuint groundSizeX = 50;
+GLuint groundSizeZ = 50;
 float groundUVTiling = 10.0f;
 
 
@@ -571,7 +571,8 @@ void renderScene(GLuint shaderProgram)
     glUniformMatrix4fv(worldMatrixLocation, 1, GL_FALSE, &groundBaseMatrix[0][0]);
     glDrawArrays(meshRenderMode, 0, 6*groundSizeX*groundSizeZ);
 
-
+    // Objects will likely have to inherit the ground's transform as to follow its coordinates.
+    // Or we only draw the world in the positive X, positive Z quadrants.
 
     // Draw test cube.
     glBindVertexArray(cubeVAO);

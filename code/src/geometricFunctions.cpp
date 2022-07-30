@@ -30,9 +30,13 @@ struct TexturedColoredNormalVertex
     vec2 uv;
     vec3 normals;
     
+    // Constructors.
     TexturedColoredNormalVertex() : position(vec3(0.0f, 0.0f, 0.0f)), color(vec3(1.0f, 1.0f, 1.0f)), uv(vec2(0.0f, 0.0f)), normals(vec3(0.0f, 0.0f, 0.0f)) {}
 
     TexturedColoredNormalVertex(vec3 _position, vec3 _color, vec2 _uv, vec3 _normals) : position(_position), color(_color), uv(_uv), normals(_normals) {}
+
+    // Copy constructor.
+    TexturedColoredNormalVertex(TexturedColoredNormalVertex source, vec3 newNormals) : position(source.position), color(source.color), uv(source.uv), normals(newNormals) {}
 };
 
 
@@ -596,7 +600,7 @@ std::map<vec2, TexturedColoredNormalVertex, CompareVec2> terrainVertexMap; // Th
 std::map<vec2, TexturedColoredNormalVertex, CompareVec2> createGroundVertexMap(unsigned int sizeX, unsigned int sizeZ, float uvTiling)
 {
     //std::map<vec2, TexturedColoredNormalVertex, CompareVec2> terrainVertexMap;
-    
+
     // Vertex parameters.
     vec3 position;
     vec3 color = vec3(1.0f, 1.0f, 1.0f);
@@ -611,14 +615,36 @@ std::map<vec2, TexturedColoredNormalVertex, CompareVec2> createGroundVertexMap(u
         {
             yCoord = generateHeightCoord(x, z, 0.05f); // Generate basic height variation using a perlin noise.
             yCoord += (sin((float)x) / 2 + (rand() % 12 + 1)) / 20; // Generate aditional variations using random numbers and a sin wave.
-            
+
             position = vec3((float)x, yCoord, (float)z);
             uv = generateUVCoords(x, z, uvTiling);
-            
+
             vec2 currentKey = vec2(x, z);
             TexturedColoredNormalVertex currentVertex = TexturedColoredNormalVertex(position, color, uv, normals);
 
             terrainVertexMap.insert(std::make_pair(currentKey, currentVertex));
+        }
+    }
+
+    // Generate normals that account for the variable terrain height. Exclude the vertices at the very edges of the grid.
+    for (int z = 1; z < sizeZ - 1; z++) // Columns.
+    {
+        for (int x = 1; x < sizeX - 1; x++) // Rows.
+        {
+            vec3 topLeft = generateFaceNormals(terrainVertexMap[vec2(x, z)].position, terrainVertexMap[vec2(x, z + 1)].position, terrainVertexMap[vec2(x + 1, z)].position);
+            vec3 topMid = generateFaceNormals(terrainVertexMap[vec2(x, z)].position, terrainVertexMap[vec2(x - 1, z + 1)].position, terrainVertexMap[vec2(x, z + 1)].position);
+            vec3 topRight = generateFaceNormals(terrainVertexMap[vec2(x, z)].position, terrainVertexMap[vec2(x - 1, z)].position, terrainVertexMap[vec2(x - 1, z - 1)].position);
+
+            vec3 bottomLeft = generateFaceNormals(terrainVertexMap[vec2(x, z)].position, terrainVertexMap[vec2(x + 1, z)].position, terrainVertexMap[vec2(x + 1, z - 1)].position);
+            vec3 bottomMid = generateFaceNormals(terrainVertexMap[vec2(x, z)].position, terrainVertexMap[vec2(x + 1, z - 1)].position, terrainVertexMap[vec2(x, z - 1)].position);
+            vec3 bottomRight = generateFaceNormals(terrainVertexMap[vec2(x, z)].position, terrainVertexMap[vec2(x, z - 1)].position, terrainVertexMap[vec2(x - 1, z)].position);
+
+            terrainVertexMap[vec2(x, z)].normals = (topLeft + topMid + topRight + bottomLeft + bottomMid + bottomRight) / 6.0f; // Divise the value by six to normalize it.
+            //terrainVertexMap[vec2(x, z)].normals.x *= 0.75f;
+            //terrainVertexMap[vec2(x, z)].normals.z *= 0.75f;
+
+            cout << "Vertex normals at " << terrainVertexMap[vec2(x, z)].position.x << ", " << terrainVertexMap[vec2(x, z)].position.z << " :\n";
+            cout << terrainVertexMap[vec2(x, z)].normals.x << ", " << terrainVertexMap[vec2(x, z)].normals.y << ", " << terrainVertexMap[vec2(x, z)].normals.z << " :\n";
         }
     }
 
@@ -645,6 +671,20 @@ vec2 generateUVCoords(unsigned int posX, unsigned int posZ, float uvTiling)
     return vec2(uvPosX, uvPosY);
 }
 
+// Based on the algorithm at https://www.khronos.org/opengl/wiki/Calculating_a_Surface_Normal
+vec3 generateFaceNormals(vec3 pointAPos, vec3 pointBPos, vec3 pointCPos)
+{
+    vec3 vectorU = pointBPos - pointAPos;
+    vec3 vectorV = pointCPos - pointAPos;
+
+    vec3 faceNormals = vec3(0.0f);
+    faceNormals.x = (vectorU.y * vectorV.z) - (vectorU.z * vectorV.y);
+    faceNormals.y = (vectorU.z * vectorV.x) - (vectorU.x * vectorV.z);
+    faceNormals.z = (vectorU.x * vectorV.y) - (vectorU.y * vectorV.x);
+
+    return faceNormals;
+}
+
 vector<TexturedColoredNormalVertex> createGroundVertexVector(std::map<vec2, TexturedColoredNormalVertex, CompareVec2> terrainVertexMap, unsigned int sizeX, unsigned int sizeZ)
 {
     vector<TexturedColoredNormalVertex> vertexVector;
@@ -653,27 +693,15 @@ vector<TexturedColoredNormalVertex> createGroundVertexVector(std::map<vec2, Text
     {
         for (int x = 0; x < sizeX; x++) // Rows.
         {
-            // Bottom triangle. |\
-
-            // update normals
-            // the vertices will likely have to be copied :/
-            // https://www.khronos.org/opengl/wiki/Calculating_a_Surface_Normal
-
+            // Bottom triangle.
             vertexVector.push_back(terrainVertexMap[vec2(x, z)]); // (0, 0).
             vertexVector.push_back(terrainVertexMap[vec2(x, z + 1)]); // (0, 1).
             vertexVector.push_back(terrainVertexMap[vec2(x + 1, z)]); // (1, 0).
-
-
-
-
-            // Top triangle. \|
-
-            // update normals
-            
+           
+            // Top triangle.
             vertexVector.push_back(terrainVertexMap[vec2(x + 1, z)]); // (1, 0).
             vertexVector.push_back(terrainVertexMap[vec2(x, z + 1)]); // (0, 1).
             vertexVector.push_back(terrainVertexMap[vec2(x + 1, z + 1)]); // (1, 1). 
-            
         }
     }
 
@@ -738,8 +766,7 @@ int createGroundVBO(unsigned int sizeX, unsigned int sizeZ, float uvTiling)
     return vertexArrayObject;
 }
 
-
-
+// Utility.
 float returnHeightAtPoint(vec2 pointCoords)
 {
     float heightAtPoint;
