@@ -13,9 +13,19 @@
 using namespace std;
 using namespace glm;
 
-Model::Model(): mPosition(0.0f, 0.0f, 0.0f), mScaling(1.0f, 1.0f, 1.0f), mRotation(0.0f, 0.0f, 0.0f)
+Model::Model() : mPosition(0.0f, 0.0f, 0.0f), mScaling(1.0f, 1.0f, 1.0f), mRotation(0.0f, 0.0f, 0.0f), mParent(mat4(1.0f))
 {
-    mParent = mat4(1.0f);
+
+}
+
+Model::Model(vec3 position, vec3 rotation, vec3 scale) : mPosition(position), mRotation(rotation), mScaling(scale), mParent(mat4(1.0f))
+{
+
+}
+
+Model::Model(vec3 position, vec3 rotation, vec3 scale, mat4 parent) : mPosition(position), mRotation(rotation), mScaling(scale), mParent(parent)
+{
+
 }
 
 Model::~Model()
@@ -30,6 +40,13 @@ Model::~Model()
 //void Model::Draw(int shaderProgram)
 //{
 //}
+
+void Model::SetWorldMatrix(vec3 position, vec3 rotation, vec3 scale) 
+{
+    mPosition = position;
+    mRotation = rotation;
+    mScaling = scale;
+}
 
 void Model::SetParent(mat4 parentMatrix)
 {
@@ -51,12 +68,12 @@ mat4 Model::GetWorldMatrix() const
     return worldMatrix;
 }
 
-void Model::SetPosition(glm::vec3 position)
+void Model::SetPosition(vec3 position)
 {
     mPosition = position;
 }
 
-void Model::SetScaling(glm::vec3 scaling)
+void Model::SetScaling(vec3 scaling)
 {
     mScaling = scaling;
 }

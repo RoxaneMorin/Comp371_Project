@@ -23,12 +23,16 @@ class Model
 {
 public:
 	Model();
+	Model(vec3 position, vec3 rotation, vec3 scale);
+	Model(vec3 position, vec3 rotation, vec3 scale, mat4 parent);
 	virtual ~Model();
 
 	virtual void Update(float dt) = 0;
-	virtual void Draw(int shaderProgram) = 0;
+	virtual void Draw(int shaderProgram, GLenum renderingMode = GL_TRIANGLES) = 0;
 
 	virtual mat4 GetWorldMatrix() const;
+
+	virtual void SetWorldMatrix(vec3 position, vec3 rotation, vec3 scale);
 
 	void SetParent(mat4 parentMatrix);
 	void SetPosition(vec3 position);
@@ -41,11 +45,10 @@ public:
 
 	virtual bool ContainsPoint(vec3 position) = 0;//Whether or not the given point is withing the model. For collisions.
 	virtual bool IntersectsPlane(vec3 planePoint, vec3 planeNormal) = 0;
-	virtual float IntersectsRay(vec3 rayOrigin, vec3 rayDirection) = 0; //Returns a strictly positive value if an intersection occurs
+	//virtual float IntersectsRay(vec3 rayOrigin, vec3 rayDirection) = 0; //Returns a strictly positive value if an intersection occurs
 
 	virtual bool isSphere() = 0; //This is not at all object-oriented, but somewhat necessary due to need for a simple double-dispatch mechanism
 
-protected:
 	// The vertex format could be different for different types of models
 	struct TexturedColoredNormalVertex
 	{
@@ -63,10 +66,12 @@ protected:
 		TexturedColoredNormalVertex(TexturedColoredNormalVertex source, vec3 newNormals) : position(source.position), color(source.color), uv(source.uv), normals(newNormals) {}
 	};
 
+protected:
 	vec3 mPosition;
 	vec3 mScaling;
 	vec3 mRotation;
 
 	mat4 mParent;
 };
+
 

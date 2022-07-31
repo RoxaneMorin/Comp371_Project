@@ -32,6 +32,7 @@
 #include "geometricFunctions.h"
 #include "drawFunctions.h"
 #include "light.h"
+#include "CubeModel.h"
 
 using namespace std;
 using namespace glm;
