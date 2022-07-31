@@ -87,22 +87,42 @@ GLuint texturedShaderProgram;
 GLuint groundShaderProgram;
 GLuint shadowShaderProgram;
 
-vector<GLuint> allShaders;
+std::vector<unsigned int> allShaderPrograms;
 
 
-// shader variable setters
+// Shader variable setters.
+
+// Mat 4.
 void SetUniformMat4(GLuint shader_id, const char* uniform_name, mat4 uniform_value)
 {
     glUseProgram(shader_id);
     glUniformMatrix4fv(glGetUniformLocation(shader_id, uniform_name), 1, GL_FALSE, &uniform_value[0][0]);
 }
+// Iterate the above on all shaders.
+void SetUniformMat4(const char* uniform_name, mat4 uniform_value)
+{
+    for (vector<unsigned int>::iterator currentShader = allShaderPrograms.begin(); currentShader < allShaderPrograms.end(); ++currentShader)
+    {
+        SetUniformMat4(*currentShader, uniform_name, uniform_value);
+    }
+}
 
+// Vec 3.
 void SetUniformVec3(GLuint shader_id, const char* uniform_name, vec3 uniform_value)
 {
     glUseProgram(shader_id);
     glUniform3fv(glGetUniformLocation(shader_id, uniform_name), 1, value_ptr(uniform_value));
 }
+// Iterate the above on all shaders.
+void SetUniformVec3(const char* uniform_name, vec3 uniform_value)
+{
+    for (vector<unsigned int>::iterator currentShader = allShaderPrograms.begin(); currentShader < allShaderPrograms.end(); ++currentShader)
+    {
+        SetUniformVec3(*currentShader, uniform_name, uniform_value);
+    }
+}
 
+// Float.
 template <class T>
 void SetUniform1Value(GLuint shader_id, const char* uniform_name, T uniform_value)
 {
@@ -110,6 +130,16 @@ void SetUniform1Value(GLuint shader_id, const char* uniform_name, T uniform_valu
     glUniform1f(glGetUniformLocation(shader_id, uniform_name), uniform_value);
     glUseProgram(0);
 }
+// Iterate the above on all shaders.
+template <class T>
+void SetUniform1Value(const char* uniform_name, T uniform_value)
+{
+    for (vector<unsigned int>::iterator currentShader = allShaderPrograms.begin(); currentShader < allShaderPrograms.end(); ++currentShader)
+    {
+        SetUniform1Value(*currentShader, uniform_name, uniform_value);
+    }
+}
+
 
 
 // Matrix & Camera Functions.
@@ -253,7 +283,7 @@ void window_size_callback(GLFWwindow* window, int width, int height)
         0.001f, 1000.0f); // near and far planes.
 
 
-    setProjectionMatrix(allShaders, projectionMatrix);
+    //setProjectionMatrix(allShaders, projectionMatrix);
     setProjectionMatrix(texturedShaderProgram, projectionMatrix);
     setProjectionMatrix(colourShaderProgram, projectionMatrix);
     setProjectionMatrix(groundShaderProgram, projectionMatrix);
@@ -401,14 +431,13 @@ void initScene()
     colourShaderProgram = loadSHADER(shaderPathPrefix + "vertexcolour_vertex.glsl", shaderPathPrefix + "vertexcolour_fragment.glsl");
     texturedShaderProgram = loadSHADER(shaderPathPrefix + "textured_vertex.glsl", shaderPathPrefix + "textured_fragment.glsl");
     groundShaderProgram = loadSHADER(shaderPathPrefix + "textured_vertex.glsl", shaderPathPrefix + "ground_fragment.glsl");
-
     shadowShaderProgram = loadSHADER(shaderPathPrefix + "shadow_vertex.glsl", shaderPathPrefix + "shadow_fragment.glsl");
 
-    /*
-    allShaders.push_back(colourShaderProgram);
-    allShaders.push_back(texturedShaderProgram);
-    allShaders.push_back(groundShaderProgram);
-    */
+    // Collect shaders into a vector for ease of iteration.
+    allShaderPrograms.push_back(colourShaderProgram);
+    allShaderPrograms.push_back(texturedShaderProgram);
+    allShaderPrograms.push_back(groundShaderProgram);
+    allShaderPrograms.push_back(shadowShaderProgram);
 
 
     // Define and upload geometry to the GPU.
