@@ -37,7 +37,7 @@ using namespace std;
 using namespace glm;
 
 
-GLuint loadTexture(const char* filename)
+GLuint loadTexture(const string filename)
 {
     // Create and bind textures¸.
     GLuint textureId = 0;
@@ -52,7 +52,7 @@ GLuint loadTexture(const char* filename)
 
     // Load texture with its dimensional data.
     int width, height, nrChannels;
-    unsigned char* data = stbi_load(filename, &width, &height, &nrChannels, 0);
+    unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrChannels, 0);
     if (!data)
     {
         std::cerr << "Error::Texture could not load texture file:" << filename << std::endl;
@@ -379,20 +379,21 @@ void initScene()
     // Background colour.
     glClearColor(0.5f, 0.75f, 1.0f, 1.0f);
 
-
+    cout << "LOADING TEXTURES\n";
     // Load textures.
-    snowTextureID = loadTexture("assets/textures/snow.png");
-    carrotTextureID = loadTexture("assets/textures/carrot.png");
-    stoneTextureID = loadTexture("assets/textures/stone.png");
-    woodTextureID = loadTexture("assets/textures/wood.png");
-    metalTextureID = loadTexture("assets/textures/metal.png");
+    const string texturePathPrefix = "assets/textures/";
+    const string shaderPathPrefix = "assets/shaders/";
+
+    snowTextureID = loadTexture(texturePathPrefix + "snow.png");
+    carrotTextureID = loadTexture(texturePathPrefix  +"carrot.png");
+    stoneTextureID = loadTexture(texturePathPrefix + "stone.png");
+    woodTextureID = loadTexture(texturePathPrefix + "wood.png");
+    metalTextureID = loadTexture(texturePathPrefix + "metal.png");
 
     snowDepthTextureID = loadTexture("assets/textures/snowDepth.png");
     stoneDepthTextureID = loadTexture("assets/textures/stoneDepth.png");
 
     // Compile and link shaders.
-    std::string shaderPathPrefix = "assets/shaders/";
-
     colourShaderProgram = loadSHADER(shaderPathPrefix + "vertexcolour_vertex.glsl", shaderPathPrefix + "vertexcolour_fragment.glsl");
     texturedShaderProgram = loadSHADER(shaderPathPrefix + "textured_vertex.glsl", shaderPathPrefix + "textured_fragment.glsl");
     groundShaderProgram = loadSHADER(shaderPathPrefix + "textured_vertex.glsl", shaderPathPrefix + "ground_fragment.glsl");
@@ -406,7 +407,6 @@ void initScene()
     */
 
 
-
     // Define and upload geometry to the GPU.
     cubeVAO = createCubeVBO();
     planeVAO = createPlaneVBO();
@@ -415,14 +415,11 @@ void initScene()
     sphereVertexCount = sphereRadialDivs * sphereVerticalDivs * 6;
     groundVAO = createGroundVBO(groundSizeX, groundSizeZ, groundUVTiling);
 
-
-
     // Initial camera parameters.
     cameraTheta = radians(270.0f);
     cameraPhi = radians(10.0f);
     cameraRadius = 10.0f;
     cameraRotSpeed = radians(1.0f);
-
 
     // Set projection matrix for shaders.
     mat4 projectionMatrix = perspective(70.0f, // fov in degrees.
