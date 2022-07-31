@@ -33,6 +33,9 @@
 #include "drawFunctions.h"
 #include "light.h"
 #include "CubeModel.h"
+#include "PlaneModel.h"
+#include "GroundModel.h"
+#include "SphereModel.h"
 
 using namespace std;
 using namespace glm;
@@ -409,12 +412,16 @@ void initScene()
 
 
     // Define and upload geometry to the GPU.
-    cubeVAO = createCubeVBO();
-    planeVAO = createPlaneVBO();
+    cubeVAO = CubeModel::CubeModelVAO();
+    planeVAO = PlaneModel::PlaneModelVAO();
+    sphereVAO = SphereModel::SphereModelVAO(0.75f, 0.5f, sphereRadialDivs, sphereVerticalDivs, sphereVertexCount);
+    groundVAO = GroundModel::GroundModelVAO(groundSizeX, groundSizeZ, groundUVTiling);
+    //cubeVAO = createCubeVBO();
+    //planeVAO = createPlaneVBO();
     lineVAO = createLinesVBO();
-    sphereVAO = createSphereVBO(0.75f, 0.5f, sphereRadialDivs, sphereVerticalDivs);
-    sphereVertexCount = sphereRadialDivs * sphereVerticalDivs * 6;
-    groundVAO = createGroundVBO(groundSizeX, groundSizeZ, groundUVTiling);
+    //sphereVAO = createSphereVBO(0.75f, 0.5f, sphereRadialDivs, sphereVerticalDivs);
+    //sphereVertexCount = sphereRadialDivs * sphereVerticalDivs * 6;
+    //groundVAO = createGroundVBO(groundSizeX, groundSizeZ, groundUVTiling);
 
     // Initial camera parameters.
     cameraTheta = radians(270.0f);
