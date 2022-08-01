@@ -2,12 +2,13 @@ cmake_minimum_required(VERSION 3.11)
 
 project(Final_Project)
 
+set(CMAKE_CXX_STANDARD 20)
+
 include(ExternalProject)
 
 # Set install directory
 set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/dist CACHE PATH ${CMAKE_SOURCE_DIR}/dist FORCE)
 
-set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_BUILD_TYPE "Debug")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
@@ -45,4 +46,3 @@ install(TARGETS ${BIN} DESTINATION ${CMAKE_INSTALL_PREFIX})
 install(DIRECTORY ${ASSETS} DESTINATION ${CMAKE_INSTALL_PREFIX})
 
 #set_property(TARGET ${BIN} PROPERTY CXX_STANDARD 20)
-#set_property(TARGET ${BIN} PROPERTY C_STANDARD 17)

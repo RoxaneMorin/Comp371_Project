@@ -93,13 +93,13 @@ std::vector<unsigned int> allShaderPrograms;
 // Shader variable setters.
 
 // Mat 4.
-void SetUniformMat4(GLuint shader_id, const char* uniform_name, mat4 uniform_value)
+void SetUniformMat4(GLuint shader_id, const char* uniform_name, const mat4 & uniform_value)
 {
     glUseProgram(shader_id);
     glUniformMatrix4fv(glGetUniformLocation(shader_id, uniform_name), 1, GL_FALSE, &uniform_value[0][0]);
 }
 // Iterate the above on all shaders.
-void SetUniformMat4(const char* uniform_name, mat4 uniform_value)
+void SetUniformMat4(const char* uniform_name, const mat4 & uniform_value)
 {
     for (vector<unsigned int>::iterator currentShader = allShaderPrograms.begin(); currentShader < allShaderPrograms.end(); ++currentShader)
     {
@@ -152,10 +152,13 @@ void setProjectionMatrix(int shaderProgram, mat4 projectionMatrix)
 }
 
 // To do : fix the functions using the allShaders vector so they actually update stuff.
-void setProjectionMatrix(vector<GLuint> shaderPrograms, mat4 projectionMatrix)
+void setProjectionMatrix(mat4 projectionMatrix)
 {
-    for (int shaderProgram : shaderPrograms)
-        setProjectionMatrix(shaderProgram, projectionMatrix);
+    for (vector<unsigned int>::iterator currentShader = allShaderPrograms.begin(); currentShader < allShaderPrograms.end(); ++currentShader)
+    {
+        cout << "Current iterator: " << *currentShader << ".\n";
+        setProjectionMatrix(*currentShader, projectionMatrix);
+    }
 }
 
 void setViewMatrix(int shaderProgram, mat4 viewMatrix)
@@ -165,10 +168,13 @@ void setViewMatrix(int shaderProgram, mat4 viewMatrix)
     glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, &viewMatrix[0][0]);
 }
 
-void setViewMatrix(vector<GLuint> shaderPrograms, mat4 viewMatrix)
+void setViewMatrix(mat4 viewMatrix)
 {
-    for (int shaderProgram : shaderPrograms)
-        setProjectionMatrix(shaderProgram, viewMatrix);
+    for (vector<unsigned int>::iterator currentShader = allShaderPrograms.begin(); currentShader < allShaderPrograms.end(); ++currentShader)
+    {
+        cout << "Current iterator: " << *currentShader << ".\n";
+        setViewMatrix(*currentShader, viewMatrix);
+    }
 }
 
 void setWorldMatrix(int shaderProgram, mat4 worldMatrix)
@@ -281,12 +287,7 @@ void window_size_callback(GLFWwindow* window, int width, int height)
     mat4 projectionMatrix = perspective(70.0f, // fov in degrees.
         (float)width / (float)height, // aspect ratio.
         0.001f, 1000.0f); // near and far planes.
-
-
-    //setProjectionMatrix(allShaders, projectionMatrix);
-    setProjectionMatrix(texturedShaderProgram, projectionMatrix);
-    setProjectionMatrix(colourShaderProgram, projectionMatrix);
-    setProjectionMatrix(groundShaderProgram, projectionMatrix);
+    setProjectionMatrix(projectionMatrix);
 
     //cout << "Window resized.\n";
 }
@@ -470,15 +471,9 @@ void initScene()
     normalize(cameraSideVector);
     viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
 
-
     // Set View and Projection matrices.
-    setViewMatrix(colourShaderProgram, viewMatrix);
-    setViewMatrix(groundShaderProgram, viewMatrix);
-    setViewMatrix(shadowShaderProgram, viewMatrix);
-
-    setProjectionMatrix(colourShaderProgram, projectionMatrix);
-    setProjectionMatrix(groundShaderProgram, projectionMatrix);
-    setProjectionMatrix(shadowShaderProgram, projectionMatrix);
+    setViewMatrix(viewMatrix);
+    setProjectionMatrix(projectionMatrix);
 
 
     // Initialize main light.
@@ -642,9 +637,7 @@ void handleInputs()
         cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
         viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
 
-        setViewMatrix(groundShaderProgram, viewMatrix);
-        setViewMatrix(colourShaderProgram, viewMatrix);
-        //setViewMatrix(allShaders, viewMatrix);
+        setViewMatrix(viewMatrix);
     }
     // Pressing the left arrow key rotates the camera clockwise.
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
@@ -656,9 +649,7 @@ void handleInputs()
         cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
         viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
 
-        setViewMatrix(groundShaderProgram, viewMatrix);
-        setViewMatrix(colourShaderProgram, viewMatrix);
-        //setViewMatrix(allShaders, viewMatrix);
+        setViewMatrix(viewMatrix);
     }
 
     /// Pressing the up arrow key rotates the camera upward.
@@ -673,9 +664,7 @@ void handleInputs()
         cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
         viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
 
-        setViewMatrix(groundShaderProgram, viewMatrix);
-        setViewMatrix(colourShaderProgram, viewMatrix);
-        //setViewMatrix(allShaders, viewMatrix);
+        setViewMatrix(viewMatrix);
     }
     /// Pressing the down arrow key rotates the camera downward.
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
@@ -687,9 +676,7 @@ void handleInputs()
         cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
         viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
 
-        setViewMatrix(groundShaderProgram, viewMatrix);
-        setViewMatrix(colourShaderProgram, viewMatrix);
-        //setViewMatrix(allShaders, viewMatrix);
+        setViewMatrix(viewMatrix);
     }
 
     // Mouse position housekeeping.
@@ -709,9 +696,7 @@ void handleInputs()
         cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
         viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
 
-        setViewMatrix(groundShaderProgram, viewMatrix);
-        setViewMatrix(colourShaderProgram, viewMatrix);
-        //setViewMatrix(allShaders, viewMatrix);
+        setViewMatrix(viewMatrix);
     }
 
     // Dragging the mouse while its right button is pressed controls the camera lookat point's left/right position (pan).
@@ -724,9 +709,7 @@ void handleInputs()
         cameraLookAt += cameraSideVector * delta;
         viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
 
-        setViewMatrix(groundShaderProgram, viewMatrix);
-        setViewMatrix(colourShaderProgram, viewMatrix);
-        //setViewMatrix(allShaders, viewMatrix);
+        setViewMatrix(viewMatrix);
     }
 
     // Dragging the mouse while its middle button is pressed controls the camera lookat point height (tilt).
@@ -738,9 +721,7 @@ void handleInputs()
 
         viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
 
-        setViewMatrix(groundShaderProgram, viewMatrix);
-        setViewMatrix(colourShaderProgram, viewMatrix);
-        //setViewMatrix(allShaders, viewMatrix);
+        setViewMatrix(viewMatrix);
     }
 
     /// Pressing the home button or 'H' key resets all camera parameters.
@@ -755,9 +736,7 @@ void handleInputs()
         cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
         viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
 
-        setViewMatrix(groundShaderProgram, viewMatrix);
-        setViewMatrix(colourShaderProgram, viewMatrix);
-        //setViewMatrix(allShaders, viewMatrix);
+        setViewMatrix(viewMatrix);
     }
 
 
@@ -776,18 +755,6 @@ void handleInputs()
     if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
     {
         meshRenderMode = GL_TRIANGLES;
-    }
-
-    // Press 'B' to switch whether shadows are rendered.
-    if ((glfwGetKey(window, GLFW_KEY_B) == GLFW_RELEASE) && previousBPress == GLFW_PRESS)
-    {
-        useShadows = !useShadows;
-
-        glUseProgram(texturedShaderProgram);
-        glUniform1i(glGetUniformLocation(texturedShaderProgram, "render_shadows"), useShadows);
-
-        glUseProgram(groundShaderProgram);
-        glUniform1i(glGetUniformLocation(texturedShaderProgram, "render_shadows"), useShadows);
     }
 
     // Close the window if Escape is pressed.

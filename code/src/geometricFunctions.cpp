@@ -1,6 +1,12 @@
 #include "geometricFunctions.h"
 #include "PerlinNoise.h"
 
+#include <cmath>
+
+using namespace std;
+using namespace glm;
+
+
 // Structs.
 
 // Code based on https://stackoverflow.com/questions/23042947/how-to-create-a-stdset-with-custom-comparator-in-c
