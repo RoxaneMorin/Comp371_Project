@@ -18,7 +18,7 @@
 #include <GL/glew.h>    // Include GLEW - OpenGL Extension Wrangler
 
 #include <GLFW/glfw3.h> // GLFW provides a cross-platform interface for creating a graphical context,
-                        // initializing OpenGL and binding inputs
+						// initializing OpenGL and binding inputs
 
 #include <glm/glm.hpp>  // GLM is an optimized math library with syntax to similar to OpenGL Shading Language
 #include <glm/gtc/matrix_transform.hpp> // include this to create transformation matrices
@@ -254,12 +254,6 @@ float cameraTheta;
 float cameraPhi;
 float cameraRadius;
 float cameraRotSpeed;
-float cameraSpeed = 1.0f;
-float cameraFastSpeed = 2 * cameraSpeed;
-const float cameraAngularSpeed = 60.0f;
-float cameraHorizontalAngle = 90.0f;
-float cameraVerticalAngle = 0.0f;
-bool cameraFirstPerson = true; // press 1 or 2 to toggle this variable
 
 // Camera matrixes.
 vec3 cameraPosition;
@@ -332,8 +326,7 @@ int main(int argc, char* argv[])
 
 	// Initialize GLEW
 	glewExperimental = true; // Needed for core profile
-    if (glewInit() != GLEW_OK)
-    {
+	if (glewInit() != GLEW_OK) {
 		std::cerr << "Failed to create GLEW" << std::endl;
 		glfwTerminate();
 		return -1;
@@ -622,9 +615,6 @@ void renderScene(GLuint shaderProgram)
 	// Draw ground.
 	glBindVertexArray(groundVAO);
 
-    // > Base.
-    float groundCenterX = 0 - (float)groundSizeX / 2;
-    float groundCenterZ = 0 - (float)groundSizeZ / 2;
 
 	ground->Draw(shaderProgram, groundSizeX, groundSizeZ);
 
@@ -660,8 +650,7 @@ void handleInputs()
 	glfwPollEvents();
 
 	// On Key Press actions.
-	bool fastCam = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_SHIFT) == GLFW_PRESS;
-	float currentCameraSpeed = (fastCam) ? cameraFastSpeed : cameraSpeed;
+
 	// -> Camera movements.
 	// Pressing the right arrow key rotates the camera counterclockwise.
 	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
@@ -670,183 +659,137 @@ void handleInputs()
 			cameraTheta += cameraRotSpeed;
 		else cameraTheta = radians(0.0f);
 
-		// translate camera (WORKING!)
-		// camera move left
-		if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
-		{
-			cameraPosition += vec3(0.5f, 0.0f, 0.0f);
-			cameraLookAt += vec3(0.5f, 0.0f, 0.0f);
-		}
-		// camera move right
-		if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
-		{
-			cameraPosition -= vec3(0.5f, 0.0f, 0.0f);
-			cameraLookAt -= vec3(0.5f, 0.0f, 0.0f);
-		}
-		// camera move backwards
-		if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
-		{
-			cameraPosition += vec3(0.0f, 0.0f, 0.5f);
-			cameraLookAt += vec3(0.0f, 0.0f, 0.5f);
-		}
+		cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
+		viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
 
-		// camera move forward
-		if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
-		{
-			cameraPosition -= vec3(0.0f, 0.0f, 0.5f);
-			cameraLookAt -= vec3(0.0f, 0.0f, 0.5f);
-		}
-
-		// First person view
-		if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
-		{
-			cameraFirstPerson = true;
-		}
-		// Third person view
-		if (glfwGetKey(window, GLFW_KEY_M) == GLFW_PRESS)
-		{
-			cameraFirstPerson = false;
-		}
-
-		// Rotate Camera (Working)
-		if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-		{
-			cameraFirstPerson = false;
-			cameraHorizontalAngle -= cameraAngularSpeed * dt;
-		}
-		if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-		{
-			cameraFirstPerson = false;
-			cameraHorizontalAngle += cameraAngularSpeed * dt;
-		}
-		if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-		{
-			cameraFirstPerson = false;
-			cameraVerticalAngle -= cameraAngularSpeed * dt;
-		}
-		/// Pressing the down arrow key rotates the camera downward.
-		if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-		{
-			cameraFirstPerson = false;
-			cameraVerticalAngle += cameraAngularSpeed * dt;
-		}
-
-		// Mouse position housekeeping.
-		double mousePosX, mousePosY;
-		glfwGetCursorPos(window, &mousePosX, &mousePosY);
-
-		double dx = mousePosX - lastMousePosX;
-		double dy = mousePosY - lastMousePosY;
-		lastMousePosX = mousePosX;
-		lastMousePosY = mousePosY;
-
-		// Dragging the mouse while its left button is pressed controls the camera spherical coordinates' radius (zoom).
-		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-		{
-			cameraRadius += dy * dt;
-
-			cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
-			viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
-
-			setViewMatrix(viewMatrix);
-		}
-
-		// Dragging the mouse while its right button is pressed controls the camera lookat point's left/right position (pan).
-		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
-		{
-			cameraSideVector = cross(cameraPosition, cameraUpVector);
-			normalize(cameraSideVector);
-
-			float delta = dx * dt * 0.1f;
-			cameraLookAt += cameraSideVector * delta;
-			viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
-
-			setViewMatrix(viewMatrix);
-		}
-
-		// Dragging the mouse while its middle button is pressed controls the camera lookat point height (tilt).
-		if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS)
-		{
-			if (cameraLookAt.y + (dy * dt) > 0)
-				cameraLookAt.y += dy * dt;
-			else
-				cameraLookAt.y = 0;
-
-			viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
-
-			setViewMatrix(viewMatrix);
-		}
-
-		/// Pressing the home button or 'H' key resets all camera parameters.
-		if ((glfwGetKey(window, GLFW_KEY_HOME) || glfwGetKey(window, GLFW_KEY_H)) == GLFW_PRESS)
-		{
-			cameraLookAt.x = 0.0f;
-			cameraLookAt.y = 0.0f;
-			cameraLookAt.z = -1.0f;
-			cameraUpVector.x = 0.0f;
-			cameraUpVector.y = 1.0f;
-			cameraUpVector.z = 0.0f;
-
-			// initial orientation
-			cameraHorizontalAngle = 90.0f;
-			cameraVerticalAngle = 0.0f;
-
-			cameraPosition = vec3(0.0f, 1.0f, 20.0f);
-		}
-		// Clamp vertical angle to [-85, 85] degrees
-		cameraVerticalAngle = std::max(-85.0f, std::min(85.0f, cameraVerticalAngle));
-		if (cameraHorizontalAngle > 360)
-		{
-			cameraHorizontalAngle -= 360;
-		}
-		else if (cameraHorizontalAngle < -360)
-		{
-			cameraHorizontalAngle += 360;
-		}
-
-		float theta = radians(cameraHorizontalAngle);
-		float phi = radians(cameraVerticalAngle);
-
-		cameraLookAt = vec3(cosf(phi) * cosf(theta), sinf(phi), -cosf(phi) * sinf(theta));
-		vec3 cameraSideVector = glm::cross(cameraLookAt, vec3(0.0f, 1.0f, 0.0f));
-		glm::normalize(cameraSideVector);
-
-		// -> Rendering modes.
-		// Press 'P' to change the snowman's rendering mode to points.
-		if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
-		{
-			meshRenderMode = GL_POINTS;
-		}
-		// Press 'L' to change the snowman's rendering mode to lines.
-		if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
-		{
-			meshRenderMode = GL_LINE_LOOP;
-		}
-		// Press 'T' to change the snowman's rendering mode to triangles.
-		if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
-		{
-			meshRenderMode = GL_TRIANGLES;
-		}
-
-		// Close the window if Escape is pressed.
-		if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-			glfwSetWindowShouldClose(window, true);
-		mat4 viewMatrix(1.0f);
-		if (cameraFirstPerson)
-		{
-			viewMatrix = lookAt(cameraPosition, cameraPosition + cameraLookAt, cameraUpVector);
-		}
-		else
-		{
-			float radius = 5.0f;
-			glm::vec3 position = cameraPosition - radius * cameraLookAt;
-			viewMatrix = lookAt(position, position + cameraLookAt, cameraUpVector);
-		}
+		setViewMatrix(viewMatrix);
 	}
+	// Pressing the left arrow key rotates the camera clockwise.
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+	{
+		if (cameraTheta > radians(0.0f))
+			cameraTheta -= cameraRotSpeed;
+		else cameraTheta = radians(360.0f);
+
+		cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
+		viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
+
+		setViewMatrix(viewMatrix);
+	}
+
+	/// Pressing the up arrow key rotates the camera upward.
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	{
+		if (cameraPhi < radians(89.0f))
+			cameraPhi += cameraRotSpeed;
+		else cameraPhi = radians(89.0f);
+
+		cameraPhi += cameraRotSpeed;
+
+		cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
+		viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
+
+		setViewMatrix(viewMatrix);
+	}
+	/// Pressing the down arrow key rotates the camera downward.
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	{
+		if (cameraPhi > radians(1.0f))
+			cameraPhi -= cameraRotSpeed;
+		else cameraPhi = radians(1.0f);
+
+		cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
+		viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
+
+		setViewMatrix(viewMatrix);
+	}
+
+	// Mouse position housekeeping.
+	double mousePosX, mousePosY;
+	glfwGetCursorPos(window, &mousePosX, &mousePosY);
+
+	double dx = mousePosX - lastMousePosX;
+	double dy = mousePosY - lastMousePosY;
+	lastMousePosX = mousePosX;
+	lastMousePosY = mousePosY;
+
+	// Dragging the mouse while its left button is pressed controls the camera spherical coordinates' radius (zoom).
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+	{
+		cameraRadius += dy * dt;
+
+		cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
+		viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
+
+		setViewMatrix(viewMatrix);
+	}
+
+	// Dragging the mouse while its right button is pressed controls the camera lookat point's left/right position (pan).
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+	{
+		cameraSideVector = cross(cameraPosition, cameraUpVector);
+		normalize(cameraSideVector);
+
+		float delta = dx * dt * 0.1f;
+		cameraLookAt += cameraSideVector * delta;
+		viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
+
+		setViewMatrix(viewMatrix);
+	}
+
+	// Dragging the mouse while its middle button is pressed controls the camera lookat point height (tilt).
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS)
+	{
+		if (cameraLookAt.y + (dy * dt) > 0)
+			cameraLookAt.y += dy * dt;
+		else cameraLookAt.y = 0;
+
+		viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
+
+		setViewMatrix(viewMatrix);
+	}
+
+	/// Pressing the home button or 'H' key resets all camera parameters.
+	if ((glfwGetKey(window, GLFW_KEY_HOME) || glfwGetKey(window, GLFW_KEY_H)) == GLFW_PRESS)
+	{
+		cameraTheta = radians(270.0f);
+		cameraPhi = radians(10.0f);
+		cameraRadius = 10.0f;
+
+		cameraLookAt = vec3(0.0f);
+
+		cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
+		viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
+
+		setViewMatrix(viewMatrix);
+	}
+
+
+	// -> Rendering modes.
+	// Press 'P' to change the snowman's rendering mode to points.
+	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+	{
+		meshRenderMode = GL_POINTS;
+	}
+	// Press 'L' to change the snowman's rendering mode to lines.
+	if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
+	{
+		meshRenderMode = GL_LINE_LOOP;
+	}
+	// Press 'T' to change the snowman's rendering mode to triangles.
+	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
+	{
+		meshRenderMode = GL_TRIANGLES;
+	}
+
+	// Close the window if Escape is pressed.
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
 }
 
 void Update(float delta)
 {
+
 	//Check collisions
 	for (vector<Model*>::iterator it = objects.begin(); it < objects.end(); ++it)
 	{
