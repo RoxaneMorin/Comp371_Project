@@ -226,8 +226,8 @@ int sphereVAO;
 int groundVAO;
 
 // Additional info for spheres.
-int sphereRadialDivs = 8;
-int sphereVerticalDivs = 8;
+int sphereRadialDivs = 16;
+int sphereVerticalDivs = 16;
 int sphereVertexCount;
 
 
@@ -271,6 +271,8 @@ int previousIPress;
 int previousBPress;
 float dt;
 
+CubeModel* cube;
+SphereModel* sphere;
 
 // Ground info
 GLuint groundSizeX = 50;
@@ -444,7 +446,7 @@ void initScene()
     // Define and upload geometry to the GPU.
     cubeVAO = CubeModel::CubeModelVAO();
     planeVAO = PlaneModel::PlaneModelVAO();
-    sphereVAO = SphereModel::SphereModelVAO(0.75f, 0.5f, sphereRadialDivs, sphereVerticalDivs, sphereVertexCount);
+    sphereVAO = SphereModel::SphereModelVAO(1.0f, 0.5f, sphereRadialDivs, sphereVerticalDivs, sphereVertexCount);
     groundVAO = GroundModel::GroundModelVAO(groundSizeX, groundSizeZ, groundUVTiling);
     //cubeVAO = createCubeVBO();
     //planeVAO = createPlaneVBO();
@@ -503,6 +505,9 @@ void initScene()
 
     SetUniform1Value(groundShaderProgram, "heightblend_factor", 0.45f);
 
+
+    cube = new CubeModel(vec3(0.0f, 5.0f, 0.0f), vec3(0.0f, 45.0f, 45.0f), vec3(2.0f, 2.0f, 2.0f));
+    sphere = new SphereModel(vec3(5.0f, 5.0f, 5.0f), vec3(45.0f, 45.0f, 45.0f), vec3(3.0f, 3.0f, 3.0f));
     
     // Other OpenGL states to set once
     glEnable(GL_DEPTH_TEST);
@@ -587,6 +592,15 @@ void renderScene(GLuint shaderProgram)
     glUniform1i(textureLocation, 4);
 
 
+    glBindVertexArray(cubeVAO);
+
+    cube->Draw(shaderProgram);
+
+
+    glBindVertexArray(sphereVAO);
+
+    //sphere->Draw(shaderProgram, sphereVertexCount);
+    sphere->Draw(shaderProgram, sphereVertexCount, GL_LINES);
 
     // Draw ground.
     glBindVertexArray(groundVAO);
