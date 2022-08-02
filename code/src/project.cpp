@@ -18,7 +18,7 @@
 #include <GL/glew.h>    // Include GLEW - OpenGL Extension Wrangler
 
 #include <GLFW/glfw3.h> // GLFW provides a cross-platform interface for creating a graphical context,
-                        // initializing OpenGL and binding inputs
+						// initializing OpenGL and binding inputs
 
 #include <glm/glm.hpp>  // GLM is an optimized math library with syntax to similar to OpenGL Shading Language
 #include <glm/gtc/matrix_transform.hpp> // include this to create transformation matrices
@@ -32,10 +32,13 @@
 #include "geometricFunctions.h"
 #include "drawFunctions.h"
 #include "light.h"
+#include "Model.h"
 #include "CubeModel.h"
 #include "PlaneModel.h"
 #include "GroundModel.h"
 #include "SphereModel.h"
+
+#define VECTOR_UP vec3(0.0f, 1.0f, 0.0f)
 
 using namespace std;
 using namespace glm;
@@ -43,41 +46,41 @@ using namespace glm;
 
 GLuint loadTexture(const string filename)
 {
-    // Create and bind textures¸.
-    GLuint textureId = 0;
-    glGenTextures(1, &textureId);
-    assert(textureId != 0);
+	// Create and bind textures¸.
+	GLuint textureId = 0;
+	glGenTextures(1, &textureId);
+	assert(textureId != 0);
 
-    glBindTexture(GL_TEXTURE_2D, textureId);
+	glBindTexture(GL_TEXTURE_2D, textureId);
 
-    // Set filter parameters.
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	// Set filter parameters.
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    // Load texture with its dimensional data.
-    int width, height, nrChannels;
-    unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrChannels, 0);
-    if (!data)
-    {
-        std::cerr << "Error::Texture could not load texture file:" << filename << std::endl;
-        return 0;
-    }
+	// Load texture with its dimensional data.
+	int width, height, nrChannels;
+	unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrChannels, 0);
+	if (!data)
+	{
+		std::cerr << "Error::Texture could not load texture file:" << filename << std::endl;
+		return 0;
+	}
 
-    // Upload the texture to the PU.
-    GLenum format = 0;
-    if (nrChannels == 1)
-        format = GL_RED;
-    else if (nrChannels == 3)
-        format = GL_RGB;
-    else if (nrChannels == 4)
-        format = GL_RGBA;
-    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height,
-        0, format, GL_UNSIGNED_BYTE, data);
+	// Upload the texture to the PU.
+	GLenum format = 0;
+	if (nrChannels == 1)
+		format = GL_RED;
+	else if (nrChannels == 3)
+		format = GL_RGB;
+	else if (nrChannels == 4)
+		format = GL_RGBA;
+	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height,
+		0, format, GL_UNSIGNED_BYTE, data);
 
-    // Clean up.
-    stbi_image_free(data);
-    glBindTexture(GL_TEXTURE_2D, 0);
-    return textureId;
+	// Clean up.
+	stbi_image_free(data);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	return textureId;
 }
 
 
@@ -93,51 +96,51 @@ std::vector<unsigned int> allShaderPrograms;
 // Shader variable setters.
 
 // Mat 4.
-void SetUniformMat4(GLuint shader_id, const char* uniform_name, const mat4 & uniform_value)
+void SetUniformMat4(GLuint shader_id, const char* uniform_name, const mat4& uniform_value)
 {
-    glUseProgram(shader_id);
-    glUniformMatrix4fv(glGetUniformLocation(shader_id, uniform_name), 1, GL_FALSE, &uniform_value[0][0]);
+	glUseProgram(shader_id);
+	glUniformMatrix4fv(glGetUniformLocation(shader_id, uniform_name), 1, GL_FALSE, &uniform_value[0][0]);
 }
 // Iterate the above on all shaders.
-void SetUniformMat4(const char* uniform_name, const mat4 & uniform_value)
+void SetUniformMat4(const char* uniform_name, const mat4& uniform_value)
 {
-    for (vector<unsigned int>::iterator currentShader = allShaderPrograms.begin(); currentShader < allShaderPrograms.end(); ++currentShader)
-    {
-        SetUniformMat4(*currentShader, uniform_name, uniform_value);
-    }
+	for (vector<unsigned int>::iterator currentShader = allShaderPrograms.begin(); currentShader < allShaderPrograms.end(); ++currentShader)
+	{
+		SetUniformMat4(*currentShader, uniform_name, uniform_value);
+	}
 }
 
 // Vec 3.
 void SetUniformVec3(GLuint shader_id, const char* uniform_name, vec3 uniform_value)
 {
-    glUseProgram(shader_id);
-    glUniform3fv(glGetUniformLocation(shader_id, uniform_name), 1, value_ptr(uniform_value));
+	glUseProgram(shader_id);
+	glUniform3fv(glGetUniformLocation(shader_id, uniform_name), 1, value_ptr(uniform_value));
 }
 // Iterate the above on all shaders.
 void SetUniformVec3(const char* uniform_name, vec3 uniform_value)
 {
-    for (vector<unsigned int>::iterator currentShader = allShaderPrograms.begin(); currentShader < allShaderPrograms.end(); ++currentShader)
-    {
-        SetUniformVec3(*currentShader, uniform_name, uniform_value);
-    }
+	for (vector<unsigned int>::iterator currentShader = allShaderPrograms.begin(); currentShader < allShaderPrograms.end(); ++currentShader)
+	{
+		SetUniformVec3(*currentShader, uniform_name, uniform_value);
+	}
 }
 
 // Float.
 template <class T>
 void SetUniform1Value(GLuint shader_id, const char* uniform_name, T uniform_value)
 {
-    glUseProgram(shader_id);
-    glUniform1f(glGetUniformLocation(shader_id, uniform_name), uniform_value);
-    glUseProgram(0);
+	glUseProgram(shader_id);
+	glUniform1f(glGetUniformLocation(shader_id, uniform_name), uniform_value);
+	glUseProgram(0);
 }
 // Iterate the above on all shaders.
 template <class T>
 void SetUniform1Value(const char* uniform_name, T uniform_value)
 {
-    for (vector<unsigned int>::iterator currentShader = allShaderPrograms.begin(); currentShader < allShaderPrograms.end(); ++currentShader)
-    {
-        SetUniform1Value(*currentShader, uniform_name, uniform_value);
-    }
+	for (vector<unsigned int>::iterator currentShader = allShaderPrograms.begin(); currentShader < allShaderPrograms.end(); ++currentShader)
+	{
+		SetUniform1Value(*currentShader, uniform_name, uniform_value);
+	}
 }
 
 
@@ -146,51 +149,51 @@ void SetUniform1Value(const char* uniform_name, T uniform_value)
 
 void setProjectionMatrix(int shaderProgram, mat4 projectionMatrix)
 {
-    glUseProgram(shaderProgram);
-    GLuint projectionMatrixLocation = glGetUniformLocation(shaderProgram, "projectionMatrix");
-    glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, &projectionMatrix[0][0]);
+	glUseProgram(shaderProgram);
+	GLuint projectionMatrixLocation = glGetUniformLocation(shaderProgram, "projectionMatrix");
+	glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, &projectionMatrix[0][0]);
 }
 
 // To do : fix the functions using the allShaders vector so they actually update stuff.
 void setProjectionMatrix(mat4 projectionMatrix)
 {
-    for (vector<unsigned int>::iterator currentShader = allShaderPrograms.begin(); currentShader < allShaderPrograms.end(); ++currentShader)
-    {
-        cout << "Current iterator: " << *currentShader << ".\n";
-        setProjectionMatrix(*currentShader, projectionMatrix);
-    }
+	for (vector<unsigned int>::iterator currentShader = allShaderPrograms.begin(); currentShader < allShaderPrograms.end(); ++currentShader)
+	{
+		cout << "Current iterator: " << *currentShader << ".\n";
+		setProjectionMatrix(*currentShader, projectionMatrix);
+	}
 }
 
 void setViewMatrix(int shaderProgram, mat4 viewMatrix)
 {
-    glUseProgram(shaderProgram);
-    GLuint viewMatrixLocation = glGetUniformLocation(shaderProgram, "viewMatrix");
-    glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, &viewMatrix[0][0]);
+	glUseProgram(shaderProgram);
+	GLuint viewMatrixLocation = glGetUniformLocation(shaderProgram, "viewMatrix");
+	glUniformMatrix4fv(viewMatrixLocation, 1, GL_FALSE, &viewMatrix[0][0]);
 }
 
 void setViewMatrix(mat4 viewMatrix)
 {
-    for (vector<unsigned int>::iterator currentShader = allShaderPrograms.begin(); currentShader < allShaderPrograms.end(); ++currentShader)
-    {
-        cout << "Current iterator: " << *currentShader << ".\n";
-        setViewMatrix(*currentShader, viewMatrix);
-    }
+	for (vector<unsigned int>::iterator currentShader = allShaderPrograms.begin(); currentShader < allShaderPrograms.end(); ++currentShader)
+	{
+		cout << "Current iterator: " << *currentShader << ".\n";
+		setViewMatrix(*currentShader, viewMatrix);
+	}
 }
 
 void setWorldMatrix(int shaderProgram, mat4 worldMatrix)
 {
-    glUseProgram(shaderProgram);
-    GLuint worldMatrixLocation = glGetUniformLocation(shaderProgram, "worldMatrix");
-    glUniformMatrix4fv(worldMatrixLocation, 1, GL_FALSE, &worldMatrix[0][0]);
+	glUseProgram(shaderProgram);
+	GLuint worldMatrixLocation = glGetUniformLocation(shaderProgram, "worldMatrix");
+	glUniformMatrix4fv(worldMatrixLocation, 1, GL_FALSE, &worldMatrix[0][0]);
 }
 
 vec3 updateCameraPosition(float cameraTheta, float cameraPhi, float cameraRadius)
 {
-    // Recalculate the camera's position from its spherical coordinates.
-    float cameraX = cameraRadius * cosf(cameraTheta) * cosf(cameraPhi);
-    float cameraZ = cameraRadius * sinf(cameraTheta) * -cosf(cameraPhi);
-    float cameraY = cameraRadius * sinf(cameraPhi);
-    return vec3(cameraX, cameraY, cameraZ);
+	// Recalculate the camera's position from its spherical coordinates.
+	float cameraX = cameraRadius * cosf(cameraTheta) * cosf(cameraPhi);
+	float cameraZ = cameraRadius * sinf(cameraTheta) * -cosf(cameraPhi);
+	float cameraY = cameraRadius * sinf(cameraPhi);
+	return vec3(cameraX, cameraY, cameraZ);
 }
 
 
@@ -203,6 +206,7 @@ void initShadows();
 void setUpLightForShadows(Light light);
 void renderScene(GLuint shaderProgram);
 void handleInputs();
+void Update(float delta);
 
 
 // Textures.
@@ -243,6 +247,7 @@ GLuint shadowMapTexture;
 GLuint shadowMapFBO;
 float aspect;
 
+vec3 gravityVector(0.0f, -0.01f, 0.0f);
 
 // Camera parameters.
 float cameraTheta;
@@ -271,8 +276,11 @@ int previousIPress;
 int previousBPress;
 float dt;
 
+vector<Model*> objects;
+
 CubeModel* cube;
 SphereModel* sphere;
+GroundModel* ground;
 
 // Ground info
 GLuint groundSizeX = 50;
@@ -283,495 +291,581 @@ float groundUVTiling = 10.0f;
 // Handle window resizing.
 void window_size_callback(GLFWwindow* window, int width, int height)
 {
-    glfwGetWindowSize(window, &windowWidth, &windowHeigth);
+	glfwGetWindowSize(window, &windowWidth, &windowHeigth);
 
-    // Set projection matrix for shaders.
-    mat4 projectionMatrix = perspective(70.0f, // fov in degrees.
-        (float)width / (float)height, // aspect ratio.
-        0.001f, 1000.0f); // near and far planes.
-    setProjectionMatrix(projectionMatrix);
+	// Set projection matrix for shaders.
+	mat4 projectionMatrix = perspective(70.0f, // fov in degrees.
+		(float)width / (float)height, // aspect ratio.
+		0.001f, 1000.0f); // near and far planes.
+	setProjectionMatrix(projectionMatrix);
 
-    //cout << "Window resized.\n";
+	//cout << "Window resized.\n";
 }
 
 int main(int argc, char* argv[])
 {
-    // Initialize GLFW and OpenGL version
-    glfwInit();
+	// Initialize GLFW and OpenGL version
+	glfwInit();
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
 
-    // Create Window and rendering context using GLFW, resolution is 1024x768
-    window = glfwCreateWindow(windowWidth, windowHeigth, "Comp371 - Assignment 02", NULL, NULL);
-    if (window == NULL)
-    {
-        std::cerr << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
-    glfwMakeContextCurrent(window);
-
-
-    // Initialize GLEW
-    glewExperimental = true; // Needed for core profile
-    if (glewInit() != GLEW_OK) {
-        std::cerr << "Failed to create GLEW" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
-
-    // Frame time and last key presses.
-    float lastFrameTime = glfwGetTime();
-    int lastMouseLeftState = GLFW_RELEASE;
-    glfwGetCursorPos(window, &lastMousePosX, &lastMousePosY);
-
-    previousZPress = GLFW_RELEASE;
-    previousCPress = GLFW_RELEASE;
-
-    initScene();
-    initShadows();
-
-    glUseProgram(texturedShaderProgram);
-    glUniform1i(glGetUniformLocation(texturedShaderProgram, "render_shadows"), (int)true);
-    glUseProgram(groundShaderProgram);
-    glUniform1i(glGetUniformLocation(texturedShaderProgram, "render_shadows"), (int)true);
-
-    glfwSetWindowSizeCallback(window, window_size_callback);
-
-    // Entering Main Loop
-    while (!glfwWindowShouldClose(window))
-    {
-        // Frame time calculation.
-        dt = glfwGetTime() - lastFrameTime;
-        lastFrameTime += dt;
+	// Create Window and rendering context using GLFW, resolution is 1024x768
+	window = glfwCreateWindow(windowWidth, windowHeigth, "Comp371 - Assignment 02", NULL, NULL);
+	if (window == NULL)
+	{
+		std::cerr << "Failed to create GLFW window" << std::endl;
+		glfwTerminate();
+		return -1;
+	}
+	glfwMakeContextCurrent(window);
 
 
-        // Render frame.
-        
-        // Shadows.
-        // Size viewport, clear buffers, and render the depth cubemap.
-        glViewport(0, 0, SHADOW_TEXTURE_WIDTH, SHADOW_TEXTURE_HEIGHT);
-        glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFBO);
-        glClear(GL_DEPTH_BUFFER_BIT);
+	// Initialize GLEW
+	glewExperimental = true; // Needed for core profile
+	if (glewInit() != GLEW_OK) {
+		std::cerr << "Failed to create GLEW" << std::endl;
+		glfwTerminate();
+		return -1;
+	}
 
-        glCullFace(GL_FRONT);
-        renderScene(shadowShaderProgram);
+	// Frame time and last key presses.
+	float lastFrameTime = glfwGetTime();
+	int lastMouseLeftState = GLFW_RELEASE;
+	glfwGetCursorPos(window, &lastMousePosX, &lastMousePosY);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	previousZPress = GLFW_RELEASE;
+	previousCPress = GLFW_RELEASE;
 
+	initScene();
+	initShadows();
 
-        // Scene.
-        // Size viewport, clear buffers, and render the scene itself.
-        glViewport(0, 0, windowWidth, windowHeigth);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glUseProgram(texturedShaderProgram);
+	glUniform1i(glGetUniformLocation(texturedShaderProgram, "render_shadows"), (int)true);
+	glUseProgram(groundShaderProgram);
+	glUniform1i(glGetUniformLocation(texturedShaderProgram, "render_shadows"), (int)true);
 
-        // Draw colourful lines.
-        glUseProgram(colourShaderProgram);
-        glBindVertexArray(lineVAO);
-        DawAxisStar(colourShaderProgram);
+	glfwSetWindowSizeCallback(window, window_size_callback);
 
-        // Prepare textures.
-        // To do : either move this to its own function, or make it a loop over all relevant shaders.
-        glUseProgram(texturedShaderProgram);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, shadowMapTexture);
-        GLuint textureLocation = glGetUniformLocation(texturedShaderProgram, "shadowMap");
-        glUniform1i(textureLocation, 0);
+	// Entering Main Loop
+	while (!glfwWindowShouldClose(window))
+	{
+		// Frame time calculation.
+		dt = glfwGetTime() - lastFrameTime;
+		lastFrameTime += dt;
 
-        glUseProgram(groundShaderProgram);
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, shadowMapTexture);
-        textureLocation = glGetUniformLocation(groundShaderProgram, "shadowMap");
-        glUniform1i(textureLocation, 0);
+		Update(dt);
 
-        // Draw the main scene.
-        glCullFace(GL_BACK);
-        renderScene(groundShaderProgram);
+		// Render frame.
 
-        // End frame
-        glfwSwapBuffers(window);
+		// Shadows.
+		// Size viewport, clear buffers, and render the depth cubemap.
+		glViewport(0, 0, SHADOW_TEXTURE_WIDTH, SHADOW_TEXTURE_HEIGHT);
+		glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFBO);
+		glClear(GL_DEPTH_BUFFER_BIT);
 
+		glCullFace(GL_FRONT);
+		renderScene(shadowShaderProgram);
 
-        // Save previous key presses.
-        previousZPress = glfwGetKey(window, GLFW_KEY_Z);
-        previousCPress = glfwGetKey(window, GLFW_KEY_C);
-        previousYPress = glfwGetKey(window, GLFW_KEY_Y);
-        previousIPress = glfwGetKey(window, GLFW_KEY_I);
-        previousBPress = glfwGetKey(window, GLFW_KEY_B);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-        handleInputs();
-    }
+		// Scene.
+		// Size viewport, clear buffers, and render the scene itself.
+		glViewport(0, 0, windowWidth, windowHeigth);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    // Shutdown GLFW
-    glfwTerminate();
-    return 0;
+		// Draw colourful lines.
+		glUseProgram(colourShaderProgram);
+		glBindVertexArray(lineVAO);
+		DawAxisStar(colourShaderProgram);
+
+		// Prepare textures.
+		// To do : either move this to its own function, or make it a loop over all relevant shaders.
+		glUseProgram(texturedShaderProgram);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, shadowMapTexture);
+		GLuint textureLocation = glGetUniformLocation(texturedShaderProgram, "shadowMap");
+		glUniform1i(textureLocation, 0);
+
+		glUseProgram(groundShaderProgram);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, shadowMapTexture);
+		textureLocation = glGetUniformLocation(groundShaderProgram, "shadowMap");
+		glUniform1i(textureLocation, 0);
+
+		// Draw the main scene.
+		glCullFace(GL_BACK);
+		renderScene(groundShaderProgram);
+
+		// End frame
+		glfwSwapBuffers(window);
+
+		// Save previous key presses.
+		previousZPress = glfwGetKey(window, GLFW_KEY_Z);
+		previousCPress = glfwGetKey(window, GLFW_KEY_C);
+		previousYPress = glfwGetKey(window, GLFW_KEY_Y);
+		previousIPress = glfwGetKey(window, GLFW_KEY_I);
+		previousBPress = glfwGetKey(window, GLFW_KEY_B);
+
+		handleInputs();
+	}
+
+	// Shutdown GLFW
+	glfwTerminate();
+	return 0;
 }
 
 void initScene()
 {
-    // Background colour.
-    glClearColor(0.5f, 0.75f, 1.0f, 1.0f);
+	// Background colour.
+	glClearColor(0.5f, 0.75f, 1.0f, 1.0f);
 
-    cout << "LOADING TEXTURES\n";
-    // Load textures.
-    const string texturePathPrefix = "assets/textures/";
-    const string shaderPathPrefix = "assets/shaders/";
+	cout << "LOADING TEXTURES\n";
+	// Load textures.
+	const string texturePathPrefix = "assets/textures/";
+	const string shaderPathPrefix = "assets/shaders/";
 
-    snowTextureID = loadTexture(texturePathPrefix + "snow.png");
-    carrotTextureID = loadTexture(texturePathPrefix  +"carrot.png");
-    stoneTextureID = loadTexture(texturePathPrefix + "stone.png");
-    woodTextureID = loadTexture(texturePathPrefix + "wood.png");
-    metalTextureID = loadTexture(texturePathPrefix + "metal.png");
+	snowTextureID = loadTexture(texturePathPrefix + "snow.png");
+	carrotTextureID = loadTexture(texturePathPrefix + "carrot.png");
+	stoneTextureID = loadTexture(texturePathPrefix + "stone.png");
+	woodTextureID = loadTexture(texturePathPrefix + "wood.png");
+	metalTextureID = loadTexture(texturePathPrefix + "metal.png");
 
-    snowDepthTextureID = loadTexture("assets/textures/snowDepth.png");
-    stoneDepthTextureID = loadTexture("assets/textures/stoneDepth.png");
+	snowDepthTextureID = loadTexture("assets/textures/snowDepth.png");
+	stoneDepthTextureID = loadTexture("assets/textures/stoneDepth.png");
 
-    // Compile and link shaders.
-    colourShaderProgram = loadSHADER(shaderPathPrefix + "vertexcolour_vertex.glsl", shaderPathPrefix + "vertexcolour_fragment.glsl");
-    texturedShaderProgram = loadSHADER(shaderPathPrefix + "textured_vertex.glsl", shaderPathPrefix + "textured_fragment.glsl");
-    groundShaderProgram = loadSHADER(shaderPathPrefix + "textured_vertex.glsl", shaderPathPrefix + "ground_fragment.glsl");
-    shadowShaderProgram = loadSHADER(shaderPathPrefix + "shadow_vertex.glsl", shaderPathPrefix + "shadow_fragment.glsl");
+	// Compile and link shaders.
+	colourShaderProgram = loadSHADER(shaderPathPrefix + "vertexcolour_vertex.glsl", shaderPathPrefix + "vertexcolour_fragment.glsl");
+	texturedShaderProgram = loadSHADER(shaderPathPrefix + "textured_vertex.glsl", shaderPathPrefix + "textured_fragment.glsl");
+	groundShaderProgram = loadSHADER(shaderPathPrefix + "textured_vertex.glsl", shaderPathPrefix + "ground_fragment.glsl");
+	shadowShaderProgram = loadSHADER(shaderPathPrefix + "shadow_vertex.glsl", shaderPathPrefix + "shadow_fragment.glsl");
 
-    // Collect shaders into a vector for ease of iteration.
-    allShaderPrograms.push_back(colourShaderProgram);
-    allShaderPrograms.push_back(texturedShaderProgram);
-    allShaderPrograms.push_back(groundShaderProgram);
-    allShaderPrograms.push_back(shadowShaderProgram);
-
-
-    // Define and upload geometry to the GPU.
-    cubeVAO = CubeModel::CubeModelVAO();
-    planeVAO = PlaneModel::PlaneModelVAO();
-    sphereVAO = SphereModel::SphereModelVAO(1.0f, 0.5f, sphereRadialDivs, sphereVerticalDivs, sphereVertexCount);
-    groundVAO = GroundModel::GroundModelVAO(groundSizeX, groundSizeZ, groundUVTiling);
-    //cubeVAO = createCubeVBO();
-    //planeVAO = createPlaneVBO();
-    lineVAO = createLinesVBO();
-    //sphereVAO = createSphereVBO(0.75f, 0.5f, sphereRadialDivs, sphereVerticalDivs);
-    //sphereVertexCount = sphereRadialDivs * sphereVerticalDivs * 6;
-    //groundVAO = createGroundVBO(groundSizeX, groundSizeZ, groundUVTiling);
-
-    // Initial camera parameters.
-    cameraTheta = radians(270.0f);
-    cameraPhi = radians(10.0f);
-    cameraRadius = 10.0f;
-    cameraRotSpeed = radians(1.0f);
-
-    // Set projection matrix for shaders.
-    mat4 projectionMatrix = perspective(70.0f, // fov in degrees.
-        (float)windowWidth / (float)windowHeigth, // aspect ratio.
-        0.001f, 1000.0f); // near and far planes.
+	// Collect shaders into a vector for ease of iteration.
+	allShaderPrograms.push_back(colourShaderProgram);
+	allShaderPrograms.push_back(texturedShaderProgram);
+	allShaderPrograms.push_back(groundShaderProgram);
+	allShaderPrograms.push_back(shadowShaderProgram);
 
 
-    // Set initial view matrix
-    cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
-    cameraSideVector = cross(cameraLookAt, cameraUpVector);
-    normalize(cameraSideVector);
-    viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
+	// Define and upload geometry to the GPU.
+	cubeVAO = CubeModel::CubeModelVAO();
+	planeVAO = PlaneModel::PlaneModelVAO();
+	sphereVAO = SphereModel::SphereModelVAO(1.0f, 0.5f, sphereRadialDivs, sphereVerticalDivs, sphereVertexCount);
+	groundVAO = GroundModel::GroundModelVAO(groundSizeX, groundSizeZ, groundUVTiling);
+	//cubeVAO = createCubeVBO();
+	//planeVAO = createPlaneVBO();
+	lineVAO = createLinesVBO();
+	//sphereVAO = createSphereVBO(0.75f, 0.5f, sphereRadialDivs, sphereVerticalDivs);
+	//sphereVertexCount = sphereRadialDivs * sphereVerticalDivs * 6;
+	//groundVAO = createGroundVBO(groundSizeX, groundSizeZ, groundUVTiling);
 
-    // Set View and Projection matrices.
-    setViewMatrix(viewMatrix);
-    setProjectionMatrix(projectionMatrix);
+	// Initial camera parameters.
+	cameraTheta = radians(270.0f);
+	cameraPhi = radians(10.0f);
+	cameraRadius = 10.0f;
+	cameraRotSpeed = radians(1.0f);
 
-
-    // Initialize main light.
-    sunLight = Light(vec3(0.95f, 0.95f, 1.0f), vec3(0.0f, 5.0f, 5.0f), vec3(0.0f, 1.0f, 0.0f));
-
-    setUpLightForShadows(sunLight);
-
-    // Set constant light related parameters in texture shader.
-    SetUniformVec3(texturedShaderProgram, "light_color", sunLight.color);
-    SetUniformVec3(groundShaderProgram, "light_color", sunLight.color);
-
-
-    // Set other parameters in textured shader program.
-    // To do: loop these over shaders.
-
-    SetUniformVec3(texturedShaderProgram, "view_position", cameraPosition);
-    SetUniformVec3(groundShaderProgram, "view_position", cameraPosition);
-
-    SetUniformVec3(texturedShaderProgram, "ambient_colour", ambientColour);
-    SetUniformVec3(groundShaderProgram, "ambient_colour", ambientColour);
-
-    SetUniform1Value(texturedShaderProgram, "light_near_plane", light_near_plane);
-    SetUniform1Value(texturedShaderProgram, "light_far_plane", light_far_plane);
-
-    SetUniform1Value(groundShaderProgram, "light_near_plane", light_near_plane);
-    SetUniform1Value(groundShaderProgram, "light_far_plane", light_far_plane);
-
-    SetUniform1Value(groundShaderProgram, "heightblend_factor", 0.45f);
+	// Set projection matrix for shaders.
+	mat4 projectionMatrix = perspective(70.0f, // fov in degrees.
+		(float)windowWidth / (float)windowHeigth, // aspect ratio.
+		0.001f, 1000.0f); // near and far planes.
 
 
-    cube = new CubeModel(vec3(0.0f, 5.0f, 0.0f), vec3(0.0f, 45.0f, 45.0f), vec3(2.0f, 2.0f, 2.0f));
-    sphere = new SphereModel(vec3(5.0f, 5.0f, 5.0f), vec3(45.0f, 45.0f, 45.0f), vec3(3.0f, 3.0f, 3.0f));
-    
-    // Other OpenGL states to set once
-    glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_PROGRAM_POINT_SIZE);
+	// Set initial view matrix
+	cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
+	cameraSideVector = cross(cameraLookAt, cameraUpVector);
+	normalize(cameraSideVector);
+	viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
+
+	// Set View and Projection matrices.
+	setViewMatrix(viewMatrix);
+	setProjectionMatrix(projectionMatrix);
+
+
+	// Initialize main light.
+	sunLight = Light(vec3(0.95f, 0.95f, 1.0f), vec3(0.0f, 5.0f, 5.0f), vec3(0.0f, 1.0f, 0.0f));
+
+	setUpLightForShadows(sunLight);
+
+	// Set constant light related parameters in texture shader.
+	SetUniformVec3(texturedShaderProgram, "light_color", sunLight.color);
+	SetUniformVec3(groundShaderProgram, "light_color", sunLight.color);
+
+
+	// Set other parameters in textured shader program.
+	// To do: loop these over shaders.
+
+	SetUniformVec3(texturedShaderProgram, "view_position", cameraPosition);
+	SetUniformVec3(groundShaderProgram, "view_position", cameraPosition);
+
+	SetUniformVec3(texturedShaderProgram, "ambient_colour", ambientColour);
+	SetUniformVec3(groundShaderProgram, "ambient_colour", ambientColour);
+
+	SetUniform1Value(texturedShaderProgram, "light_near_plane", light_near_plane);
+	SetUniform1Value(texturedShaderProgram, "light_far_plane", light_far_plane);
+
+	SetUniform1Value(groundShaderProgram, "light_near_plane", light_near_plane);
+	SetUniform1Value(groundShaderProgram, "light_far_plane", light_far_plane);
+
+	SetUniform1Value(groundShaderProgram, "heightblend_factor", 0.45f);
+
+
+	cube = new CubeModel(vec3(0.0f, 5.0f, 0.0f), vec3(0.0f, 45.0f, 45.0f), vec3(2.0f, 2.0f, 2.0f));
+	sphere = new SphereModel(vec3(8.0f, 8.0f, 8.0f), vec3(0.0f, 0.0f, 0.0f), vec3(2.0f, 2.0f, 2.0f));
+	ground = new GroundModel();
+
+	objects.push_back(cube);
+	objects.push_back(sphere);
+	objects.push_back(ground);
+
+	// Other OpenGL states to set once
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_PROGRAM_POINT_SIZE);
 }
 
 void setUpLightForShadows(Light light)
 {
-    // Set the light projection matrix in the textured shader.
-    SetUniformMat4(texturedShaderProgram, "lightSpaceMatrix", light.lightSpaceMatrix);
-    SetUniformMat4(groundShaderProgram, "lightSpaceMatrix", light.lightSpaceMatrix);
+	// Set the light projection matrix in the textured shader.
+	SetUniformMat4(texturedShaderProgram, "lightSpaceMatrix", light.lightSpaceMatrix);
+	SetUniformMat4(groundShaderProgram, "lightSpaceMatrix", light.lightSpaceMatrix);
 
-    SetUniformVec3(texturedShaderProgram, "light_position", light.position);
-    SetUniformVec3(groundShaderProgram, "light_position", light.position);
+	SetUniformVec3(texturedShaderProgram, "light_position", light.position);
+	SetUniformVec3(groundShaderProgram, "light_position", light.position);
 
-    SetUniformVec3(texturedShaderProgram, "light_direction", light.direction);
-    SetUniformVec3(groundShaderProgram, "light_direction", light.direction);
+	SetUniformVec3(texturedShaderProgram, "light_direction", light.direction);
+	SetUniformVec3(groundShaderProgram, "light_direction", light.direction);
 
-    // Set light related parameters in shadow shader.
-    glUseProgram(shadowShaderProgram);
-    SetUniformMat4(shadowShaderProgram, "lightSpaceMatrix", light.lightSpaceMatrix);
+	// Set light related parameters in shadow shader.
+	glUseProgram(shadowShaderProgram);
+	SetUniformMat4(shadowShaderProgram, "lightSpaceMatrix", light.lightSpaceMatrix);
 }
 
 void initShadows() // All shadowcasting code references https://learnopengl.com/Advanced-Lighting/Shadows/Point-Shadows.
 {
-    // Create and configure the depth map.
-    glGenTextures(1, &shadowMapTexture);
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, shadowMapTexture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_TEXTURE_WIDTH, SHADOW_TEXTURE_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	// Create and configure the depth map.
+	glGenTextures(1, &shadowMapTexture);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, shadowMapTexture);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_TEXTURE_WIDTH, SHADOW_TEXTURE_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    // Attach depth cubemap to framebuffer.
-    glGenFramebuffers(1, &shadowMapFBO);
-    glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFBO);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowMapTexture, 0);
-    glDrawBuffer(GL_NONE);
+	// Attach depth cubemap to framebuffer.
+	glGenFramebuffers(1, &shadowMapFBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, shadowMapFBO);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowMapTexture, 0);
+	glDrawBuffer(GL_NONE);
 
 
-    // Set up light clip information in shadow shader.
-    glUseProgram(shadowShaderProgram);
-    SetUniform1Value(shadowShaderProgram, "light_near_plane", light_near_plane);
-    SetUniform1Value(shadowShaderProgram, "light_far_plane", light_far_plane);
+	// Set up light clip information in shadow shader.
+	glUseProgram(shadowShaderProgram);
+	SetUniform1Value(shadowShaderProgram, "light_near_plane", light_near_plane);
+	SetUniform1Value(shadowShaderProgram, "light_far_plane", light_far_plane);
 }
 
 
 void renderScene(GLuint shaderProgram)
 {
-    // Update light.
-    
-     
-    // Draw geometry
-
-    // Handle textures.
-    glUseProgram(shaderProgram);
-
-    // -> Texture A.
-    glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, carrotTextureID);
-    GLuint textureLocation = glGetUniformLocation(shaderProgram, "textureSamplerA");
-    glUniform1i(textureLocation, 1);
-
-    glActiveTexture(GL_TEXTURE3);
-    glBindTexture(GL_TEXTURE_2D, stoneDepthTextureID);
-    textureLocation = glGetUniformLocation(shaderProgram, "depthSamplerA");
-    glUniform1i(textureLocation, 3);
-
-    // -> Texture B.
-    glActiveTexture(GL_TEXTURE2);
-    glBindTexture(GL_TEXTURE_2D, snowTextureID);
-    textureLocation = glGetUniformLocation(shaderProgram, "textureSamplerB");
-    glUniform1i(textureLocation, 2);
-
-    glActiveTexture(GL_TEXTURE4);
-    glBindTexture(GL_TEXTURE_2D, snowDepthTextureID);
-    textureLocation = glGetUniformLocation(shaderProgram, "depthSamplerB");
-    glUniform1i(textureLocation, 4);
+	// Update light.
 
 
-    glBindVertexArray(cubeVAO);
+	// Draw geometry
 
-    cube->Draw(shaderProgram);
+	// Handle textures.
+	glUseProgram(shaderProgram);
+
+	// -> Texture A.
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, carrotTextureID);
+	GLuint textureLocation = glGetUniformLocation(shaderProgram, "textureSamplerA");
+	glUniform1i(textureLocation, 1);
+
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, stoneDepthTextureID);
+	textureLocation = glGetUniformLocation(shaderProgram, "depthSamplerA");
+	glUniform1i(textureLocation, 3);
+
+	// -> Texture B.
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, snowTextureID);
+	textureLocation = glGetUniformLocation(shaderProgram, "textureSamplerB");
+	glUniform1i(textureLocation, 2);
+
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, snowDepthTextureID);
+	textureLocation = glGetUniformLocation(shaderProgram, "depthSamplerB");
+	glUniform1i(textureLocation, 4);
+
+	glBindVertexArray(cubeVAO);
+
+	cube->Draw(shaderProgram);
+
+	glBindVertexArray(sphereVAO);
+
+	//sphere->Draw(shaderProgram, sphereVertexCount);
+	sphere->Draw(shaderProgram, sphereVertexCount);
+
+	// Draw ground.
+	glBindVertexArray(groundVAO);
 
 
-    glBindVertexArray(sphereVAO);
+	ground->Draw(shaderProgram, groundSizeX, groundSizeZ);
 
-    //sphere->Draw(shaderProgram, sphereVertexCount);
-    sphere->Draw(shaderProgram, sphereVertexCount, GL_LINES);
+	//// > Base.
+	//float groundCenterX{ 0 - (float)groundSizeX / 2 };
+	//float groundCenterZ{ 0 - (float)groundSizeZ / 2 };
 
-    // Draw ground.
-    glBindVertexArray(groundVAO);
-    
-    // > Base.
-    float groundCenterX = 0 - (float)groundSizeX / 2;
-    float groundCenterZ = 0 - (float)groundSizeZ / 2;
+	//mat4 groundBaseMatrix = translate(mat4(1.0f), vec3(groundCenterX, 0.0f, groundCenterZ));
+	//GLuint worldMatrixLocation = glGetUniformLocation(shaderProgram, "worldMatrix");
+	//glUniformMatrix4fv(worldMatrixLocation, 1, GL_FALSE, &groundBaseMatrix[0][0]);
+	//glDrawArrays(meshRenderMode, 0, 6 * groundSizeX * groundSizeZ);
 
-    mat4 groundBaseMatrix = translate(mat4(1.0f), vec3(groundCenterX, 0.0f, groundCenterZ));
-    GLuint worldMatrixLocation = glGetUniformLocation(shaderProgram, "worldMatrix");
-    glUniformMatrix4fv(worldMatrixLocation, 1, GL_FALSE, &groundBaseMatrix[0][0]);
-    glDrawArrays(meshRenderMode, 0, 6*groundSizeX*groundSizeZ);
+	// Objects will likely have to inherit the ground's transform as to follow its coordinates.
+	// Or we only draw the world in the positive X, positive Z quadrants.
 
-    // Objects will likely have to inherit the ground's transform as to follow its coordinates.
-    // Or we only draw the world in the positive X, positive Z quadrants.
+	// Draw test cube.
+	glBindVertexArray(cubeVAO);
 
-    // Draw test cube.
-    glBindVertexArray(cubeVAO);
+	mat4 cubeBaseMatrix = translate(mat4(1.0f), vec3(0.0f, 2.0f, 0.0f));
+	GLuint worldMatrixLocation = glGetUniformLocation(shaderProgram, "worldMatrix");
+	glUniformMatrix4fv(worldMatrixLocation, 1, GL_FALSE, &cubeBaseMatrix[0][0]);
+	glDrawArrays(meshRenderMode, 0, 36);
 
-    mat4 cubeBaseMatrix = translate(mat4(1.0f), vec3(0.0f, 2.0f, 0.0f));
-    worldMatrixLocation = glGetUniformLocation(shaderProgram, "worldMatrix");
-    glUniformMatrix4fv(worldMatrixLocation, 1, GL_FALSE, &cubeBaseMatrix[0][0]);
-    glDrawArrays(meshRenderMode, 0, 36);
-
-    
-
-    // Unbind vertex array.
-    glBindVertexArray(0);
+	// Unbind vertex array.
+	glBindVertexArray(0);
 }
 
 
 // To do: better camera controls.
 void handleInputs()
 {
-    // Detect inputs
-    glfwPollEvents();
+	// Detect inputs
+	glfwPollEvents();
 
-    // On Key Press actions.
+	// On Key Press actions.
 
-    // -> Camera movements.
-    // Pressing the right arrow key rotates the camera counterclockwise.
-    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-    {
-        if (cameraTheta < radians(360.0f))
-            cameraTheta += cameraRotSpeed;
-        else cameraTheta = radians(0.0f);
+	// -> Camera movements.
+	// Pressing the right arrow key rotates the camera counterclockwise.
+	if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+	{
+		if (cameraTheta < radians(360.0f))
+			cameraTheta += cameraRotSpeed;
+		else cameraTheta = radians(0.0f);
 
-        cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
-        viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
+		cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
+		viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
 
-        setViewMatrix(viewMatrix);
-    }
-    // Pressing the left arrow key rotates the camera clockwise.
-    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-    {
-        if (cameraTheta > radians(0.0f))
-            cameraTheta -= cameraRotSpeed;
-        else cameraTheta = radians(360.0f);
+		setViewMatrix(viewMatrix);
+	}
+	// Pressing the left arrow key rotates the camera clockwise.
+	if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+	{
+		if (cameraTheta > radians(0.0f))
+			cameraTheta -= cameraRotSpeed;
+		else cameraTheta = radians(360.0f);
 
-        cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
-        viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
+		cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
+		viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
 
-        setViewMatrix(viewMatrix);
-    }
+		setViewMatrix(viewMatrix);
+	}
 
-    /// Pressing the up arrow key rotates the camera upward.
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-    {
-        if (cameraPhi < radians(89.0f))
-            cameraPhi += cameraRotSpeed;
-        else cameraPhi = radians(89.0f);
+	/// Pressing the up arrow key rotates the camera upward.
+	if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
+	{
+		if (cameraPhi < radians(89.0f))
+			cameraPhi += cameraRotSpeed;
+		else cameraPhi = radians(89.0f);
 
-        cameraPhi += cameraRotSpeed;
+		cameraPhi += cameraRotSpeed;
 
-        cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
-        viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
+		cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
+		viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
 
-        setViewMatrix(viewMatrix);
-    }
-    /// Pressing the down arrow key rotates the camera downward.
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-    {
-        if (cameraPhi > radians(1.0f))
-            cameraPhi -= cameraRotSpeed;
-        else cameraPhi = radians(1.0f);
+		setViewMatrix(viewMatrix);
+	}
+	/// Pressing the down arrow key rotates the camera downward.
+	if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
+	{
+		if (cameraPhi > radians(1.0f))
+			cameraPhi -= cameraRotSpeed;
+		else cameraPhi = radians(1.0f);
 
-        cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
-        viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
+		cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
+		viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
 
-        setViewMatrix(viewMatrix);
-    }
+		setViewMatrix(viewMatrix);
+	}
 
-    // Mouse position housekeeping.
-    double mousePosX, mousePosY;
-    glfwGetCursorPos(window, &mousePosX, &mousePosY);
+	// Mouse position housekeeping.
+	double mousePosX, mousePosY;
+	glfwGetCursorPos(window, &mousePosX, &mousePosY);
 
-    double dx = mousePosX - lastMousePosX;
-    double dy = mousePosY - lastMousePosY;
-    lastMousePosX = mousePosX;
-    lastMousePosY = mousePosY;
+	double dx = mousePosX - lastMousePosX;
+	double dy = mousePosY - lastMousePosY;
+	lastMousePosX = mousePosX;
+	lastMousePosY = mousePosY;
 
-    // Dragging the mouse while its left button is pressed controls the camera spherical coordinates' radius (zoom).
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
-    {
-        cameraRadius += dy * dt;
+	// Dragging the mouse while its left button is pressed controls the camera spherical coordinates' radius (zoom).
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS)
+	{
+		cameraRadius += dy * dt;
 
-        cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
-        viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
+		cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
+		viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
 
-        setViewMatrix(viewMatrix);
-    }
+		setViewMatrix(viewMatrix);
+	}
 
-    // Dragging the mouse while its right button is pressed controls the camera lookat point's left/right position (pan).
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
-    {
-        cameraSideVector = cross(cameraPosition, cameraUpVector);
-        normalize(cameraSideVector);
+	// Dragging the mouse while its right button is pressed controls the camera lookat point's left/right position (pan).
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS)
+	{
+		cameraSideVector = cross(cameraPosition, cameraUpVector);
+		normalize(cameraSideVector);
 
-        float delta = dx * dt * 0.1f;
-        cameraLookAt += cameraSideVector * delta;
-        viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
+		float delta = dx * dt * 0.1f;
+		cameraLookAt += cameraSideVector * delta;
+		viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
 
-        setViewMatrix(viewMatrix);
-    }
+		setViewMatrix(viewMatrix);
+	}
 
-    // Dragging the mouse while its middle button is pressed controls the camera lookat point height (tilt).
-    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS)
-    {
-        if (cameraLookAt.y + (dy * dt) > 0)
-            cameraLookAt.y += dy * dt;
-        else cameraLookAt.y = 0;
+	// Dragging the mouse while its middle button is pressed controls the camera lookat point height (tilt).
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS)
+	{
+		if (cameraLookAt.y + (dy * dt) > 0)
+			cameraLookAt.y += dy * dt;
+		else cameraLookAt.y = 0;
 
-        viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
+		viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
 
-        setViewMatrix(viewMatrix);
-    }
+		setViewMatrix(viewMatrix);
+	}
 
-    /// Pressing the home button or 'H' key resets all camera parameters.
-    if ((glfwGetKey(window, GLFW_KEY_HOME) || glfwGetKey(window, GLFW_KEY_H)) == GLFW_PRESS)
-    {
-        cameraTheta = radians(270.0f);
-        cameraPhi = radians(10.0f);
-        cameraRadius = 10.0f;
+	/// Pressing the home button or 'H' key resets all camera parameters.
+	if ((glfwGetKey(window, GLFW_KEY_HOME) || glfwGetKey(window, GLFW_KEY_H)) == GLFW_PRESS)
+	{
+		cameraTheta = radians(270.0f);
+		cameraPhi = radians(10.0f);
+		cameraRadius = 10.0f;
 
-        cameraLookAt = vec3(0.0f);
+		cameraLookAt = vec3(0.0f);
 
-        cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
-        viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
+		cameraPosition = updateCameraPosition(cameraTheta, cameraPhi, cameraRadius);
+		viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
 
-        setViewMatrix(viewMatrix);
-    }
+		setViewMatrix(viewMatrix);
+	}
 
 
-    // -> Rendering modes.
-    // Press 'P' to change the snowman's rendering mode to points.
-    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
-    {
-        meshRenderMode = GL_POINTS;
-    }
-    // Press 'L' to change the snowman's rendering mode to lines.
-    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
-    {
-        meshRenderMode = GL_LINE_LOOP;
-    }
-    // Press 'T' to change the snowman's rendering mode to triangles.
-    if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
-    {
-        meshRenderMode = GL_TRIANGLES;
-    }
+	// -> Rendering modes.
+	// Press 'P' to change the snowman's rendering mode to points.
+	if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+	{
+		meshRenderMode = GL_POINTS;
+	}
+	// Press 'L' to change the snowman's rendering mode to lines.
+	if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
+	{
+		meshRenderMode = GL_LINE_LOOP;
+	}
+	// Press 'T' to change the snowman's rendering mode to triangles.
+	if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
+	{
+		meshRenderMode = GL_TRIANGLES;
+	}
 
-    // Close the window if Escape is pressed.
-    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
+	// Close the window if Escape is pressed.
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
+}
+
+void Update(float delta)
+{
+
+	//Check collisions
+	for (vector<Model*>::iterator it = objects.begin(); it < objects.end(); ++it)
+	{
+		glm::vec3 groundPoint = glm::vec3(0.0f);
+		glm::vec3 groundUp = glm::vec3(0.0f, 1.0f, 0.0f);
+
+		//Collisions with ground
+		//complexity: O(n)
+		if (*it == ground)
+		{
+			GroundModel* ground = dynamic_cast<GroundModel*>(*it);
+
+			float groundHeight = ground->returnHeightAtPoint(vec2(cameraPosition.x, cameraPosition.z), true);
+			cout << "CAMERA X: " << cameraPosition.x << " CAMERA Z: " << cameraPosition.z << endl;
+			if (cameraPosition.y < groundHeight)
+			{
+				updateCameraPosition(cameraTheta, cosf(groundHeight), cameraRadius);
+				viewMatrix = lookAt(cameraPosition, cameraLookAt, cameraUpVector); // eye, center, up.
+
+				setViewMatrix(viewMatrix);
+				//cout << "COLLIDING WITH GROUND\n";
+			}
+			else {
+				//cout << "NOT COLLIDING WITH GROUND";
+			}
+		}
+
+
+		//Intersphere collisions
+		//complexity: O(n^2)
+		//for (vector<Model*>::iterator it2 = it; it2 < mModel.end(); ++it2)
+		//{
+		//    if (it != it2 && (*it)->isSphere() && (*it2)->isSphere()) //Spheres can't collide with themselves, and both models should be spheres for this scene.
+		//    {
+		//        Model* s1 = *it;
+		//        Model* s2 = *it2;
+
+		//        float distance = glm::distance(s1->GetPosition(), s2->GetPosition());
+		//        float r1 = s1->GetScaling().x;
+		//        float r2 = s2->GetScaling().x;
+		//        float totalRadii = r1 + r2;
+
+		//        //TODO 2 - Collisions between spheres
+
+		//        if (distance < totalRadii) //Collision
+		//        {
+		//            glm::vec3 collisionNormal = glm::normalize(s1->GetPosition() - s2->GetPosition());
+		//            glm::vec3 collisionPoint = s2->GetPosition() + r2 * collisionNormal;
+
+		//            //decompose momentum
+		//            //
+		//            float m1 = s1->GetMass();
+		//            float m2 = s2->GetMass();
+
+		//            glm::vec3 normalVelocity1 = glm::dot(s1->GetVelocity(), collisionNormal) * collisionNormal;
+		//            glm::vec3 normalVelocity2 = glm::dot(s2->GetVelocity(), collisionNormal) * collisionNormal;
+
+		//            glm::vec3 tangentMomentum1 = s1->GetVelocity() - normalVelocity1;
+		//            glm::vec3 tangentMomentum2 = s2->GetVelocity() - normalVelocity2;
+
+		//            glm::vec3 newNormalVelocity1 = ((m1 - m2) / (m1 + m2)) * normalVelocity1 + ((2 * m2) / (m1 + m2) * normalVelocity2);
+		//            glm::vec3 newNormalVelocity2 = ((2 * m1) / (m1 + m2)) * normalVelocity1 + ((m2 - m1) / (m1 + m2) * normalVelocity2);
+
+		//            s1->SetVelocity(newNormalVelocity1 + tangentMomentum1);
+		//            s2->SetVelocity(newNormalVelocity2 + tangentMomentum2);
+		//        }
+
+
+		//    }
+	//    }
+
+	}
+
+	// Update models
+	for (vector<Model*>::iterator it = objects.begin(); it < objects.end(); ++it)
+	{
+		(*it)->Update(delta);
+	}
 }

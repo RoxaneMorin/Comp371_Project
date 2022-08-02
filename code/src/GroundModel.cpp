@@ -281,10 +281,11 @@ vector<Model::TexturedColoredNormalVertex> GroundModel::createGroundVertexVector
 }
 
 // Utility.
-float GroundModel::returnHeightAtPoint(vec2 pointCoords)
+float GroundModel::returnHeightAtPoint(vec2 pointCoords, bool debug)
 {
 	float heightAtPoint;
-	std::cout << "Calculating ground height at point: " << pointCoords.x << ", " << pointCoords.y << ".\n";
+
+	//if (debug) std::cout << "Calculating ground height at point: " << pointCoords.x << ", " << pointCoords.y << ".\n";
 
 	float closestLowX = floor(pointCoords.x);
 	float closestHighX = closestLowX + 1;
@@ -356,4 +357,14 @@ float GroundModel::returnHeightAtPoint(vec2 pointCoords)
 
 	cout << "The height at this point is: " << heightAtPoint << ".\n";
 	return heightAtPoint;
+}
+
+bool GroundModel::ContainsPoint(vec3 position)
+{
+	return true;
+}
+
+bool GroundModel::IntersectsPlane(vec3 planePoint, vec3 planeNormal)
+{
+	return true;
 }

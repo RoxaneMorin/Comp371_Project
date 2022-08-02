@@ -53,6 +53,11 @@ void Model::SetParent(mat4 parentMatrix)
     mParent = parentMatrix;
 }
 
+void Model::ResetParent()
+{
+    mParent = mat4(1.0f);
+}
+
 mat4 Model::GetWorldMatrix() const
 {
     mat4 worldMatrix(1.0f);
@@ -63,9 +68,9 @@ mat4 Model::GetWorldMatrix() const
     mat4 r = mat4_cast(mQuat);
     mat4 s = scale(mat4(1.0f), mScaling);
 
-    worldMatrix = t * r * s * mParent;
+    worldMatrix = t * r * s;
 
-    return worldMatrix;
+    return worldMatrix * mParent;
 }
 
 void Model::SetPosition(vec3 position)

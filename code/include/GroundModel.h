@@ -25,11 +25,14 @@ public:
 	virtual void Draw(int shaderProgram, GLenum renderingModel = GL_TRIANGLES);
 	void Draw(int shaderProgram, int sizeX, int sizeZ, GLenum renderingModel = GL_TRIANGLES);
 
+	virtual bool ContainsPoint(vec3 position);//Whether or not the given point is withing the model. For collisions.
+	virtual bool IntersectsPlane(vec3 planePoint, vec3 planeNormal);
+
 	virtual bool isSphere() { return false; } //This is not at all object-oriented, but somewhat necessary due to need for a simple double-dispatch mechanism
 
-	unsigned int static GroundModelVAO(unsigned int sizeX, unsigned int sizeZ, float uvTiling);
+	//unsigned int static GroundModelVAO(unsigned int sizeX, unsigned int sizeZ, float uvTiling);
 
-	float returnHeightAtPoint(vec2 pointCoords);
+	float returnHeightAtPoint(vec2 pointCoords, bool debug = false);
 
 	float static generateHeightCoord(unsigned int xCoord, unsigned int zCoord, float noiseScaling);
 	vec2 static generateUVCoords(unsigned int posX, unsigned int posZ, float uvTiling);

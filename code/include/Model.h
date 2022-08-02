@@ -34,6 +34,7 @@ public:
 
 	virtual void SetWorldMatrix(vec3 position, vec3 rotation, vec3 scale);
 
+	void ResetParent();
 	void SetParent(mat4 parentMatrix);
 	void SetPosition(vec3 position);
 	void SetScaling(vec3 scaling);
