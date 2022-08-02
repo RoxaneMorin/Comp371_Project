@@ -13,6 +13,7 @@ in VS_OUT {
 
 uniform sampler2D textureSampler;
 uniform sampler2D shadowMap;
+uniform sampler2D normalSampler;
 
 uniform vec3 colour = vec3(1.0f, 1.0f, 1.0f);
 uniform float alpha = 1.0f;
