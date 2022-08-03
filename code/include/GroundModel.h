@@ -23,7 +23,7 @@ public:
 
 	virtual void Update(float dt);
 	virtual void Draw(int shaderProgram, GLenum renderingModel = GL_TRIANGLES);
-	void Draw(int shaderProgram, int sizeX, int sizeZ, GLenum renderingModel = GL_TRIANGLES);
+	//void Draw(int shaderProgram, int sizeX, int sizeZ, GLenum renderingModel = GL_TRIANGLES);
 
 	virtual bool ContainsPoint(vec3 position);//Whether or not the given point is withing the model. For collisions.
 	virtual bool IntersectsPlane(vec3 planePoint, vec3 planeNormal);
@@ -34,11 +34,11 @@ public:
 
 	float returnHeightAtPoint(vec2 pointCoords, bool debug = false);
 
-	float static generateHeightCoord(unsigned int xCoord, unsigned int zCoord, float noiseScaling);
-	vec2 static generateUVCoords(unsigned int posX, unsigned int posZ, float uvTiling);
-	vec3 static generateFaceNormals(vec3 pointAPos, vec3 pointBPos, vec3 pointCPos);
-	std::vector<TexturedColoredNormalVertex> static createGroundVertexVector(std::map<vec2, TexturedColoredNormalVertex, CompareVec2> terrainVertexMap, unsigned int sizeX, unsigned int sizeZ);
-	std::map<vec2, TexturedColoredNormalVertex, CompareVec2> static createGroundVertexMap(unsigned int sizeX, unsigned int sizeZ, float uvTiling = 1);
+	float generateHeightCoord(unsigned int xCoord, unsigned int zCoord, float noiseScaling);
+	vec2 generateUVCoords(unsigned int posX, unsigned int posZ, float uvTiling);
+	vec3 generateFaceNormals(vec3 pointAPos, vec3 pointBPos, vec3 pointCPos);
+	void createGroundVertexVector(std::map<vec2, TexturedColoredNormalVertex, CompareVec2> terrainVertexMap, unsigned int sizeX, unsigned int sizeZ);
+	void createGroundVertexMap(unsigned int sizeX, unsigned int sizeZ, float uvTiling = 1);
 
 private:
 	float sizeX;

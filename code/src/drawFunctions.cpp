@@ -39,7 +39,7 @@ void DawAxisStar(int shaderProgram)
     glDrawArrays(GL_LINE_STRIP, 0, 6);
 }
 
-int meshRenderMode = GL_TRIANGLES; // Declaring the variable here as it is used in multiple methods.
+GLenum meshRenderMode = GL_TRIANGLES; // Declaring the variable here as it is used in multiple methods.
 
 mat4 DrawParentedMesh(int shaderProgram, mat4 parentMatrix, vec3 translation, vec3 scale, unsigned int numberOfVerts)
 {

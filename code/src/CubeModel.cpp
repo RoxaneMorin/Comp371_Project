@@ -234,7 +234,7 @@ CubeModel::~CubeModel()
 
 void CubeModel::Update(float dt)
 {
-
+	mRotation += vec3(0.0f, 5.0f * dt, 0.0f); // spins by 90 degrees per second
 }
 
 void CubeModel::Draw(int shaderProgram, GLenum renderingMode)

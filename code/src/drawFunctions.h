@@ -34,7 +34,7 @@ void DrawGrid(int shaderProgram, GLfloat centerPosX, GLfloat centerPosZ, GLuint 
 
 void DawAxisStar(int shaderProgram);
 
-extern int meshRenderMode; // Declaring the variable here as it is used in multiple methods.
+extern GLenum meshRenderMode; // Declaring the variable here as it is used in multiple methods.
 
 mat4 DrawParentedMesh(int shaderProgram, mat4 parentMatrix, vec3 translation, vec3 scale, unsigned int numberOfVerts);
 

@@ -12,64 +12,63 @@
 using namespace std;
 using namespace glm;
 
-
-unsigned int GroundModel::GroundModelVAO(unsigned int sizeX, unsigned int sizeZ, float uvTiling)
-{
-	// Generate vertices.
-	map<vec2, TexturedColoredNormalVertex, CompareVec2> groundVertexMap = createGroundVertexMap(sizeX, sizeZ, uvTiling);
-	vector<TexturedColoredNormalVertex> groundVertexVector = createGroundVertexVector(groundVertexMap, sizeX, sizeZ);
-
-	// Create a vertex array
-	GLuint vertexArrayObject;
-	glGenVertexArrays(1, &vertexArrayObject);
-	glBindVertexArray(vertexArrayObject);
-
-	// Upload Vertex Buffer to GPU, save reference.
-	GLuint vertexBufferObject;
-	glGenBuffers(1, &vertexBufferObject);
-	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
-
-	glBufferData(GL_ARRAY_BUFFER, groundVertexVector.size() * sizeof(TexturedColoredNormalVertex), &groundVertexVector[0], GL_STATIC_DRAW);
-
-	glVertexAttribPointer(0,                   // attribute 0 matches aPos in Vertex Shader
-		3,                   // size
-		GL_FLOAT,            // type
-		GL_FALSE,            // normalized?
-		sizeof(TexturedColoredNormalVertex), // stride - each vertex contain 2 vec3 (position, color)
-		(void*)0             // array buffer offset
-	);
-	glEnableVertexAttribArray(0);
-
-
-	glVertexAttribPointer(1,                            // attribute 1 matches aColor in Vertex Shader
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(TexturedColoredNormalVertex),
-		(void*)sizeof(vec3)      // color is offseted a vec3 (comes after position)
-	);
-	glEnableVertexAttribArray(1);
-
-	glVertexAttribPointer(2,                            // attribute 2 matches aUV in Vertex Shader
-		2,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(TexturedColoredNormalVertex),
-		(void*)(2 * sizeof(vec3))      // uv is offseted by 2 vec3 (comes after position and color)
-	);
-	glEnableVertexAttribArray(2);
-
-	glVertexAttribPointer(3,                            // attribute 3 matches aNormals in Vertex Shader
-		3,
-		GL_FLOAT,
-		GL_FALSE,
-		sizeof(TexturedColoredNormalVertex),
-		(void*)(2 * sizeof(vec3) + sizeof(vec2))    // normals are offsetted by two vec3 and a vec2.
-	);
-	glEnableVertexAttribArray(3);
-
-	return vertexArrayObject;
-}
+//unsigned int GroundModel::GroundModelVAO(unsigned int sizeX, unsigned int sizeZ, float uvTiling)
+//{
+//	// Generate vertices.
+//	map<vec2, TexturedColoredNormalVertex, CompareVec2> groundVertexMap = createGroundVertexMap(sizeX, sizeZ, uvTiling);
+//	vector<TexturedColoredNormalVertex> groundVertexVector = createGroundVertexVector(groundVertexMap, sizeX, sizeZ);
+//
+//	// Create a vertex array
+//	GLuint vertexArrayObject;
+//	glGenVertexArrays(1, &vertexArrayObject);
+//	glBindVertexArray(vertexArrayObject);
+//
+//	// Upload Vertex Buffer to GPU, save reference.
+//	GLuint vertexBufferObject;
+//	glGenBuffers(1, &vertexBufferObject);
+//	glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
+//
+//	glBufferData(GL_ARRAY_BUFFER, groundVertexVector.size() * sizeof(TexturedColoredNormalVertex), &groundVertexVector[0], GL_STATIC_DRAW);
+//
+//	glVertexAttribPointer(0,                   // attribute 0 matches aPos in Vertex Shader
+//		3,                   // size
+//		GL_FLOAT,            // type
+//		GL_FALSE,            // normalized?
+//		sizeof(TexturedColoredNormalVertex), // stride - each vertex contain 2 vec3 (position, color)
+//		(void*)0             // array buffer offset
+//	);
+//	glEnableVertexAttribArray(0);
+//
+//
+//	glVertexAttribPointer(1,                            // attribute 1 matches aColor in Vertex Shader
+//		3,
+//		GL_FLOAT,
+//		GL_FALSE,
+//		sizeof(TexturedColoredNormalVertex),
+//		(void*)sizeof(vec3)      // color is offseted a vec3 (comes after position)
+//	);
+//	glEnableVertexAttribArray(1);
+//
+//	glVertexAttribPointer(2,                            // attribute 2 matches aUV in Vertex Shader
+//		2,
+//		GL_FLOAT,
+//		GL_FALSE,
+//		sizeof(TexturedColoredNormalVertex),
+//		(void*)(2 * sizeof(vec3))      // uv is offseted by 2 vec3 (comes after position and color)
+//	);
+//	glEnableVertexAttribArray(2);
+//
+//	glVertexAttribPointer(3,                            // attribute 3 matches aNormals in Vertex Shader
+//		3,
+//		GL_FLOAT,
+//		GL_FALSE,
+//		sizeof(TexturedColoredNormalVertex),
+//		(void*)(2 * sizeof(vec3) + sizeof(vec2))    // normals are offsetted by two vec3 and a vec2.
+//	);
+//	glEnableVertexAttribArray(3);
+//
+//	return vertexArrayObject;
+//}
 
 GroundModel::GroundModel() { } 
 
@@ -142,6 +141,9 @@ void GroundModel::Update(float dt)
 
 void GroundModel::Draw(int shaderProgram, GLenum renderingModel)
 {
+	glBindVertexArray(mVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, mVBO);
+
 	// > Base.
 	float groundCenterX = 0 - (float)sizeX / 2;
 	float groundCenterZ = 0 - (float)sizeZ / 2;
@@ -154,24 +156,24 @@ void GroundModel::Draw(int shaderProgram, GLenum renderingModel)
 	glDrawArrays(renderingModel, 0, 6 * sizeX * sizeZ);
 }
 
-void GroundModel::Draw(int shaderProgram, int sizeX, int sizeZ, GLenum renderingModel) 
-{
-	// > Base.
-	float groundCenterX = 0 - (float)sizeX / 2;
-	float groundCenterZ = 0 - (float)sizeZ / 2;
-
-	SetPosition(vec3(groundCenterX, 0.0f, groundCenterZ));
-
-	GLuint worldMatrixLocation = glGetUniformLocation(shaderProgram, "worldMatrix");
-	glUniformMatrix4fv(worldMatrixLocation, 1, GL_FALSE, &GetWorldMatrix()[0][0]);
-
-	glDrawArrays(renderingModel, 0, 6 * sizeX * sizeZ);
-}
+//void GroundModel::Draw(int shaderProgram, int sizeX, int sizeZ, GLenum renderingModel) 
+//{
+//	// > Base.
+//	float groundCenterX = 0 - (float)sizeX / 2;
+//	float groundCenterZ = 0 - (float)sizeZ / 2;
+//
+//	SetPosition(vec3(groundCenterX, 0.0f, groundCenterZ));
+//
+//	GLuint worldMatrixLocation = glGetUniformLocation(shaderProgram, "worldMatrix");
+//	glUniformMatrix4fv(worldMatrixLocation, 1, GL_FALSE, &GetWorldMatrix()[0][0]);
+//
+//	glDrawArrays(renderingModel, 0, 6 * sizeX * sizeZ);
+//}
 
 // uvTiling = how many quads does the texture stretch across before being repeated?
-std::map<vec2, Model::TexturedColoredNormalVertex, CompareVec2> GroundModel::createGroundVertexMap(unsigned int sizeX, unsigned int sizeZ, float uvTiling)
+void GroundModel::createGroundVertexMap(unsigned int sizeX, unsigned int sizeZ, float uvTiling)
 {
-	std::map<vec2, Model::TexturedColoredNormalVertex, CompareVec2> terrainVertexMap;
+	//std::map<vec2, Model::TexturedColoredNormalVertex, CompareVec2> terrainVertexMap;
 
 	// Vertex parameters.
 	vec3 position;
@@ -219,8 +221,6 @@ std::map<vec2, Model::TexturedColoredNormalVertex, CompareVec2> GroundModel::cre
 			cout << terrainVertexMap[vec2(x, z)].normals.x << ", " << terrainVertexMap[vec2(x, z)].normals.y << ", " << terrainVertexMap[vec2(x, z)].normals.z << " :\n";
 		}
 	}
-
-	return terrainVertexMap;
 }
 
 // We are using this noise library: https://github.com/Reputeless/PerlinNoise.
@@ -257,10 +257,8 @@ vec3 GroundModel::generateFaceNormals(vec3 pointAPos, vec3 pointBPos, vec3 point
 	return faceNormals;
 }
 
-vector<Model::TexturedColoredNormalVertex> GroundModel::createGroundVertexVector(map<vec2, TexturedColoredNormalVertex, CompareVec2> terrainVertexMap, unsigned int sizeX, unsigned int sizeZ)
+void  GroundModel::createGroundVertexVector(map<vec2, TexturedColoredNormalVertex, CompareVec2> terrainVertexMap, unsigned int sizeX, unsigned int sizeZ)
 {
-	vector<TexturedColoredNormalVertex> vertexVector;
-
 	for (int z = 0; z < sizeZ; z++) // Columns.
 	{
 		for (int x = 0; x < sizeX; x++) // Rows.
@@ -276,8 +274,6 @@ vector<Model::TexturedColoredNormalVertex> GroundModel::createGroundVertexVector
 			vertexVector.push_back(terrainVertexMap[vec2(x + 1, z + 1)]); // (1, 1). 
 		}
 	}
-
-	return vertexVector;
 }
 
 // Utility.
@@ -285,7 +281,7 @@ float GroundModel::returnHeightAtPoint(vec2 pointCoords, bool debug)
 {
 	float heightAtPoint;
 
-	//if (debug) std::cout << "Calculating ground height at point: " << pointCoords.x << ", " << pointCoords.y << ".\n";
+	if (debug) std::cout << "Calculating ground height at point: " << pointCoords.x << ", " << pointCoords.y << ".\n";
 
 	float closestLowX = floor(pointCoords.x);
 	float closestHighX = closestLowX + 1;
@@ -355,7 +351,7 @@ float GroundModel::returnHeightAtPoint(vec2 pointCoords, bool debug)
 		heightAtPoint = lerp(heightAtXEdge, lowXhighZHeight, zCoordDelta);
 	}
 
-	cout << "The height at this point is: " << heightAtPoint << ".\n";
+	if (debug) cout << "The height at this point is: " << heightAtPoint << ".\n";
 	return heightAtPoint;
 }
 

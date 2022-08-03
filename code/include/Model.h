@@ -72,6 +72,7 @@ protected:
 	vec3 mScaling;
 	vec3 mRotation;
 
+	mat4 mMatrix;
 	mat4 mParent;
 };
 
