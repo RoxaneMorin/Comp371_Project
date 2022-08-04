@@ -179,10 +179,10 @@ void main()
 	
 	// Lighting.
 	float diffuseLighting = diffuse(light_direction, normalMix);
-	//float specularLighting = specular(light_direction, normalMix);
+	//float specularLighting = specular(light_direction, normalMix); // Specular lighting doesn't look very good or logical on terrain.
 	float shadow = 1.0f - shadowCalculationFiltered(fs_in.FragPosLightSpace);
 
-	//vec3 combinedLighting = ambient_colour + light_color * shadow * (diffuseLighting + specularLighting); // Specular lighting doesn't look very good on terrain.
+	//vec3 combinedLighting = ambient_colour + light_color * shadow * (diffuseLighting + specularLighting);
 	vec3 combinedLighting = ambient_colour + light_color * shadow * (diffuseLighting);
 
 

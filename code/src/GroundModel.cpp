@@ -175,6 +175,11 @@ void GroundModel::createGroundVertexMap(unsigned int sizeX, unsigned int sizeZ, 
 {
 	//std::map<vec2, Model::TexturedColoredNormalVertex, CompareVec2> terrainVertexMap;
 
+	// Default/test noise seed: 42069u.
+	srand((unsigned int)time(0));
+	uint perlinSeed = rand() % 10000 + 1;
+	cout << "The terrain's perlin noise seed is " << perlinSeed << ".\n";
+
 	// Vertex parameters.
 	vec3 position;
 	vec3 color = vec3(1.0f, 1.0f, 1.0f);
@@ -187,7 +192,8 @@ void GroundModel::createGroundVertexMap(unsigned int sizeX, unsigned int sizeZ, 
 	{
 		for (int x = 0; x <= sizeX; x++) // Rows.
 		{
-			yCoord = generateHeightCoord(x, z, 0.05f); // Generate basic height variation using a perlin noise.
+			yCoord = generateHeightCoord(x, z, 0.05f, perlinSeed); // Generate basic height variation using a perlin noise.
+			//yCoord *= 1.5; // Height modulation. Do we want higher hills and valleys?
 			yCoord += (sin((float)x) / 2 + (rand() % 12 + 1)) / 20; // Generate aditional variations using random numbers and a sin wave.
 
 			position = vec3((float)x, yCoord, (float)z);
@@ -224,10 +230,10 @@ void GroundModel::createGroundVertexMap(unsigned int sizeX, unsigned int sizeZ, 
 }
 
 // We are using this noise library: https://github.com/Reputeless/PerlinNoise.
-float GroundModel::generateHeightCoord(unsigned int xCoord, unsigned int zCoord, float noiseScaling)
+float GroundModel::generateHeightCoord(unsigned int xCoord, unsigned int zCoord, float noiseScaling, uint randomizedSeed)
 {
 	// Do the perlin noise ~~
-	const siv::PerlinNoise::seed_type seed = 42069u;
+	const siv::PerlinNoise::seed_type seed = randomizedSeed;
 	const siv::PerlinNoise perlin{ seed };
 
 	const float noise = perlin.normalizedOctave2D((float)xCoord * noiseScaling, (float)zCoord * noiseScaling, 5);

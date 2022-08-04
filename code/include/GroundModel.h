@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <map>
+#include <ctime>
 
 // Code based on https://stackoverflow.com/questions/23042947/how-to-create-a-stdset-with-custom-comparator-in-c
 struct CompareVec2
@@ -32,7 +33,7 @@ public:
 
 	float returnHeightAtPoint(vec2 pointCoords, bool debug = false);
 
-	float generateHeightCoord(unsigned int xCoord, unsigned int zCoord, float noiseScaling);
+	float generateHeightCoord(unsigned int xCoord, unsigned int zCoord, float noiseScaling, uint randomizedSeed = 42069u);
 	vec2 generateUVCoords(unsigned int posX, unsigned int posZ, float uvTiling);
 	vec3 generateFaceNormals(vec3 pointAPos, vec3 pointBPos, vec3 pointCPos);
 	void createGroundVertexVector(std::map<vec2, TexturedColoredNormalVertex, CompareVec2> terrainVertexMap, unsigned int sizeX, unsigned int sizeZ);

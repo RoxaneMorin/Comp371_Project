@@ -1,8 +1,21 @@
 ﻿cl : command line warning D9002: ignoring unknown option '-std=c++20'
+  GroundModel.cpp
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\GroundModel.cpp(77,16): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\GroundModel.cpp(78,16): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\GroundModel.cpp(156,44): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\GroundModel.cpp(191,20): warning C4018: '<=': signed/unsigned mismatch
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\GroundModel.cpp(193,21): warning C4018: '<=': signed/unsigned mismatch
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\GroundModel.cpp(210,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\GroundModel.cpp(212,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\GroundModel.cpp(239,47): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\GroundModel.cpp(239,20): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\GroundModel.cpp(268,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\GroundModel.cpp(270,21): warning C4018: '<': signed/unsigned mismatch
   project.cpp
 C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\include\shaderloader.h(29,10): warning C4477: 'printf' : format string '%s' requires an argument of type 'char *', but variadic argument 1 has type 'std::string'
 C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\project.cpp(367,22): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
 C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\project.cpp(397,22): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\project.cpp(810,56): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
 C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\project.cpp(811,54): warning C4244: '-=': conversion from 'double' to 'float', possible loss of data
+  Generating Code...
   project.vcxproj -> C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\Debug\project.exe
