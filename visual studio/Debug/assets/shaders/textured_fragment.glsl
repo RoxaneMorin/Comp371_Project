@@ -44,7 +44,8 @@ const float light2_intensity = 3.0f;
 float diffuse(vec3 lightDir, vec3 sourceNormal)
 {	
 	vec3 normal = normalize(sourceNormal);
-	vec3 normlalizedLightDirection = normalize(lightDir);
+	vec3 invertedLightDir =  vec3(-light_direction.x, light_direction.y, -light_direction.z);
+	vec3 normlalizedLightDirection = normalize(invertedLightDir);
 	
 	return shadingDiffuseStrength * max(dot(normal, normlalizedLightDirection), 0.0f);
 }
@@ -52,7 +53,8 @@ float diffuse(vec3 lightDir, vec3 sourceNormal)
 float specular(vec3 lightDir, vec3 sourceNormal)
 {
 	vec3 normal = normalize(sourceNormal);
-	vec3 normlalizedLightDirection = normalize(lightDir);
+	vec3 invertedLightDir =  vec3(-light_direction.x, light_direction.y, -light_direction.z);
+	vec3 normlalizedLightDirection = normalize(invertedLightDir);
 	
 	vec3 viewDirection = normalize(view_position - fs_in.FragPos);
 	
