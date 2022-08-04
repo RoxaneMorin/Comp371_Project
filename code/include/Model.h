@@ -39,6 +39,9 @@ public:
 	void SetPosition(vec3 position);
 	void SetScaling(vec3 scaling);
 	void SetRotation(vec3 rotation);
+	void UpdatePosition(vec3 position);
+	void UpdateRotation(vec3 rotation);
+	void UpdateScale(vec3 scale);
 
 	vec3 GetPosition() const { return mPosition; }
 	vec3 GetScaling() const { return mScaling; }
@@ -47,8 +50,6 @@ public:
 	virtual bool ContainsPoint(vec3 position) = 0;//Whether or not the given point is withing the model. For collisions.
 	virtual bool IntersectsPlane(vec3 planePoint, vec3 planeNormal) = 0;
 	//virtual float IntersectsRay(vec3 rayOrigin, vec3 rayDirection) = 0; //Returns a strictly positive value if an intersection occurs
-
-	virtual bool isSphere() = 0; //This is not at all object-oriented, but somewhat necessary due to need for a simple double-dispatch mechanism
 
 	// The vertex format could be different for different types of models
 	struct TexturedColoredNormalVertex

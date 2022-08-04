@@ -33,6 +33,7 @@
 #include "drawFunctions.h"
 #include "light.h"
 #include "Model.h"
+#include "QuadModel.h"
 #include "CubeModel.h"
 #include "PlaneModel.h"
 #include "GroundModel.h"
@@ -222,6 +223,7 @@ GLuint carrotTextureID;
 GLuint stoneTextureID;
 GLuint woodTextureID;
 GLuint metalTextureID;
+GLuint grassTextureID;
 
 GLuint snowDepthTextureID;
 GLuint stoneDepthTextureID;
@@ -231,6 +233,7 @@ int cubeVAO;
 int planeVAO;
 int lineVAO;
 int sphereVAO;
+int quadVAO;
 
 // Additional info for spheres.
 int sphereRadialDivs = 16;
@@ -245,13 +248,15 @@ Light sunLight;
 
 // Shadow data.
 bool useShadows = true;
+// X rotation on Quad, uses SQRT
+bool quadXRotation = true;
 
 const unsigned int SHADOW_TEXTURE_WIDTH = 1024, SHADOW_TEXTURE_HEIGHT = 1024;
 GLuint shadowMapTexture;
 GLuint shadowMapFBO;
 float aspect;
 
-vec3 gravityVector(0.0f, -0.5f, 0.0f);
+vec3 gravityVector(0.0f, -0.1f, 0.0f);
 
 // Camera parameters.
 float cameraTheta;
@@ -293,9 +298,12 @@ int previous3Press;
 int previous4Press;
 
 float dt;
+float spinning = 0.0f;
 
 vector<Model*> objects;
+vector<QuadModel*> quads;
 
+QuadModel* quad;
 CubeModel* cubeBase;
 CubeModel* cube;
 SphereModel* sphere;
@@ -470,6 +478,7 @@ void initScene()
 	stoneTextureID = loadTexture(texturePathPrefix + "stone.png");
 	woodTextureID = loadTexture(texturePathPrefix + "wood.png");
 	metalTextureID = loadTexture(texturePathPrefix + "metal.png");
+	grassTextureID = loadTexture(texturePathPrefix + "grass.png");
 
 	snowDepthTextureID = loadTexture("assets/textures/snowDepth.png");
 	stoneDepthTextureID = loadTexture("assets/textures/stoneDepth.png");
@@ -491,6 +500,7 @@ void initScene()
 	cubeVAO = CubeModel::CubeModelVAO();
 	planeVAO = PlaneModel::PlaneModelVAO();
 	sphereVAO = SphereModel::SphereModelVAO(1.0f, 0.5f, sphereRadialDivs, sphereVerticalDivs, sphereVertexCount);
+	quadVAO = QuadModel::QuadModelVAO();
 	//cubeVAO = createCubeVBO();
 	//planeVAO = createPlaneVBO();
 	lineVAO = createLinesVBO();
@@ -548,11 +558,14 @@ void initScene()
 
 	SetUniform1Value(groundShaderProgram, "heightblend_factor", 0.45f);
 
+	quad = new QuadModel(vec3(2.0f, 0.7f, 2.0f), vec3(0.0f), vec3(0.3f));
 	cubeBase = new CubeModel(vec3(0.0f, 2.0f, 0.0f), vec3(0.0f), vec3(1.0f));
 	cube = new CubeModel(vec3(0.0f, 5.0f, 0.0f), vec3(0.0f, 45.0f, 45.0f), vec3(2.0f));
-	sphere = new SphereModel(vec3(8.0f), vec3(0.0f, 0.0f, 0.0f), vec3(2.0f));
+	sphere = new SphereModel(vec3(20.0f), vec3(0.0f), vec3(2.0f));
 	cameraBoundingSphere = new SphereModel(cameraPosition, vec3(0.0f), vec3(0.5f));
 	ground = new GroundModel(groundSizeX, groundSizeZ, groundUVTiling);
+
+	quads.push_back(quad);
 
 	objects.push_back(cubeBase);
 	objects.push_back(cube);
@@ -563,6 +576,7 @@ void initScene()
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_PROGRAM_POINT_SIZE);
+	glEnable(GL_BLEND);
 }
 
 void setUpLightForShadows(Light light)
@@ -643,18 +657,38 @@ void renderScene(GLuint shaderProgram)
 
 	glBindVertexArray(cubeVAO);
 
+	//cube->UpdatePosition(vec3(sinf(glfwGetTime()) / 10.0f, 0.0f, 0.0f));
 	cube->Draw(shaderProgram, meshRenderMode);
 
+	cubeBase->UpdateRotation(vec3(0.0f, 1.0f * dt, 0.0f));
 	cubeBase->Draw(shaderProgram, meshRenderMode);
 
 	glBindVertexArray(sphereVAO);
 
+	spinning += 45.0f * dt;
+	mat4 center = translate(mat4(1.0f), vec3(0.0f)) * rotate(mat4(1.0f), radians(spinning), VECTOR_UP);
+
+	sphere->SetParent(center);
+
 	//sphere->Draw(shaderProgram, sphereVertexCount);
 	sphere->Draw(shaderProgram, sphereVertexCount, meshRenderMode);
 
-	// Draw ground.
+	// Draw ground. Object has it's own VAO
 	ground->Draw(shaderProgram, meshRenderMode);
 
+	glBindVertexArray(quadVAO);
+
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, grassTextureID);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, grassTextureID);
+	glActiveTexture(GL_TEXTURE3);
+	glBindTexture(GL_TEXTURE_2D, grassTextureID);
+	glActiveTexture(GL_TEXTURE4);
+	glBindTexture(GL_TEXTURE_2D, grassTextureID);
+
+	//quad->UpdateRotation(vec3(0.0f, 0.0f, 1.0f * dt));
+	quad->Draw(shaderProgram, meshRenderMode);
 	//// > Base.
 	//float groundCenterX{ 0 - (float)groundSizeX / 2 };
 	//float groundCenterZ{ 0 - (float)groundSizeZ / 2 };
@@ -666,7 +700,7 @@ void renderScene(GLuint shaderProgram)
 
 	// Objects will likely have to inherit the ground's transform as to follow its coordinates.
 	// Or we only draw the world in the positive X, positive Z quadrants.
-	
+
 	//mat4 cubeBaseMatrix = translate(mat4(1.0f), vec3(0.0f, 2.0f, 0.0f));
 	//GLuint worldMatrixLocation = glGetUniformLocation(shaderProgram, "worldMatrix");
 	//glUniformMatrix4fv(worldMatrixLocation, 1, GL_FALSE, &cubeBaseMatrix[0][0]);
@@ -717,25 +751,6 @@ void handleInputs()
 		cameraType = Rotating;
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
-
-	//// Rotate Camera (Working)
-	//if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-	//{
-	//	cameraHorizontalAngle -= cameraAngularSpeed * dt;
-	//}
-	//if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-	//{
-	//	cameraHorizontalAngle += cameraAngularSpeed * dt;
-	//}
-	//if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-	//{
-	//	cameraVerticalAngle -= cameraAngularSpeed * dt;
-	//}
-	///// Pressing the down arrow key rotates the camera downward.
-	//if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-	//{
-	//	cameraVerticalAngle += cameraAngularSpeed * dt;
-	//}
 
 	if (cameraType == FirstPerson)
 	{
@@ -856,7 +871,6 @@ void Update(float delta)
 	for (vector<Model*>::iterator it = objects.begin(); it < objects.end(); ++it)
 	{
 		//Camera Collisions with ground
-
 		if (*it == ground)
 		{
 			GroundModel* ground = dynamic_cast<GroundModel*>(*it);
@@ -870,55 +884,32 @@ void Update(float delta)
 				}
 			}
 		}
+	}
 
-		//Intersphere collisions
-		//complexity: O(n^2)
-		//for (vector<Model*>::iterator it2 = it; it2 < mModel.end(); ++it2)
-		//{
-		//    if (it != it2 && (*it)->isSphere() && (*it2)->isSphere()) //Spheres can't collide with themselves, and both models should be spheres for this scene.
-		//    {
-		//        Model* s1 = *it;
-		//        Model* s2 = *it2;
+	// Update quads to billboards
+	for (QuadModel* quad : quads)
+	{
+		vec3 lookAtDiff{ quad->GetPosition() - cameraPosition };
+		float yRotation{ atan2(lookAtDiff.x, lookAtDiff.z) };
 
-		//        float distance = glm::distance(s1->GetPosition(), s2->GetPosition());
-		//        float r1 = s1->GetScaling().x;
-		//        float r2 = s2->GetScaling().x;
-		//        float totalRadii = r1 + r2;
+		float xRotation{ 0.0f };
+		if (quadXRotation)
+		{
+			xRotation = atan2(lookAtDiff.y, sqrt(lookAtDiff.x * lookAtDiff.x + lookAtDiff.z * lookAtDiff.z));
+			xRotation = std::max(0.0f, std::min(20.0f, xRotation));
+		}
 
-		//        //TODO 2 - Collisions between spheres
-
-		//        if (distance < totalRadii) //Collision
-		//        {
-		//            glm::vec3 collisionNormal = glm::normalize(s1->GetPosition() - s2->GetPosition());
-		//            glm::vec3 collisionPoint = s2->GetPosition() + r2 * collisionNormal;
-
-		//            //decompose momentum
-		//            //
-		//            float m1 = s1->GetMass();
-		//            float m2 = s2->GetMass();
-
-		//            glm::vec3 normalVelocity1 = glm::dot(s1->GetVelocity(), collisionNormal) * collisionNormal;
-		//            glm::vec3 normalVelocity2 = glm::dot(s2->GetVelocity(), collisionNormal) * collisionNormal;
-
-		//            glm::vec3 tangentMomentum1 = s1->GetVelocity() - normalVelocity1;
-		//            glm::vec3 tangentMomentum2 = s2->GetVelocity() - normalVelocity2;
-
-		//            glm::vec3 newNormalVelocity1 = ((m1 - m2) / (m1 + m2)) * normalVelocity1 + ((2 * m2) / (m1 + m2) * normalVelocity2);
-		//            glm::vec3 newNormalVelocity2 = ((2 * m1) / (m1 + m2)) * normalVelocity1 + ((m2 - m1) / (m1 + m2) * normalVelocity2);
-
-		//            s1->SetVelocity(newNormalVelocity1 + tangentMomentum1);
-		//            s2->SetVelocity(newNormalVelocity2 + tangentMomentum2);
-		//        }
-
-
-		//    }
-	//    }
-
+		quad->SetRotation(vec3(xRotation, yRotation, 0.0f));
 	}
 
 	// Update models
-	for (vector<Model*>::iterator it = objects.begin(); it < objects.end(); ++it)
+	for (Model* model : objects)
 	{
-		(*it)->Update(delta);
+		model->Update(delta);
 	}
+
+	//for (vector<Model*>::iterator it = objects.begin(); it < objects.end(); ++it)
+	//{
+	//	(*it)->Update(delta);
+	//}
 }

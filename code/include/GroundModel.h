@@ -28,8 +28,6 @@ public:
 	virtual bool ContainsPoint(vec3 position);//Whether or not the given point is withing the model. For collisions.
 	virtual bool IntersectsPlane(vec3 planePoint, vec3 planeNormal);
 
-	virtual bool isSphere() { return false; } //This is not at all object-oriented, but somewhat necessary due to need for a simple double-dispatch mechanism
-
 	//unsigned int static GroundModelVAO(unsigned int sizeX, unsigned int sizeZ, float uvTiling);
 
 	float returnHeightAtPoint(vec2 pointCoords, bool debug = false);

@@ -70,7 +70,7 @@ mat4 Model::GetWorldMatrix() const
 
     worldMatrix = t * r * s;
 
-    return worldMatrix * mParent;
+    return mParent * worldMatrix;
 }
 
 void Model::SetPosition(vec3 position)
@@ -86,4 +86,19 @@ void Model::SetScaling(vec3 scaling)
 void Model::SetRotation(vec3 rotation)
 {
     mRotation = rotation;
+}
+
+void Model::UpdatePosition(vec3 position)
+{
+    mPosition += position;
+}
+
+void Model::UpdateRotation(vec3 rotation) 
+{
+    mRotation += rotation;
+}
+
+void Model::UpdateScale(vec3 scale)
+{
+    mScaling += scale;
 }

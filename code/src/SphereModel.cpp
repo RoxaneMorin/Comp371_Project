@@ -670,12 +670,7 @@ SphereModel::~SphereModel()
 
 void SphereModel::Update(float dt)
 {
-	mPosition += dt * mVelocity;
-}
 
-void SphereModel::Accelerate(glm::vec3 acceleration, float delta)
-{
-	mVelocity += acceleration * delta;
 }
 
 void SphereModel::Draw(int shaderProgram, GLenum renderingMode)
