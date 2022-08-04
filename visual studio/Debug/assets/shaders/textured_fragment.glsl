@@ -27,21 +27,6 @@ uniform vec3 light_color;
 uniform vec3 light_position;
 uniform vec3 light_direction;
 
-uniform float light_cutoff_angle;
-uniform float light_interior_angle;
-
-uniform vec3 light2_color;
-uniform vec3 light2_position;
-uniform vec3 light2_direction;
-
-uniform float light2_cutoff_angle;
-uniform float light2_interior_angle;
-
-
-uniform bool render_lighting = true;
-uniform bool render_main_light = true;
-uniform bool render_flash_light = true;
-uniform bool render_shadows;
 
 uniform float shadingSpecularStrength = 0.5;
 uniform float shadingSpecularPower = 10;
@@ -53,19 +38,20 @@ const float PI = 3.1415926535897932384626433832795;
 const float shadingDiffuseStrength = 0.95;
 const float light2_intensity = 3.0f;
 
-//
 
-float diffuse(vec3 lightDir)
+// Lighting.
+
+float diffuse(vec3 lightDir, vec3 sourceNormal)
 {	
-	vec3 normal = normalize(fs_in.Normal);
+	vec3 normal = normalize(sourceNormal);
 	vec3 normlalizedLightDirection = normalize(lightDir);
 	
 	return shadingDiffuseStrength * max(dot(normal, normlalizedLightDirection), 0.0f);
 }
 
-float specular(vec3 lightDir)
+float specular(vec3 lightDir, vec3 sourceNormal)
 {
-	vec3 normal = normalize(fs_in.Normal);
+	vec3 normal = normalize(sourceNormal);
 	vec3 normlalizedLightDirection = normalize(lightDir);
 	
 	vec3 viewDirection = normalize(view_position - fs_in.FragPos);
@@ -121,79 +107,50 @@ float shadowCalculationFiltered(vec4 fragPosLightSpace)
     return shadow;
 }
 
-float spotLightScalar(vec3 lightPos, vec3 lightDir, float lightCutoffAngle, float lightInteriorAngle)
+// Normals.
+
+vec3 handleNormalMap(sampler2D currentNormalSampler)
 {
-	vec3 positionalLightDir = normalize(lightPos - fs_in.FragPos);
-	//vec3 normlalizedLightDirection = normalize(lightDir);
+	vec3 normal = texture(currentNormalSampler, fs_in.TexCoords).rgb;
+	normal = normalize(normal * 2.0f - 1.0f);
 	
-	// Correct weird behaviour.
-	float inverseCutOffAngle = radians(360.0f) - lightCutoffAngle;
-	float inverseInteriorAngle = radians(360.0f) - lightInteriorAngle;
+	// Compute tangent T and bitangent B.
+	// The technique used was found here: https://community.khronos.org/t/computing-the-tangent-space-in-the-fragment-shader/52861.
+	vec3 Q1 = dFdx(fs_in.FragPos);
+	vec3 Q2 = dFdy(fs_in.FragPos);
+	vec2 st1 = dFdx(fs_in.TexCoords);
+	vec2 st2 = dFdy(fs_in.TexCoords);
 	
-	float theta = dot(positionalLightDir, lightDir);
+	vec3 T = normalize(Q1 * st2.t - Q2 * st1.t);
+	vec3 B = normalize(-Q1 * st2.s + Q2 * st1.s);
+	//vec3 B = cross(T, texture(currentNormalSampler, fs_in.TexCoords).rgb); // Seems to mess up the shadow direction, try again with a real normal map.
 	
-	if (theta > inverseInteriorAngle)
-	{
-		return 1.0f;
-	}
-	else if (theta > inverseCutOffAngle)
-	{
-		return (1.0 - cos(PI * (theta - inverseCutOffAngle) / (inverseInteriorAngle - inverseCutOffAngle))) / 2.0;
-	}
-	else
-	{
-		return 0.0f;
-	}
+	// Transpose texture-to-eye space matrix.
+	mat3 TBN = mat3(T, B, fs_in.Normal);
 	
+	// Transform the normal into eye space.
+	normal = normal * TBN;
+	
+	return vec3(normal);
 }
 
-float flashLightScalar(vec3 lightPos, vec3 lightDir, float lightCutoffAngle, float lightInteriorAngle)
-{
-	vec3 positionalLightDir = normalize(lightPos - fs_in.FragPos);
-	vec3 normlalizedLightDirection = normalize(lightDir);
-	
-	float theta = dot(positionalLightDir, normlalizedLightDirection);
-	
-	float flashLightCone;
-	
-	float inner = lightInteriorAngle; // radians(57.0f);
-	float outer = lightCutoffAngle; //radians(55.0f);
-	
-	if (theta > inner)
-	{
-		return 1.0f;
-	}
-	else if (theta > outer)
-	{
-		return (1.0 - cos(PI * (theta - outer) / (inner - outer))) / 2.0;
-	}
-	else
-	{
-		return 0.0f;
-	}
-}
 
-//
+// Main
 
 void main()
 {           
-    // Main light.
-	float diffuseLighting = diffuse(light_direction);
-	float specularLighting = specular(light_direction);
-	float shadow = render_shadows ? (1.0f - shadowCalculationFiltered(fs_in.FragPosLightSpace)) : 1.0f;
-	float mainLightCone = spotLightScalar(light_position, light_direction, light_cutoff_angle, light_interior_angle);
-	vec3 lightingMain = light_color * mainLightCone * shadow * (diffuseLighting + specularLighting);
+    vec3 normals = handleNormalMap(normalSampler);
 	
-	// Secondary/Flash light.
-	float diffuseLighting2 = diffuse(light2_direction);
-	float specularLighting2 = specular(light2_direction);
-	float flashLightCone = flashLightScalar(light2_position, light2_direction, light2_cutoff_angle, light2_interior_angle);
-	vec3 lightingFlash = light2_color * light2_intensity * flashLightCone * (diffuseLighting2 + specularLighting2);
+	// Main light.
+	float diffuseLighting = diffuse(light_direction, normals);
+	float specularLighting = specular(light_direction, normals);
+	float shadow = 1.0f - shadowCalculationFiltered(fs_in.FragPosLightSpace);
+	vec3 lightingMain = light_color * shadow * (diffuseLighting + specularLighting);
 	
-	vec3 allLighting = ambient_colour + (render_main_light ? lightingMain : vec3(0.0f)) + (render_flash_light ? lightingFlash : vec3(0.0f));
+	vec3 allLighting = ambient_colour + lightingMain;
 	
 	vec3 textureColor = texture(textureSampler, fs_in.TexCoords).rgb;
-	vec3 screenColor = render_lighting ? (colour * textureColor * allLighting) : (colour * textureColor); 
+	vec3 screenColor = colour * textureColor * allLighting;
 
 	FragColor = vec4(screenColor, alpha);
 }

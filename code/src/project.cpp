@@ -678,6 +678,23 @@ void renderScene(GLuint shaderProgram)
 
 	// Render objects.
 
+	if (shaderProgram != shadowShaderProgram)
+	{
+		//cout << "Not in shadow pass.\n";
+		shaderProgram = texturedShaderProgram;
+		glUseProgram(shaderProgram);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, woodTextureID);
+		GLuint textureLocation = glGetUniformLocation(shaderProgram, "textureSampler");
+		glUniform1i(textureLocation, 0);
+
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, groundLowNormalTextureID);
+		textureLocation = glGetUniformLocation(shaderProgram, "normalSampler");
+		glUniform1i(textureLocation, 2);
+	}
+
 	//
 	glBindVertexArray(cubeVAO);
 
