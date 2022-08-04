@@ -103,6 +103,12 @@ if %errorlevel% neq 0 goto :VCEnd</Command>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\CubeModel.cpp" />
+    <ClCompile Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\GroundModel.cpp" />
+    <ClCompile Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\Model.cpp" />
+    <ClCompile Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\PlaneModel.cpp" />
+    <ClCompile Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\QuadModel.cpp" />
+    <ClCompile Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\SphereModel.cpp" />
     <ClCompile Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\drawFunctions.cpp" />
     <ClCompile Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp" />
     <ClCompile Include="C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\project.cpp" />

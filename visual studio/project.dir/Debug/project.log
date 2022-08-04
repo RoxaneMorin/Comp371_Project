@@ -1,13 +1,14 @@
 ﻿cl : command line warning D9002: ignoring unknown option '-std=c++20'
-  geometricFunctions.cpp
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(278,26): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(278,20): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(612,23): warning C4018: '<=': signed/unsigned mismatch
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(614,27): warning C4018: '<=': signed/unsigned mismatch
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(630,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(632,27): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(661,50): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(661,23): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(692,23): warning C4018: '<': signed/unsigned mismatch
-C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\geometricFunctions.cpp(694,27): warning C4018: '<': signed/unsigned mismatch
+  GroundModel.cpp
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\GroundModel.cpp(77,16): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\GroundModel.cpp(78,16): warning C4244: '=': conversion from 'unsigned int' to 'float', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\GroundModel.cpp(156,44): warning C4244: 'argument': conversion from 'float' to 'GLsizei', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\GroundModel.cpp(186,20): warning C4018: '<=': signed/unsigned mismatch
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\GroundModel.cpp(188,21): warning C4018: '<=': signed/unsigned mismatch
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\GroundModel.cpp(204,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\GroundModel.cpp(206,21): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\GroundModel.cpp(233,47): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\GroundModel.cpp(233,20): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\GroundModel.cpp(262,20): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\code\src\GroundModel.cpp(264,21): warning C4018: '<': signed/unsigned mismatch
   project.vcxproj -> C:\Users\Roxane\Documents\COMP371_all\ProjectRepo\COMP371_Project\visual studio\Debug\project.exe

@@ -217,8 +217,8 @@ void GroundModel::createGroundVertexMap(unsigned int sizeX, unsigned int sizeZ, 
 			//terrainVertexMap[vec2(x, z)].normals.x *= 0.75f;
 			//terrainVertexMap[vec2(x, z)].normals.z *= 0.75f;
 
-			cout << "Vertex normals at " << terrainVertexMap[vec2(x, z)].position.x << ", " << terrainVertexMap[vec2(x, z)].position.z << " :\n";
-			cout << terrainVertexMap[vec2(x, z)].normals.x << ", " << terrainVertexMap[vec2(x, z)].normals.y << ", " << terrainVertexMap[vec2(x, z)].normals.z << " :\n";
+			//cout << "Vertex normals at " << terrainVertexMap[vec2(x, z)].position.x << ", " << terrainVertexMap[vec2(x, z)].position.z << " :\n";
+			//cout << terrainVertexMap[vec2(x, z)].normals.x << ", " << terrainVertexMap[vec2(x, z)].normals.y << ", " << terrainVertexMap[vec2(x, z)].normals.z << " :\n";
 		}
 	}
 }

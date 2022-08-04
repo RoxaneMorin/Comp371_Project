@@ -167,7 +167,6 @@ void setProjectionMatrix(mat4 projectionMatrix)
 {
 	for (vector<unsigned int>::iterator currentShader = allShaderPrograms.begin(); currentShader < allShaderPrograms.end(); ++currentShader)
 	{
-		cout << "Current iterator: " << *currentShader << ".\n";
 		setProjectionMatrix(*currentShader, projectionMatrix);
 	}
 }
@@ -183,7 +182,6 @@ void setViewMatrix(mat4 viewMatrix)
 {
 	for (vector<unsigned int>::iterator currentShader = allShaderPrograms.begin(); currentShader < allShaderPrograms.end(); ++currentShader)
 	{
-		cout << "Current iterator: " << *currentShader << ".\n";
 		setViewMatrix(*currentShader, viewMatrix);
 	}
 }
@@ -218,15 +216,19 @@ void Update(float delta);
 
 
 // Textures.
-GLuint snowTextureID;
-GLuint carrotTextureID;
+GLuint groundHighTextureID;
+GLuint groundLowTextureID;
 GLuint stoneTextureID;
 GLuint woodTextureID;
 GLuint metalTextureID;
 GLuint grassTextureID;
 
-GLuint snowDepthTextureID;
-GLuint stoneDepthTextureID;
+GLuint groundHighDepthTextureID;
+GLuint groundLowDepthTextureID;
+
+GLuint groundHighNormalTextureID;
+GLuint groundLowNormalTextureID;
+GLuint grassNormalTextureID;
 
 // Meshes.
 int cubeVAO;
@@ -473,15 +475,18 @@ void initScene()
 	const string texturePathPrefix = "assets/textures/";
 	const string shaderPathPrefix = "assets/shaders/";
 
-	snowTextureID = loadTexture(texturePathPrefix + "snow.png");
-	carrotTextureID = loadTexture(texturePathPrefix + "carrot.png");
+	groundHighTextureID = loadTexture(texturePathPrefix + "snow.png");
+	groundLowTextureID = loadTexture(texturePathPrefix + "carrot.png");
 	stoneTextureID = loadTexture(texturePathPrefix + "stone.png");
 	woodTextureID = loadTexture(texturePathPrefix + "wood.png");
 	metalTextureID = loadTexture(texturePathPrefix + "metal.png");
 	grassTextureID = loadTexture(texturePathPrefix + "grass.png");
 
-	snowDepthTextureID = loadTexture("assets/textures/snowDepth.png");
-	stoneDepthTextureID = loadTexture("assets/textures/stoneDepth.png");
+	groundHighDepthTextureID = loadTexture("assets/textures/snowDepth.png");
+	groundLowDepthTextureID = loadTexture("assets/textures/stoneDepth.png");
+
+	groundHighNormalTextureID = loadTexture("assets/textures/groundHighNormal.png");
+	groundLowNormalTextureID = loadTexture("assets/textures/groundLowNormal.png");
 
 	// Compile and link shaders.
 	colourShaderProgram = loadSHADER(shaderPathPrefix + "vertexcolour_vertex.glsl", shaderPathPrefix + "vertexcolour_fragment.glsl");
@@ -633,28 +638,47 @@ void renderScene(GLuint shaderProgram)
 	// Handle textures.
 	glUseProgram(shaderProgram);
 
+	// Set ground shader textures.
 	// -> Texture A.
 	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, carrotTextureID);
+	glBindTexture(GL_TEXTURE_2D, groundLowTextureID);
 	GLuint textureLocation = glGetUniformLocation(shaderProgram, "textureSamplerA");
 	glUniform1i(textureLocation, 1);
 
 	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, stoneDepthTextureID);
+	glBindTexture(GL_TEXTURE_2D, groundLowDepthTextureID);
 	textureLocation = glGetUniformLocation(shaderProgram, "depthSamplerA");
 	glUniform1i(textureLocation, 3);
 
+	glActiveTexture(GL_TEXTURE5);
+	glBindTexture(GL_TEXTURE_2D, groundLowNormalTextureID);
+	textureLocation = glGetUniformLocation(shaderProgram, "normalSamplerA");
+	glUniform1i(textureLocation, 5);
+
 	// -> Texture B.
 	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, snowTextureID);
+	glBindTexture(GL_TEXTURE_2D, groundHighTextureID);
 	textureLocation = glGetUniformLocation(shaderProgram, "textureSamplerB");
 	glUniform1i(textureLocation, 2);
 
 	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, snowDepthTextureID);
+	glBindTexture(GL_TEXTURE_2D, groundHighDepthTextureID);
 	textureLocation = glGetUniformLocation(shaderProgram, "depthSamplerB");
 	glUniform1i(textureLocation, 4);
 
+	glActiveTexture(GL_TEXTURE6);
+	glBindTexture(GL_TEXTURE_2D, groundHighNormalTextureID);
+	textureLocation = glGetUniformLocation(shaderProgram, "normalSamplerB");
+	glUniform1i(textureLocation, 6);
+
+
+	// Draw ground. Object has it's own VAO
+	ground->Draw(shaderProgram, meshRenderMode);
+
+
+	// Render objects.
+
+	//
 	glBindVertexArray(cubeVAO);
 
 	//cube->UpdatePosition(vec3(sinf(glfwGetTime()) / 10.0f, 0.0f, 0.0f));
@@ -673,8 +697,7 @@ void renderScene(GLuint shaderProgram)
 	//sphere->Draw(shaderProgram, sphereVertexCount);
 	sphere->Draw(shaderProgram, sphereVertexCount, meshRenderMode);
 
-	// Draw ground. Object has it's own VAO
-	ground->Draw(shaderProgram, meshRenderMode);
+	
 
 	glBindVertexArray(quadVAO);
 

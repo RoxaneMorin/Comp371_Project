@@ -23,8 +23,6 @@ uniform sampler2D normalSamplerB;
 
 uniform float heightblend_factor;
 
-// add specular and gloss params for both heights. https://learnopengl.com/Lighting/Lighting-maps
-// add normal or parallax maps for both heights. https://learnopengl.com/Advanced-Lighting/Normal-Mapping
 
 //
 
@@ -166,21 +164,22 @@ out vec4 FragColor;
 
 void main()
 {           
-    vec3 normal = handleNormalMap(textureSamplerA);
-	
 	// Height Blending.
 	vec3 textureColorA = texture(textureSamplerA, fs_in.TexCoords).rgb;
 	float textureDepthA = texture(depthSamplerA, fs_in.TexCoords).r;
+	vec3 textureNormalA = handleNormalMap(normalSamplerA);
 	
 	vec3 textureColorB = texture(textureSamplerB, fs_in.TexCoords).rgb;
 	float textureDepthB = texture(depthSamplerB, fs_in.TexCoords).r;
+	vec3 textureNormalB = handleNormalMap(normalSamplerB);
 	
 	vec3 textureMix = heightlerp(textureColorA, textureDepthA, textureColorB, textureDepthB, fs_in.FragPos.y);
+	vec3 normalMix = heightlerp(textureNormalA, textureDepthA, textureNormalB, textureDepthB, fs_in.FragPos.y);
 	
 	
 	// Lighting.
-	float diffuseLighting = diffuse(light_direction, normal);
-	//float specularLighting = specular(light_direction, normal);
+	float diffuseLighting = diffuse(light_direction, normalMix);
+	//float specularLighting = specular(light_direction, normalMix);
 	float shadow = 1.0f - shadowCalculationFiltered(fs_in.FragPosLightSpace);
 
 	//vec3 combinedLighting = ambient_colour + light_color * shadow * (diffuseLighting + specularLighting); // Specular lighting doesn't look very good on terrain.
