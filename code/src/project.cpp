@@ -202,7 +202,6 @@ vec3 updateCameraPosition(float cameraTheta, float cameraPhi, float cameraRadius
 	return vec3(cameraX, cameraY, cameraZ);
 }
 
-
 // MAIN
 // Declare functions and variables for later use.
 
@@ -258,15 +257,16 @@ GLuint shadowMapTexture;
 GLuint shadowMapFBO;
 float aspect;
 
-vec3 gravityVector(0.0f, -0.1f, 0.0f);
+vec3 gravityVector(0.0f, -0.5f, 0.0f);
 
 // Camera parameters.
 float cameraTheta;
 float cameraPhi;
 float cameraRadius;
 float cameraRotSpeed;
-float cameraSpeed = 1.0f;
+float cameraSpeed = 1.5f;
 float cameraFastSpeed = 2 * cameraSpeed;
+float currentCameraSpeed = 1.5f;
 const float cameraAngularSpeed = 30.0f;
 float cameraHorizontalAngle = 90.0f;
 float cameraVerticalAngle = 0.0f;
@@ -275,6 +275,7 @@ float cameraVerticalAngle = 0.0f;
 vec3 cameraPosition;
 vec3 cameraLookAt(0.0f, 0.0f, 0.0f);
 vec3 cameraUpVector(0.0f, 1.0f, 0.0f);
+vec3 cameraDirection(0.0f);
 
 vec3 cameraSideVector;
 mat4 viewMatrix;
@@ -308,6 +309,9 @@ vector<QuadModel*> quads;
 QuadModel* quad;
 CubeModel* cubeBase;
 CubeModel* cube;
+CubeModel* cube2;
+CubeModel* cube3;
+CubeModel* cube4;
 SphereModel* sphere;
 SphereModel* cameraBoundingSphere;
 GroundModel* ground;
@@ -565,15 +569,23 @@ void initScene()
 
 	quad = new QuadModel(vec3(2.0f, 0.7f, 2.0f), vec3(0.0f), vec3(0.3f));
 	cubeBase = new CubeModel(vec3(0.0f, 2.0f, 0.0f), vec3(0.0f), vec3(1.0f));
+
 	cube = new CubeModel(vec3(0.0f, 5.0f, 0.0f), vec3(0.0f, 45.0f, 45.0f), vec3(2.0f));
+	cube2 = new CubeModel(vec3(3.0f, 0.0f, -3.0f), vec3(0.0f), vec3(1.5f));
+	cube3 = new CubeModel(vec3(2.0f, 0.5f, 2.0f), vec3(0.0f), vec3(1.0f));
+	cube4 = new CubeModel(vec3(-3.0f, 0.0f, 3.0f), vec3(0.0f), vec3(2.0f));
+	
 	sphere = new SphereModel(vec3(20.0f), vec3(0.0f), vec3(2.0f));
-	cameraBoundingSphere = new SphereModel(cameraPosition, vec3(0.0f), vec3(0.5f));
+	cameraBoundingSphere = new SphereModel(cameraPosition, vec3(0.0f), vec3(1.5));
 	ground = new GroundModel(groundSizeX, groundSizeZ, groundUVTiling);
 
 	quads.push_back(quad);
 
 	objects.push_back(cubeBase);
 	objects.push_back(cube);
+	objects.push_back(cube2);
+	objects.push_back(cube3);
+	objects.push_back(cube4);
 	objects.push_back(sphere);
 	objects.push_back(ground);
 
@@ -700,6 +712,9 @@ void renderScene(GLuint shaderProgram)
 
 	//cube->UpdatePosition(vec3(sinf(glfwGetTime()) / 10.0f, 0.0f, 0.0f));
 	cube->Draw(shaderProgram, meshRenderMode);
+	cube2->Draw(shaderProgram, meshRenderMode);
+	cube3->Draw(shaderProgram, meshRenderMode);
+	cube4->Draw(shaderProgram, meshRenderMode);
 
 	cubeBase->UpdateRotation(vec3(0.0f, 1.0f * dt, 0.0f));
 	cubeBase->Draw(shaderProgram, meshRenderMode);
@@ -714,18 +729,24 @@ void renderScene(GLuint shaderProgram)
 	//sphere->Draw(shaderProgram, sphereVertexCount);
 	sphere->Draw(shaderProgram, sphereVertexCount, meshRenderMode);
 
-	
-
 	glBindVertexArray(quadVAO);
 
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, grassTextureID);
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, grassTextureID);
-	glActiveTexture(GL_TEXTURE3);
-	glBindTexture(GL_TEXTURE_2D, grassTextureID);
-	glActiveTexture(GL_TEXTURE4);
-	glBindTexture(GL_TEXTURE_2D, grassTextureID);
+	if (shaderProgram != shadowShaderProgram)
+	{
+		//cout << "Not in shadow pass.\n";
+		shaderProgram = texturedShaderProgram;
+		glUseProgram(shaderProgram);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, grassTextureID);
+		GLuint textureLocation = glGetUniformLocation(shaderProgram, "textureSampler");
+		glUniform1i(textureLocation, 0);
+
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, grassTextureID);
+		textureLocation = glGetUniformLocation(shaderProgram, "normalSampler");
+		glUniform1i(textureLocation, 2);
+	}
 
 	//quad->UpdateRotation(vec3(0.0f, 0.0f, 1.0f * dt));
 	quad->Draw(shaderProgram, meshRenderMode);
@@ -792,11 +813,12 @@ void handleInputs()
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	}
 
+	// First Person Camera
 	if (cameraType == FirstPerson)
 	{
 		// On Key Press actions.
 		bool fastCam = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS;
-		float currentCameraSpeed = (fastCam) ? cameraFastSpeed : cameraSpeed;
+		currentCameraSpeed = (fastCam) ? cameraFastSpeed : cameraSpeed;
 
 		// Mouse position housekeeping.
 		double mousePosX, mousePosY;
@@ -827,18 +849,30 @@ void handleInputs()
 
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
 			cameraPosition += cameraLookAt * dt * currentCameraSpeed;
+			cameraDirection.z = 1.0f;
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
 			cameraPosition -= cameraLookAt * dt * currentCameraSpeed;
+			cameraDirection.z = -1.0f;
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
 			cameraPosition += cameraSideVector * dt * currentCameraSpeed;
+			cameraDirection.x = 1.0f;
 		}
 
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
 			cameraPosition -= cameraSideVector * dt * currentCameraSpeed;
+			cameraDirection.x = -1.0f;
+		}
+
+		if (glfwGetKey(window, GLFW_KEY_W) != GLFW_PRESS && glfwGetKey(window, GLFW_KEY_S) != GLFW_PRESS){
+			cameraDirection.z = 0.0f;
+		}
+
+		if (glfwGetKey(window, GLFW_KEY_D) != GLFW_PRESS && glfwGetKey(window, GLFW_KEY_A) != GLFW_PRESS) {
+			cameraDirection.x = 0.0f;
 		}
 
 		// Pressing the home button or 'H' key resets all camera parameters.
@@ -907,6 +941,9 @@ void Update(float delta)
 
 	cameraBoundingSphere->SetPosition(cameraPosition);
 
+	vec3 cameraSideVector = cross(cameraLookAt, VECTOR_UP);
+	normalize(cameraSideVector);
+
 	//Check collisions
 	for (vector<Model*>::iterator it = objects.begin(); it < objects.end(); ++it)
 	{
@@ -921,7 +958,19 @@ void Update(float delta)
 				if (cameraType == FirstPerson)
 				{
 					cameraPosition.y = groundHeight + cameraBoundingSphere->GetScaling().x;
+					// Tried Lerping but it was more involved that anticipated, therefore just comented it
+					//cameraPosition.y = std::lerp(cameraPosition.y, groundHeight + cameraBoundingSphere->GetScaling().x, dt * 20.0f);
 				}
+			}
+		}
+
+		if (dynamic_cast<CubeModel*>(*it))
+		{
+			CubeModel* cube = dynamic_cast<CubeModel*>(*it);
+			if (cube->ContainsPoint(cameraBoundingSphere->GetPosition(), cameraBoundingSphere->GetScaling().x))
+			{
+				// Inverts camera direction and add the cubes height to the y
+				cameraPosition += dt * currentCameraSpeed * ((-cameraLookAt * cameraDirection.z) + (cameraDirection.x * -cameraSideVector) + (VECTOR_UP * (cube->GetPosition().y + cube->GetScaling().y)));
 			}
 		}
 	}
@@ -953,3 +1002,4 @@ void Update(float delta)
 	//	(*it)->Update(delta);
 	//}
 }
+

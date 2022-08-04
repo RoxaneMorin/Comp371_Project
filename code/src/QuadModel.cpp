@@ -99,23 +99,10 @@ void QuadModel::Draw(int shaderProgram, GLenum renderingMode)
 	glDrawArrays(renderingMode, 0, 6);
 }
 
-//Using an oriented bounding box (OBB)
+//UNIMPLEMENTED
 bool QuadModel::ContainsPoint(glm::vec3 position)
 {
-	vec4 worldSpacePoint(position, 1.0f);
-
-	//We will first transform the position into Cube Model Space
-	mat4 mTranslate = translate(GetPosition());
-	mat4 mRotation = mat4_cast(quat(mRotation));
-	mat4 mScale = scale(GetScaling());
-
-	glm::vec3 cubeModelSpacePoint = inverse(mTranslate * mRotation * mScale) * worldSpacePoint;
-
-	//Then we simply check if the transformed point lies inside a unit cube at the origin
-	return
-		cubeModelSpacePoint.x >= -0.5f && cubeModelSpacePoint.x <= 0.5f &&
-		cubeModelSpacePoint.y >= -0.5f && cubeModelSpacePoint.y <= 0.5f &&
-		cubeModelSpacePoint.z >= -0.5f && cubeModelSpacePoint.z <= 0.5f;
+	return false;
 }
 
 //UNIMPLEMENTED

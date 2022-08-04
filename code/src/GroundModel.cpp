@@ -361,12 +361,14 @@ float GroundModel::returnHeightAtPoint(vec2 pointCoords, bool debug)
 	return heightAtPoint;
 }
 
+//UNIMPLEMENTED AS IS IMPLEMENTED DIFFERENTLY
 bool GroundModel::ContainsPoint(vec3 position)
 {
-	return true;
+	return false;
 }
 
+//UNIMPLEMENTED
 bool GroundModel::IntersectsPlane(vec3 planePoint, vec3 planeNormal)
 {
-	return true;
+	return false;
 }

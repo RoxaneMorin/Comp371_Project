@@ -17,6 +17,7 @@ public:
 	virtual void Draw(int shaderProgram, GLenum renderingMode = GL_TRIANGLES);
 
 	virtual bool ContainsPoint(vec3 position);
+	virtual bool ContainsPoint(vec3 position, float scale);
 	virtual bool IntersectsPlane(vec3 planePoint, vec3 planeNormal);
 
 	virtual bool isSphere() { return false; } //This is not at all object-oriented, but somewhat necessary due to need for a simple double-dispatch mechanism

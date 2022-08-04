@@ -4,6 +4,7 @@
 #include <glm/gtc/quaternion.hpp>
 #include <glm/common.hpp>
 #include <limits>
+#include <iostream>
 
 using namespace glm;
 
@@ -252,8 +253,18 @@ void CubeModel::Draw(int shaderProgram, GLenum renderingMode)
 	glDrawArrays(renderingMode, 0, 36); // 36 vertices: 3 * 2 * 6 (3 per triangle, 2 triangles per face, 6 faces)
 }
 
+//Using an oriented bounding box (AABB)
+bool CubeModel::ContainsPoint(vec3 position, float size)
+{
+	bool collisionX = GetPosition().x + GetScaling().x >= position.x && position.x + size >= GetPosition().x;
+	bool collisionY = GetPosition().y + GetScaling().y >= position.y && position.y + size >= GetPosition().y;
+	bool collisionZ = GetPosition().z + GetScaling().z >= position.z && position.z + size >= GetPosition().z;
+
+	return collisionX && collisionY && collisionZ;
+}
+
 //Using an oriented bounding box (OBB)
-bool CubeModel::ContainsPoint(glm::vec3 position)
+bool CubeModel::ContainsPoint(vec3 position)
 {
 	vec4 worldSpacePoint(position, 1.0f);
 
@@ -262,17 +273,16 @@ bool CubeModel::ContainsPoint(glm::vec3 position)
 	mat4 mRotation = mat4_cast(quat(mRotation));
 	mat4 mScale = scale(GetScaling());
 
-	glm::vec3 cubeModelSpacePoint = inverse(mTranslate * mRotation * mScale) * worldSpacePoint;
+	vec3 cubeModelSpacePoint = inverse(mTranslate * mRotation * mScale) * worldSpacePoint;
 
-	//Then we simply check if the transformed point lies inside a unit cube at the origin
 	return
-		cubeModelSpacePoint.x >= -0.5f && cubeModelSpacePoint.x <= 0.5f &&
-		cubeModelSpacePoint.y >= -0.5f && cubeModelSpacePoint.y <= 0.5f &&
-		cubeModelSpacePoint.z >= -0.5f && cubeModelSpacePoint.z <= 0.5f;
+		cubeModelSpacePoint.x >= -0.045f && cubeModelSpacePoint.x <= 0.045f &&
+		cubeModelSpacePoint.y >= -0.045f && cubeModelSpacePoint.y <= 0.045f &&
+		cubeModelSpacePoint.z >= -0.045f && cubeModelSpacePoint.z <= 0.045f;
 }
 
 //UNIMPLEMENTED
-bool CubeModel::IntersectsPlane(glm::vec3 planePoint, glm::vec3 planeNormal)
+bool CubeModel::IntersectsPlane(vec3 planePoint, vec3 planeNormal)
 {
 	return false;
 }
