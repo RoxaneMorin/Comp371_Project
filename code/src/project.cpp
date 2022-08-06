@@ -13,6 +13,8 @@
 #include <list>
 #include <algorithm>
 #include <vector>
+#include <random>
+#include <chrono>
 
 #define GLEW_STATIC 1   // This allows linking with Static Library on Windows, without DLL
 #include <GL/glew.h>    // Include GLEW - OpenGL Extension Wrangler
@@ -212,6 +214,8 @@ void setUpLightForShadows(Light light);
 void renderScene(GLuint shaderProgram);
 void handleInputs();
 void Update(float delta);
+float randomFloat(int max, int min);
+void userInputRequest();
 
 
 // Textures.
@@ -221,6 +225,8 @@ GLuint stoneTextureID;
 GLuint woodTextureID;
 GLuint metalTextureID;
 GLuint grassTextureID;
+GLuint treeTopTextureID;
+GLuint bushTextureID;
 
 GLuint groundHighDepthTextureID;
 GLuint groundLowDepthTextureID;
@@ -258,6 +264,21 @@ GLuint shadowMapFBO;
 float aspect;
 
 vec3 gravityVector(0.0f, -0.5f, 0.0f);
+
+// user set parameters
+int treeCount;
+int bushCount;
+
+// random generation parameters
+vector<int> randomXPositions;
+vector<int> randomZPositions;
+vec3 treePosition[];
+vec3 bushPosition[];
+unsigned seed;
+vector <CubeModel*> treeBase;
+vector <SphereModel*> treeTop;
+vector <SphereModel*> bush;
+
 
 // Camera parameters.
 float cameraTheta;
@@ -311,7 +332,7 @@ CubeModel* cubeBase;
 CubeModel* cube;
 CubeModel* cube2;
 CubeModel* cube3;
-CubeModel* cube4;
+CubeModel* cube5;
 SphereModel* sphere;
 SphereModel* cameraBoundingSphere;
 GroundModel* ground;
@@ -347,8 +368,10 @@ int main(int argc, char* argv[])
 	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
 
+	userInputRequest();
+
 	// Create Window and rendering context using GLFW, resolution is 1024x768
-	window = glfwCreateWindow(windowWidth, windowHeigth, "Comp371 - Assignment 02", NULL, NULL);
+	window = glfwCreateWindow(windowWidth, windowHeigth, "Comp371 - Final Project", NULL, NULL);
 	if (window == NULL)
 	{
 		std::cerr << "Failed to create GLFW window" << std::endl;
@@ -474,7 +497,7 @@ void initScene()
 	// Background colour.
 	glClearColor(0.5f, 0.75f, 1.0f, 1.0f);
 
-	cout << "LOADING TEXTURES\n";
+	std::cout << "LOADING TEXTURES\n";
 	// Load textures.
 	const string texturePathPrefix = "assets/textures/";
 	const string shaderPathPrefix = "assets/shaders/";
@@ -485,6 +508,8 @@ void initScene()
 	woodTextureID = loadTexture(texturePathPrefix + "wood.png");
 	metalTextureID = loadTexture(texturePathPrefix + "metal.png");
 	grassTextureID = loadTexture(texturePathPrefix + "grass.png");
+	treeTopTextureID = loadTexture(texturePathPrefix + "treeTop.png");
+	bushTextureID = loadTexture(texturePathPrefix + "bush.png");
 
 	groundHighDepthTextureID = loadTexture("assets/textures/snowDepth.png");
 	groundLowDepthTextureID = loadTexture("assets/textures/stoneDepth.png");
@@ -573,11 +598,47 @@ void initScene()
 	cube = new CubeModel(vec3(0.0f, 5.0f, 0.0f), vec3(0.0f, 45.0f, 45.0f), vec3(2.0f));
 	cube2 = new CubeModel(vec3(3.0f, 0.0f, -3.0f), vec3(0.0f), vec3(1.5f));
 	cube3 = new CubeModel(vec3(2.0f, 0.5f, 2.0f), vec3(0.0f), vec3(1.0f));
-	cube4 = new CubeModel(vec3(-3.0f, 0.0f, 3.0f), vec3(0.0f), vec3(2.0f));
+	cube5 = new CubeModel(vec3(-3.0f, 0.0f, 3.0f), vec3(0.0f), vec3(2.0f));
 	
 	sphere = new SphereModel(vec3(20.0f), vec3(0.0f), vec3(2.0f));
 	cameraBoundingSphere = new SphereModel(cameraPosition, vec3(0.0f), vec3(1.5));
 	ground = new GroundModel(groundSizeX, groundSizeZ, groundUVTiling);
+
+	// set coordinates for possible generated item placements into a vector and shuffle the vector using the system clock as the seed
+	for (int i = 0; i < groundSizeX / 2; i++)
+	{
+		randomXPositions.push_back(float(i) * 2.0f);
+	}
+	shuffle(randomXPositions.begin(), randomXPositions.end(), std::default_random_engine(seed));
+	for (int i = 0; i < groundSizeZ / 2; i++)
+	{
+		randomZPositions.push_back(float(i) * 2.0f);
+	}
+	shuffle(randomZPositions.begin(), randomZPositions.end(), std::default_random_engine(seed*2));
+
+	// using the shuffled vectors, setup parameters for the randomly generated items
+	int itemsSpawned = 0;
+	for (itemsSpawned; itemsSpawned < treeCount; itemsSpawned++)
+	{
+		float xTranslation = randomXPositions[itemsSpawned % randomXPositions.size()] - float(groundSizeX / 2);
+		float zTranslation = randomZPositions[itemsSpawned % randomZPositions.size()] - float(groundSizeZ / 2);
+		float height = randomFloat(5, 3);
+		float yTranslation = ground->returnHeightAtPoint(vec2(xTranslation + float(groundSizeX / 2), zTranslation + float(groundSizeZ / 2))) -0.5f;
+		treeBase.push_back(new CubeModel(vec3(xTranslation, yTranslation, zTranslation), vec3(0.0f), vec3(randomFloat(2, 1), height, randomFloat(2, 1))));
+		objects.push_back(treeBase.back());
+
+		treeTop.push_back(new SphereModel(vec3(xTranslation, yTranslation + height, zTranslation), vec3(0.0f), vec3(randomFloat(3, 2), randomFloat(4, 2), randomFloat(3, 2))));
+		objects.push_back(treeTop.back());
+	}
+	for (itemsSpawned; itemsSpawned < bushCount + treeCount; itemsSpawned++)
+	{
+		float xTranslation = randomXPositions[itemsSpawned % randomXPositions.size()] - float(groundSizeX / 2);
+		float zTranslation = randomZPositions[itemsSpawned % randomZPositions.size()] - float(groundSizeZ / 2);
+		float yTranslation = ground->returnHeightAtPoint(vec2(xTranslation + float(groundSizeX / 2), zTranslation + float(groundSizeZ / 2))) - 0.5f;
+
+		bush.push_back(new SphereModel(vec3(xTranslation, yTranslation, zTranslation), vec3(0.0f), vec3(randomFloat(3, 1), randomFloat(2, 1), randomFloat(3, 1))));
+		objects.push_back(bush.back());
+	}
 
 	quads.push_back(quad);
 
@@ -585,7 +646,7 @@ void initScene()
 	objects.push_back(cube);
 	objects.push_back(cube2);
 	objects.push_back(cube3);
-	objects.push_back(cube4);
+	objects.push_back(cube5);
 	objects.push_back(sphere);
 	objects.push_back(ground);
 
@@ -594,6 +655,12 @@ void initScene()
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_PROGRAM_POINT_SIZE);
 	glEnable(GL_BLEND);
+
+
+	
+
+	
+
 }
 
 void setUpLightForShadows(Light light)
@@ -714,7 +781,13 @@ void renderScene(GLuint shaderProgram)
 	cube->Draw(shaderProgram, meshRenderMode);
 	cube2->Draw(shaderProgram, meshRenderMode);
 	cube3->Draw(shaderProgram, meshRenderMode);
-	cube4->Draw(shaderProgram, meshRenderMode);
+	cube5->Draw(shaderProgram, meshRenderMode);
+
+	// render treeBases
+	for (int i = 0; i < treeCount; i++)
+	{
+		treeBase.at(i)->Draw(shaderProgram, meshRenderMode);
+	}
 
 	cubeBase->UpdateRotation(vec3(0.0f, 1.0f * dt, 0.0f));
 	cubeBase->Draw(shaderProgram, meshRenderMode);
@@ -728,6 +801,54 @@ void renderScene(GLuint shaderProgram)
 
 	//sphere->Draw(shaderProgram, sphereVertexCount);
 	sphere->Draw(shaderProgram, sphereVertexCount, meshRenderMode);
+
+	// set treeTop texture
+	if (shaderProgram != shadowShaderProgram)
+	{
+		//cout << "Not in shadow pass.\n";
+		shaderProgram = texturedShaderProgram;
+		glUseProgram(shaderProgram);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, treeTopTextureID);
+		GLuint textureLocation = glGetUniformLocation(shaderProgram, "textureSampler");
+		glUniform1i(textureLocation, 0);
+
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, groundLowNormalTextureID);
+		textureLocation = glGetUniformLocation(shaderProgram, "normalSampler");
+		glUniform1i(textureLocation, 2);
+	}
+
+	//render treeTops
+	for (int i = 0; i < treeCount; i++)
+	{
+		treeTop.at(i)->Draw(shaderProgram, sphereVertexCount, meshRenderMode);
+	}
+
+	// set bush texture
+	if (shaderProgram != shadowShaderProgram)
+	{
+		//cout << "Not in shadow pass.\n";
+		shaderProgram = texturedShaderProgram;
+		glUseProgram(shaderProgram);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, bushTextureID);
+		GLuint textureLocation = glGetUniformLocation(shaderProgram, "textureSampler");
+		glUniform1i(textureLocation, 0);
+
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, groundLowNormalTextureID);
+		textureLocation = glGetUniformLocation(shaderProgram, "normalSampler");
+		glUniform1i(textureLocation, 2);
+	}
+
+	// render bushes
+	for (int i = 0; i < bushCount; i++)
+	{
+		bush.at(i)->Draw(shaderProgram, sphereVertexCount, meshRenderMode);
+	}
 
 	glBindVertexArray(quadVAO);
 
@@ -1003,3 +1124,52 @@ void Update(float delta)
 	//}
 }
 
+float randomFloat(int max, int min)
+{
+	return (float(rand()) / float((RAND_MAX)) * max + min);
+}
+
+void userInputRequest()
+{
+	string response;
+	std::cout << "would you like to set the seed for item placement within the world? type \'y\' for yes or \'n\' for no";
+	std::cin >> response;
+
+	if (response.compare("y") == 0) {
+		std::cout << "please enter a number to use as the seed: ";
+		std::cin >> seed;
+	}
+	else
+	{
+		seed = std::chrono::system_clock::now().time_since_epoch().count();
+	}
+
+	int maxObjCount;
+	int remainingObjPool;
+	std::cout << "please enter the desired length of the terrain in the x direction: ";
+	std::cin >> groundSizeX;
+	std::cout << "please enter the desired length of the terrain in the z direction: ";
+	std::cin >> groundSizeZ;
+	if (groundSizeX >= groundSizeZ)
+	{
+		maxObjCount = groundSizeX / 2;
+	}
+	else
+	{
+		maxObjCount = groundSizeZ / 2;
+	}
+	do
+	{
+		remainingObjPool = maxObjCount;
+		std::cout << "please keep in mind for the next object count attributes; please do not exceed a total of " << maxObjCount << endl;
+		std::cout << "please enter the amount of trees you would like to spawn for random generation: ";
+		std::cin >> treeCount;
+		remainingObjPool -= treeCount;
+		std::cout << "you have " << remainingObjPool << " objects left to spawn" << endl;
+		std::cout << "please enter the amount of bushes you would like to spawn for random generation: ";
+		std::cin >> bushCount;
+
+	} 
+	while (treeCount > maxObjCount);
+	
+}
