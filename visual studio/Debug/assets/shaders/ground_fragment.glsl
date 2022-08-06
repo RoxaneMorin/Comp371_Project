@@ -92,7 +92,7 @@ float shadowCalculationFiltered(vec4 fragPosLightSpace)
 	
     vec3 normal = normalize(fs_in.Normal);
     vec3 lightDir = normalize(light_position - fs_in.FragPos);
-    float bias = 0.005f;
+    float bias = -0.0001f;
 
     float shadow = 0.0;
     vec2 texelSize = 1.0 / textureSize(shadowMap, 0);
