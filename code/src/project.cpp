@@ -566,7 +566,7 @@ void initScene()
 
 
 	// Initialize main light.
-	sunLight = Light(vec3(0.95f, 0.95f, 1.0f), vec3(0.0f, 5.0f, 5.0f), vec3(0.0f, 1.0f, 0.0f));
+	sunLight = Light(vec3(0.95f, 0.95f, 1.0f), vec3(0.0f, 45.0f, 50.0f), vec3(0.0f, 1.0f, 0.0f));
 
 	setUpLightForShadows(sunLight);
 

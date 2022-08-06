@@ -15,7 +15,7 @@ using namespace glm;
 
 
 // Global variables.
-const float light_far_plane = 500.0f;
+const float light_far_plane = 1000.0f;
 const float light_near_plane = 0.1f;
 
 
@@ -60,7 +60,7 @@ class Light // Directional Light.
 
     public: void generateProjectionMatrix()
     {
-        lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, light_near_plane, light_far_plane);
+        lightProjection = glm::ortho(-50.0f, 50.0f, -50.0f, 50.0f, light_near_plane, light_far_plane);
     }
 
     public: void generateViewMatrix()
