@@ -107,3 +107,9 @@ https://www.glfw.org/
 Good place for advanced graphics theory
 https://www.scratchapixel.com/
 
+
+
+texture sources:
+	treeTop: https://freestocktextures.com/texture/frozen-winter-thuja,129.html
+
+	bush: https://freestocktextures.com/texture/euonymus-fortunei-shrub-garden,768.html
