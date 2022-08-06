@@ -320,7 +320,7 @@ GroundModel* ground;
 // Ground info
 GLuint groundSizeX = 50;
 GLuint groundSizeZ = 50;
-float groundUVTiling = 10.0f;
+float groundUVTiling = 8.0f;
 
 
 // Handle window resizing.
@@ -480,16 +480,16 @@ void initScene()
 	const string texturePathPrefix = "assets/textures/";
 	const string shaderPathPrefix = "assets/shaders/";
 
-	groundHighTextureID = loadTexture(texturePathPrefix + "snow.png");
-	groundLowTextureID = loadTexture(texturePathPrefix + "carrot.png");
+	groundHighTextureID = loadTexture(texturePathPrefix + "groundHigh.png");
+	groundLowTextureID = loadTexture(texturePathPrefix + "groundLow.png");
 	stoneTextureID = loadTexture(texturePathPrefix + "stone.png");
 	woodTextureID = loadTexture(texturePathPrefix + "wood.png");
 	metalTextureID = loadTexture(texturePathPrefix + "metal.png");
 	grassTextureID = loadTexture(texturePathPrefix + "grass.png");
 	moonTextureID = loadTexture(texturePathPrefix + "moon.png");
 
-	groundHighDepthTextureID = loadTexture("assets/textures/snowDepth.png");
-	groundLowDepthTextureID = loadTexture("assets/textures/stoneDepth.png");
+	groundHighDepthTextureID = loadTexture("assets/textures/groundHighDepth.png");
+	groundLowDepthTextureID = loadTexture("assets/textures/groundLowDepth.png");
 
 	groundHighNormalTextureID = loadTexture("assets/textures/groundHighNormal.png");
 	groundLowNormalTextureID = loadTexture("assets/textures/groundLowNormal.png");
