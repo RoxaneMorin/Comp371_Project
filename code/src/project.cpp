@@ -221,6 +221,7 @@ GLuint stoneTextureID;
 GLuint woodTextureID;
 GLuint metalTextureID;
 GLuint grassTextureID;
+GLuint moonTextureID;
 
 GLuint groundHighDepthTextureID;
 GLuint groundLowDepthTextureID;
@@ -485,6 +486,7 @@ void initScene()
 	woodTextureID = loadTexture(texturePathPrefix + "wood.png");
 	metalTextureID = loadTexture(texturePathPrefix + "metal.png");
 	grassTextureID = loadTexture(texturePathPrefix + "grass.png");
+	moonTextureID = loadTexture(texturePathPrefix + "moon.png");
 
 	groundHighDepthTextureID = loadTexture("assets/textures/snowDepth.png");
 	groundLowDepthTextureID = loadTexture("assets/textures/stoneDepth.png");
@@ -575,8 +577,8 @@ void initScene()
 	cube3 = new CubeModel(vec3(2.0f, 0.5f, 2.0f), vec3(0.0f), vec3(1.0f));
 	cube4 = new CubeModel(vec3(-3.0f, 0.0f, 3.0f), vec3(0.0f), vec3(2.0f));
 	
-	sphere = new SphereModel(vec3(20.0f), vec3(0.0f), vec3(2.0f));
-	cameraBoundingSphere = new SphereModel(cameraPosition, vec3(0.0f), vec3(1.5));
+	sphere = new SphereModel(vec3(20.0f, 15.0f, 20.0f), vec3(0.0f), vec3(2.5f));
+	cameraBoundingSphere = new SphereModel(cameraPosition, vec3(0.0f), vec3(1.0f));
 	ground = new GroundModel(groundSizeX, groundSizeZ, groundUVTiling);
 
 	quads.push_back(quad);
@@ -719,11 +721,29 @@ void renderScene(GLuint shaderProgram)
 	cubeBase->UpdateRotation(vec3(0.0f, 1.0f * dt, 0.0f));
 	cubeBase->Draw(shaderProgram, meshRenderMode);
 
+	if (shaderProgram != shadowShaderProgram)
+	{
+		//cout << "Not in shadow pass.\n";
+		shaderProgram = texturedShaderProgram;
+		glUseProgram(shaderProgram);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, moonTextureID);
+		GLuint textureLocation = glGetUniformLocation(shaderProgram, "textureSampler");
+		glUniform1i(textureLocation, 0);
+
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, moonTextureID);
+		textureLocation = glGetUniformLocation(shaderProgram, "normalSampler");
+		glUniform1i(textureLocation, 2);
+	}
+
 	glBindVertexArray(sphereVAO);
 
-	spinning += 45.0f * dt;
+	spinning += 10.0f * dt;
 	mat4 center = translate(mat4(1.0f), vec3(0.0f)) * rotate(mat4(1.0f), radians(spinning), VECTOR_UP);
 
+	sphere->UpdateRotation(vec3(0.0f, radians(0.5f), 0.0f));
 	sphere->SetParent(center);
 
 	//sphere->Draw(shaderProgram, sphereVertexCount);
