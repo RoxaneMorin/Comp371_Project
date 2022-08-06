@@ -340,7 +340,7 @@ GroundModel* ground;
 // Ground info
 GLuint groundSizeX = 50;
 GLuint groundSizeZ = 50;
-float groundUVTiling = 10.0f;
+float groundUVTiling = 8.0f;
 
 
 // Handle window resizing.
@@ -502,8 +502,8 @@ void initScene()
 	const string texturePathPrefix = "assets/textures/";
 	const string shaderPathPrefix = "assets/shaders/";
 
-	groundHighTextureID = loadTexture(texturePathPrefix + "snow.png");
-	groundLowTextureID = loadTexture(texturePathPrefix + "carrot.png");
+	groundHighTextureID = loadTexture(texturePathPrefix + "groundHigh.png");
+	groundLowTextureID = loadTexture(texturePathPrefix + "groundLow.png");
 	stoneTextureID = loadTexture(texturePathPrefix + "stone.png");
 	woodTextureID = loadTexture(texturePathPrefix + "wood.png");
 	metalTextureID = loadTexture(texturePathPrefix + "metal.png");
@@ -511,8 +511,8 @@ void initScene()
 	treeTopTextureID = loadTexture(texturePathPrefix + "treeTop.png");
 	bushTextureID = loadTexture(texturePathPrefix + "bush.png");
 
-	groundHighDepthTextureID = loadTexture("assets/textures/snowDepth.png");
-	groundLowDepthTextureID = loadTexture("assets/textures/stoneDepth.png");
+	groundHighDepthTextureID = loadTexture("assets/textures/groundHighDepth.png");
+	groundLowDepthTextureID = loadTexture("assets/textures/groundLowDepth.png");
 
 	groundHighNormalTextureID = loadTexture("assets/textures/groundHighNormal.png");
 	groundLowNormalTextureID = loadTexture("assets/textures/groundLowNormal.png");
@@ -1132,11 +1132,11 @@ float randomFloat(int max, int min)
 void userInputRequest()
 {
 	string response;
-	std::cout << "would you like to set the seed for item placement within the world? type \'y\' for yes or \'n\' for no";
+	std::cout << "Would you like to set a custom seed for the placement of items in the world? Type \'y\' for yes or \'n\' for no.\n";
 	std::cin >> response;
 
 	if (response.compare("y") == 0) {
-		std::cout << "please enter a number to use as the seed: ";
+		std::cout << "Please enter a number to use as the seed: ";
 		std::cin >> seed;
 	}
 	else
@@ -1146,9 +1146,9 @@ void userInputRequest()
 
 	int maxObjCount;
 	int remainingObjPool;
-	std::cout << "please enter the desired length of the terrain in the x direction: ";
+	std::cout << "Please enter the terrain's desired dimension in X:\n";
 	std::cin >> groundSizeX;
-	std::cout << "please enter the desired length of the terrain in the z direction: ";
+	std::cout << "Please enter the terrain's desired dimension in Z:\n";
 	std::cin >> groundSizeZ;
 	if (groundSizeX >= groundSizeZ)
 	{
@@ -1161,12 +1161,12 @@ void userInputRequest()
 	do
 	{
 		remainingObjPool = maxObjCount;
-		std::cout << "please keep in mind for the next object count attributes; please do not exceed a total of " << maxObjCount << endl;
-		std::cout << "please enter the amount of trees you would like to spawn for random generation: ";
+		std::cout << "The object count must not excel a total of: " << maxObjCount << endl;
+		std::cout << "Please enter the number of trees to spawn during terrain generation:\n";
 		std::cin >> treeCount;
 		remainingObjPool -= treeCount;
-		std::cout << "you have " << remainingObjPool << " objects left to spawn" << endl;
-		std::cout << "please enter the amount of bushes you would like to spawn for random generation: ";
+		std::cout << "\n" <<remainingObjPool << " objects may still be spawned.\n" << endl;
+		std::cout << "Please enter the number of bushes to spawn during terrain generation:\n";
 		std::cin >> bushCount;
 
 	} 
