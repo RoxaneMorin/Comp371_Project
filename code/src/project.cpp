@@ -648,8 +648,10 @@ void initScene()
 
 	// Setting the Moon to the outerbound of the terrain
 	moon = new SphereModel(vec3(groundSizeX, 40.0f, groundSizeZ), vec3(0.0f), vec3(2.0f));
+	//Skybox, scaling by negative so it is inverted and rotating it by 180 so it upright
 	skybox = new SphereModel(vec3(0.0f), vec3(radians(180.0f), 0.0f, 0.0f), vec3(groundSizeX * -2.0f, groundSizeX * -2.0f, groundSizeZ * -2.0f));
 
+	// camera's sphere collider
 	cameraBoundingSphere = new SphereModel(cameraPosition, vec3(0.0f), vec3(1.0f));
 
 	ground = new GroundModel(groundSizeX, groundSizeZ, groundUVTiling);
