@@ -13,3 +13,9 @@ texture sources:
 	treeTop: https://freestocktextures.com/texture/frozen-winter-thuja,129.html
 
 	bush: https://freestocktextures.com/texture/euonymus-fortunei-shrub-garden,768.html
+	
+	low ground: https://luniversims.com/files/file/340-herbes-05/
+	
+	high ground: https://www.textures.com/download/RockGrassy0142/90744
+	
+	bark: unknown.

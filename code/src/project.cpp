@@ -504,12 +504,12 @@ void initScene()
 
 	groundHighTextureID = loadTexture(texturePathPrefix + "groundHigh.png");
 	groundLowTextureID = loadTexture(texturePathPrefix + "groundLow.png");
-	stoneTextureID = loadTexture(texturePathPrefix + "stone.png");
+	//stoneTextureID = loadTexture(texturePathPrefix + "stone.png");
 	woodTextureID = loadTexture(texturePathPrefix + "wood.png");
-	metalTextureID = loadTexture(texturePathPrefix + "metal.png");
+	//metalTextureID = loadTexture(texturePathPrefix + "metal.png");
 	grassTextureID = loadTexture(texturePathPrefix + "grass.png");
-	treeTopTextureID = loadTexture(texturePathPrefix + "treeTop.jpg");
-	bushTextureID = loadTexture(texturePathPrefix + "bush.jpg");
+	treeTopTextureID = loadTexture(texturePathPrefix + "treeTop.png");
+	bushTextureID = loadTexture(texturePathPrefix + "bush.png");
 
 	groundHighDepthTextureID = loadTexture("assets/textures/groundHighDepth.png");
 	groundLowDepthTextureID = loadTexture("assets/textures/groundLowDepth.png");
