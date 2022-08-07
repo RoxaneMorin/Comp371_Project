@@ -49,41 +49,75 @@ using namespace glm;
 
 GLuint loadTexture(const string filename)
 {
-	// Create and bind textures¸.
-	GLuint textureId = 0;
-	glGenTextures(1, &textureId);
-	assert(textureId != 0);
+	//// Create and bind textures¸.
+	//GLuint textureId = 0;
+	//glGenTextures(1, &textureId);
+	//assert(textureId != 0);
 
-	glBindTexture(GL_TEXTURE_2D, textureId);
+	//glBindTexture(GL_TEXTURE_2D, textureId);
 
-	// Set filter parameters.
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	//// Set filter parameters.
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	// Load texture with its dimensional data.
-	int width, height, nrChannels;
-	unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrChannels, 0);
-	if (!data)
+	//// Load texture with its dimensional data.
+	//int width, height, nrChannels;
+	//unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrChannels, 0);
+	//if (!data)
+	//{
+	//	std::cerr << "Error::Texture could not load texture file:" << filename << std::endl;
+	//	return 0;
+	//}
+
+	//// Upload the texture to the PU.
+	//GLenum format = 0;
+	//if (nrChannels == 1)
+	//	format = GL_RED;
+	//else if (nrChannels == 3)
+	//	format = GL_RGB;
+	//else if (nrChannels == 4)
+	//	format = GL_RGBA;
+	//glTexImage2D(GL_TEXTURE_2D, 0, format, width, height,
+	//	0, format, GL_UNSIGNED_BYTE, data);
+
+	//// Clean up.
+	//stbi_image_free(data);
+	//glBindTexture(GL_TEXTURE_2D, 0);
+	//return textureId;
+
+	unsigned int textureID;
+	glGenTextures(1, &textureID);
+
+	int width, height, nrComponents;
+	unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrComponents, 0);
+	if (data)
 	{
-		std::cerr << "Error::Texture could not load texture file:" << filename << std::endl;
-		return 0;
+		GLenum format;
+		if (nrComponents == 1)
+			format = GL_RED;
+		else if (nrComponents == 3)
+			format = GL_RGB;
+		else if (nrComponents == 4)
+			format = GL_RGBA;
+
+		glBindTexture(GL_TEXTURE_2D, textureID);
+		glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT); // for this tutorial: use GL_CLAMP_TO_EDGE to prevent semi-transparent borders. Due to interpolation it takes texels from next repeat 
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		stbi_image_free(data);
+	}
+	else
+	{
+		std::cout << "Texture failed to load at path: " << filename << std::endl;
+		stbi_image_free(data);
 	}
 
-	// Upload the texture to the PU.
-	GLenum format = 0;
-	if (nrChannels == 1)
-		format = GL_RED;
-	else if (nrChannels == 3)
-		format = GL_RGB;
-	else if (nrChannels == 4)
-		format = GL_RGBA;
-	glTexImage2D(GL_TEXTURE_2D, 0, format, width, height,
-		0, format, GL_UNSIGNED_BYTE, data);
-
-	// Clean up.
-	stbi_image_free(data);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	return textureId;
+	return textureID;
 }
 
 
@@ -217,8 +251,9 @@ void Update(float delta);
 float randomFloat(float max, float min);
 void userInputRequest();
 
-
 // Textures.
+#pragma region TEXTURES
+
 GLuint groundHighTextureID;
 GLuint groundLowTextureID;
 GLuint stoneTextureID;
@@ -226,7 +261,21 @@ GLuint woodTextureID;
 GLuint metalTextureID;
 GLuint grassTextureID;
 GLuint treeTopTextureID;
+//GLuint bushTextureID;
+GLuint moonTextureID;
+GLuint bark001TextureID;
+GLuint bark001NTextureID;
+GLuint bark012TextureID;
+GLuint bark012NTextureID;
+GLuint birchTextureID;
+GLuint birchNTextureID;
 GLuint bushTextureID;
+GLuint bushNTextureID;
+GLuint leaves01TextureID;
+GLuint leaves02TextureID;
+GLuint skyboxTextureID;
+
+#pragma endregion
 
 GLuint groundHighDepthTextureID;
 GLuint groundLowDepthTextureID;
@@ -243,11 +292,11 @@ int sphereVAO;
 int quadVAO;
 
 // Additional info for spheres.
-int sphereRadialDivs = 16;
-int sphereVerticalDivs = 16;
+int sphereRadialDivs = 24;
+int sphereVerticalDivs = 24;
 int sphereVertexCount;
 
-ECameraType cameraType = FirstPerson;
+ECameraType cameraType = ECameraType::FirstPerson;
 
 // Light parameters.
 vec3 ambientColour = vec3(0.5, 0.5, 0.55);
@@ -301,18 +350,17 @@ vec3 cameraDirection(0.0f);
 vec3 cameraSideVector;
 mat4 viewMatrix;
 
-
 // Misc information.
 GLFWwindow* window;
 int windowWidth = 1024, windowHeigth = 768;
 
 double lastMousePosX, lastMousePosY;
-int previousZPress;
-int previousCPress;
-int previousYPress;
-int previousIPress;
-int previousBPress;
-int previousFPress;
+//int previousZPress;
+//int previousCPress;
+//int previousYPress;
+//int previousIPress;
+//int previousBPress;
+//int previousFPress;
 int previousPPress;
 int previousLPress;
 int previousTPress;
@@ -327,13 +375,9 @@ float spinning = 0.0f;
 vector<Model*> objects;
 vector<QuadModel*> quads;
 
-QuadModel* quad;
-//CubeModel* cubeBase;
-//CubeModel* cube;
-//CubeModel* cube2;
-//CubeModel* cube3;
-//CubeModel* cube5;
-SphereModel* sphere;
+//QuadModel* quad;
+SphereModel* moon;
+SphereModel* skybox;
 SphereModel* cameraBoundingSphere;
 GroundModel* ground;
 
@@ -394,14 +438,9 @@ int main(int argc, char* argv[])
 	float lastFrameTime = glfwGetTime();
 	glfwGetCursorPos(window, &lastMousePosX, &lastMousePosY);
 
-	int lastMouseLeftState = GLFW_RELEASE;
-	previousZPress = GLFW_RELEASE;
-	previousCPress = GLFW_RELEASE;
-	previousFPress = GLFW_RELEASE;
 	previousPPress = GLFW_RELEASE;
 	previousLPress = GLFW_RELEASE;
 	previousTPress = GLFW_RELEASE;
-	previousFPress = GLFW_RELEASE;
 	previous1Press = GLFW_RELEASE;
 	previous2Press = GLFW_RELEASE;
 	previous3Press = GLFW_RELEASE;
@@ -473,11 +512,6 @@ int main(int argc, char* argv[])
 		handleInputs();
 
 		// Save previous key presses.
-		previousZPress = glfwGetKey(window, GLFW_KEY_Z);
-		previousCPress = glfwGetKey(window, GLFW_KEY_C);
-		previousYPress = glfwGetKey(window, GLFW_KEY_Y);
-		previousIPress = glfwGetKey(window, GLFW_KEY_I);
-		previousBPress = glfwGetKey(window, GLFW_KEY_B);
 		previousPPress = glfwGetKey(window, GLFW_KEY_P);
 		previousLPress = glfwGetKey(window, GLFW_KEY_L);
 		previousTPress = glfwGetKey(window, GLFW_KEY_T);
@@ -502,6 +536,8 @@ void initScene()
 	const string texturePathPrefix = "assets/textures/";
 	const string shaderPathPrefix = "assets/shaders/";
 
+#pragma region TEXTURE LOADING
+
 	groundHighTextureID = loadTexture(texturePathPrefix + "groundHigh.png");
 	groundLowTextureID = loadTexture(texturePathPrefix + "groundLow.png");
 	//stoneTextureID = loadTexture(texturePathPrefix + "stone.png");
@@ -509,7 +545,23 @@ void initScene()
 	//metalTextureID = loadTexture(texturePathPrefix + "metal.png");
 	grassTextureID = loadTexture(texturePathPrefix + "grass.png");
 	treeTopTextureID = loadTexture(texturePathPrefix + "treeTop.png");
-	bushTextureID = loadTexture(texturePathPrefix + "bush.png");
+	bushTextureID = loadTexture(texturePathPrefix + "Bush.jpg");
+	bushNTextureID = loadTexture(texturePathPrefix + "Bush_N.jpg");
+	moonTextureID = loadTexture(texturePathPrefix + "moon.png");
+
+	bark001TextureID = loadTexture(texturePathPrefix + "Bark001.jpg");
+	bark001NTextureID = loadTexture(texturePathPrefix + "Bark001_N.jpg");
+	bark012TextureID = loadTexture(texturePathPrefix + "Bark012.jpg");
+	bark012NTextureID = loadTexture(texturePathPrefix + "Bark012_N.jpg");
+	birchTextureID = loadTexture(texturePathPrefix + "Birch.jpg");
+	birchNTextureID = loadTexture(texturePathPrefix + "Birch_N.png");
+	leaves01TextureID = loadTexture(texturePathPrefix + "leaves_1.png");
+	leaves02TextureID = loadTexture(texturePathPrefix + "leaves_2.png");
+	skyboxTextureID = loadTexture(texturePathPrefix + "skybox.png");
+
+
+#pragma endregion
+
 
 	groundHighDepthTextureID = loadTexture("assets/textures/groundHighDepth.png");
 	groundLowDepthTextureID = loadTexture("assets/textures/groundLowDepth.png");
@@ -528,7 +580,6 @@ void initScene()
 	allShaderPrograms.push_back(texturedShaderProgram);
 	allShaderPrograms.push_back(groundShaderProgram);
 	allShaderPrograms.push_back(shadowShaderProgram);
-
 
 	// Define and upload geometry to the GPU.
 	cubeVAO = CubeModel::CubeModelVAO();
@@ -592,16 +643,15 @@ void initScene()
 
 	SetUniform1Value(groundShaderProgram, "heightblend_factor", 0.45f);
 
-	quad = new QuadModel(vec3(2.0f, 0.7f, 2.0f), vec3(0.0f), vec3(0.3f));
-	/*cubeBase = new CubeModel(vec3(0.0f, 2.0f, 0.0f), vec3(0.0f), vec3(1.0f));
-
-	cube = new CubeModel(vec3(0.0f, 5.0f, 0.0f), vec3(0.0f, 45.0f, 45.0f), vec3(2.0f));
-	cube2 = new CubeModel(vec3(3.0f, 0.0f, -3.0f), vec3(0.0f), vec3(1.5f));
-	cube3 = new CubeModel(vec3(2.0f, 0.5f, 2.0f), vec3(0.0f), vec3(1.0f));
-	cube5 = new CubeModel(vec3(-3.0f, 0.0f, 3.0f), vec3(0.0f), vec3(2.0f));*/
+	//quad = new QuadModel(vec3(2.0f, 0.7f, 2.0f), vec3(0.0f), vec3(1.0f));
 	
-	sphere = new SphereModel(vec3(20.0f), vec3(0.0f), vec3(2.0f));
-	cameraBoundingSphere = new SphereModel(cameraPosition, vec3(0.0f), vec3(1.5));
+
+	// Setting the Moon to the outerbound of the terrain
+	moon = new SphereModel(vec3(groundSizeX, 40.0f, groundSizeZ), vec3(0.0f), vec3(2.0f));
+	skybox = new SphereModel(vec3(0.0f), vec3(radians(180.0f), 0.0f, 0.0f), vec3(groundSizeX * -2.0f, groundSizeX * -2.0f, groundSizeZ * -2.0f));
+
+	cameraBoundingSphere = new SphereModel(cameraPosition, vec3(0.0f), vec3(1.0f));
+
 	ground = new GroundModel(groundSizeX, groundSizeZ, groundUVTiling);
 
 	// setup all possible item positions within a vector and the shuffle the vector using seed
@@ -683,14 +733,14 @@ void initScene()
 	//	objects.push_back(bush.back());
 	//}
 
-	quads.push_back(quad);
+	//quads.push_back(quad);
 
 	/*objects.push_back(cubeBase);
 	objects.push_back(cube);
 	objects.push_back(cube2);
 	objects.push_back(cube3);
 	objects.push_back(cube5);*/
-	objects.push_back(sphere);
+	objects.push_back(moon);
 	objects.push_back(ground);
 
 	// Other OpenGL states to set once
@@ -698,12 +748,7 @@ void initScene()
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_PROGRAM_POINT_SIZE);
 	glEnable(GL_BLEND);
-
-
-	
-
-	
-
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void setUpLightForShadows(Light light)
@@ -799,6 +844,34 @@ void renderScene(GLuint shaderProgram)
 
 
 	// Render objects.
+	if (shaderProgram != shadowShaderProgram)
+	{
+		//cout << "Not in shadow pass.\n";
+		shaderProgram = texturedShaderProgram;
+		glUseProgram(shaderProgram);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, bark001TextureID);
+		GLuint textureLocation = glGetUniformLocation(shaderProgram, "textureSampler");
+		glUniform1i(textureLocation, 0);
+
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, bark001NTextureID);
+		textureLocation = glGetUniformLocation(shaderProgram, "normalSampler");
+		glUniform1i(textureLocation, 2);
+	}
+
+	// Binding CUBE vertex array Object
+	glBindVertexArray(cubeVAO);
+
+	// render treeBases
+	for (int i = 0; i < treeCount; i++)
+	{
+		treeBase.at(i)->Draw(shaderProgram, meshRenderMode);
+	}
+
+	// Binding SPHERE vertex array object
+	glBindVertexArray(sphereVAO);
 
 	if (shaderProgram != shadowShaderProgram)
 	{
@@ -807,43 +880,39 @@ void renderScene(GLuint shaderProgram)
 		glUseProgram(shaderProgram);
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, woodTextureID);
+		glBindTexture(GL_TEXTURE_2D, skyboxTextureID);
 		GLuint textureLocation = glGetUniformLocation(shaderProgram, "textureSampler");
 		glUniform1i(textureLocation, 0);
 
 		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, groundLowNormalTextureID);
+		glBindTexture(GL_TEXTURE_2D, bushNTextureID);
 		textureLocation = glGetUniformLocation(shaderProgram, "normalSampler");
 		glUniform1i(textureLocation, 2);
 	}
 
-	//
-	glBindVertexArray(cubeVAO);
+	// Drawing the skybox as always triangles
+	skybox->Draw(shaderProgram, sphereVertexCount, GL_TRIANGLES);
 
-	//cube->UpdatePosition(vec3(sinf(glfwGetTime()) / 10.0f, 0.0f, 0.0f));
-	/*cube->Draw(shaderProgram, meshRenderMode);
-	cube2->Draw(shaderProgram, meshRenderMode);
-	cube3->Draw(shaderProgram, meshRenderMode);
-	cube5->Draw(shaderProgram, meshRenderMode);*/
-
-	// render treeBases
-	for (int i = 0; i < treeCount; i++)
+	if (shaderProgram != shadowShaderProgram)
 	{
-		treeBase.at(i)->Draw(shaderProgram, meshRenderMode);
+		//cout << "Not in shadow pass.\n";
+		shaderProgram = texturedShaderProgram;
+		glUseProgram(shaderProgram);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, moonTextureID);
+		GLuint textureLocation = glGetUniformLocation(shaderProgram, "textureSampler");
+		glUniform1i(textureLocation, 0);
 	}
 
-	/*cubeBase->UpdateRotation(vec3(0.0f, 1.0f * dt, 0.0f));
-	cubeBase->Draw(shaderProgram, meshRenderMode);*/
-
-	glBindVertexArray(sphereVAO);
-
-	spinning += 45.0f * dt;
+	// Drawing Moon
+	spinning += 5.0f * dt;
 	mat4 center = translate(mat4(1.0f), vec3(0.0f)) * rotate(mat4(1.0f), radians(spinning), VECTOR_UP);
 
-	sphere->SetParent(center);
+	moon->UpdateRotation(vec3(0.0f, radians(0.5f), 0.0f));
+	moon->SetParent(center);
 
-	//sphere->Draw(shaderProgram, sphereVertexCount);
-	sphere->Draw(shaderProgram, sphereVertexCount, meshRenderMode);
+	moon->Draw(shaderProgram, sphereVertexCount, meshRenderMode);
 
 	// set treeTop texture
 	if (shaderProgram != shadowShaderProgram)
@@ -853,7 +922,7 @@ void renderScene(GLuint shaderProgram)
 		glUseProgram(shaderProgram);
 
 		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, treeTopTextureID);
+		glBindTexture(GL_TEXTURE_2D, leaves02TextureID);
 		GLuint textureLocation = glGetUniformLocation(shaderProgram, "textureSampler");
 		glUniform1i(textureLocation, 0);
 
@@ -882,7 +951,7 @@ void renderScene(GLuint shaderProgram)
 		glUniform1i(textureLocation, 0);
 
 		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, groundLowNormalTextureID);
+		glBindTexture(GL_TEXTURE_2D, bushNTextureID);
 		textureLocation = glGetUniformLocation(shaderProgram, "normalSampler");
 		glUniform1i(textureLocation, 2);
 	}
@@ -892,28 +961,28 @@ void renderScene(GLuint shaderProgram)
 	{
 		bush.at(i)->Draw(shaderProgram, sphereVertexCount, meshRenderMode);
 	}
+	
+	glBindVertexArray(quadVAO);
 
-	//glBindVertexArray(quadVAO);
+	if (shaderProgram != shadowShaderProgram)
+	{
+		//cout << "not in shadow pass.\n";
+		shaderProgram = texturedShaderProgram;
+		glUseProgram(shaderProgram);
 
-	//if (shaderProgram != shadowShaderProgram)
-	//{
-	//	//cout << "Not in shadow pass.\n";
-	//	shaderProgram = texturedShaderProgram;
-	//	glUseProgram(shaderProgram);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, grassTextureID);
+		GLuint texturelocation = glGetUniformLocation(shaderProgram, "texturesampler");
+		glUniform1i(texturelocation, 0);
 
-	//	glActiveTexture(GL_TEXTURE0);
-	//	glBindTexture(GL_TEXTURE_2D, grassTextureID);
-	//	GLuint textureLocation = glGetUniformLocation(shaderProgram, "textureSampler");
-	//	glUniform1i(textureLocation, 0);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, grassTextureID);
+		texturelocation = glGetUniformLocation(shaderProgram, "normalsampler");
+		glUniform1i(texturelocation, 2);
+	}
 
-	//	glActiveTexture(GL_TEXTURE2);
-	//	glBindTexture(GL_TEXTURE_2D, grassTextureID);
-	//	textureLocation = glGetUniformLocation(shaderProgram, "normalSampler");
-	//	glUniform1i(textureLocation, 2);
-	//}
-
-	////quad->UpdateRotation(vec3(0.0f, 0.0f, 1.0f * dt));
 	//quad->Draw(shaderProgram, meshRenderMode);
+
 	//// > Base.
 	//float groundCenterX{ 0 - (float)groundSizeX / 2 };
 	//float groundCenterZ{ 0 - (float)groundSizeZ / 2 };
@@ -945,8 +1014,16 @@ void handleInputs()
 	// Toggles first Person Camera
 	if (previous1Press == GLFW_RELEASE && glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
 	{
-		cameraType = FirstPerson;
+		cameraLookAt = vec3(0.0f);
+		cameraUpVector = VECTOR_UP;
 
+		// initial orientation
+		cameraHorizontalAngle = 90.0f;
+		cameraVerticalAngle = 0.0f;
+
+		cameraPosition = { 0.0f, 5.0f, 20.0f };
+		
+		cameraType = FirstPerson;
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
 
@@ -960,9 +1037,10 @@ void handleInputs()
 
 	}
 
+	// Camera that takes into account the size of the map
 	if (previous3Press == GLFW_RELEASE && glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
 	{
-		cameraPosition = { -30.0f, 30.0f, -20.0f };
+		cameraPosition = { -1.0f * groundSizeX, 30.0f, -1.0f * groundSizeZ };
 		cameraLookAt = { 0.0f, 0.0f, 0.0f };
 
 		cameraType = Static;
@@ -1077,21 +1155,21 @@ void handleInputs()
 	setViewMatrix(viewMatrix);
 
 	//// -> Rendering modes.
-	//// Press 'P' to change the world's rendering mode to points.
-	//if (previousPPress == GLFW_RELEASE && glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
-	//{
-	//	meshRenderMode = GL_POINTS;
-	//}
-	//// Press 'L' to change the world's rendering mode to lines.
-	//if (previousLPress == GLFW_RELEASE && glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
-	//{
-	//	meshRenderMode = GL_LINE_LOOP;
-	//}
-	//// Press 'T' to change the world's rendering mode to triangles.
-	//if (previousTPress == GLFW_RELEASE && glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
-	//{
-	//	meshRenderMode = GL_TRIANGLES;
-	//}
+	// Press 'P' to change the world's rendering mode to points.
+	if (previousPPress == GLFW_RELEASE && glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+	{
+		meshRenderMode = GL_POINTS;
+	}
+	// Press 'L' to change the world's rendering mode to lines.
+	if (previousLPress == GLFW_RELEASE && glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
+	{
+		meshRenderMode = GL_LINE_LOOP;
+	}
+	// Press 'T' to change the world's rendering mode to triangles.
+	if (previousTPress == GLFW_RELEASE && glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
+	{
+		meshRenderMode = GL_TRIANGLES;
+	}
 
 	// Close the window if Escape is pressed.
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -1108,7 +1186,7 @@ void Update(float delta)
 	vec3 cameraSideVector = cross(cameraLookAt, VECTOR_UP);
 	normalize(cameraSideVector);
 
-	//Check collisions
+	//Check collisions with the camera
 	for (vector<Model*>::iterator it = objects.begin(); it < objects.end(); ++it)
 	{
 		//Camera Collisions with ground
@@ -1134,7 +1212,7 @@ void Update(float delta)
 			if (cube->ContainsPoint(cameraBoundingSphere->GetPosition(), cameraBoundingSphere->GetScaling().x))
 			{
 				// Inverts camera direction and add the cubes height to the y
-				cameraPosition += dt * currentCameraSpeed * ((-cameraLookAt * cameraDirection.z) + (cameraDirection.x * -cameraSideVector) + (VECTOR_UP * (cube->GetPosition().y + cube->GetScaling().y)));
+				cameraPosition += dt * currentCameraSpeed * ((-cameraDirection.z * cameraLookAt) + (-cameraDirection.x * cameraSideVector) + (VECTOR_UP * (cube->GetPosition().y + cube->GetScaling().y)));
 			}
 		}
 	}
@@ -1156,15 +1234,11 @@ void Update(float delta)
 	}
 
 	// Update models
-	for (Model* model : objects)
-	{
-		model->Update(delta);
-	}
-
-	//for (vector<Model*>::iterator it = objects.begin(); it < objects.end(); ++it)
+	//for (Model* model : objects)
 	//{
-	//	(*it)->Update(delta);
+	//	model->Update(delta);
 	//}
+
 }
 
 float randomFloat(float max, float min)
