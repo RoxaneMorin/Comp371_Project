@@ -214,7 +214,7 @@ void setUpLightForShadows(Light light);
 void renderScene(GLuint shaderProgram);
 void handleInputs();
 void Update(float delta);
-float randomFloat(int max, int min);
+float randomFloat(float max, float min);
 void userInputRequest();
 
 
@@ -328,11 +328,11 @@ vector<Model*> objects;
 vector<QuadModel*> quads;
 
 QuadModel* quad;
-CubeModel* cubeBase;
-CubeModel* cube;
-CubeModel* cube2;
-CubeModel* cube3;
-CubeModel* cube5;
+//CubeModel* cubeBase;
+//CubeModel* cube;
+//CubeModel* cube2;
+//CubeModel* cube3;
+//CubeModel* cube5;
 SphereModel* sphere;
 SphereModel* cameraBoundingSphere;
 GroundModel* ground;
@@ -508,8 +508,8 @@ void initScene()
 	woodTextureID = loadTexture(texturePathPrefix + "wood.png");
 	metalTextureID = loadTexture(texturePathPrefix + "metal.png");
 	grassTextureID = loadTexture(texturePathPrefix + "grass.png");
-	treeTopTextureID = loadTexture(texturePathPrefix + "treeTop.png");
-	bushTextureID = loadTexture(texturePathPrefix + "bush.png");
+	treeTopTextureID = loadTexture(texturePathPrefix + "treeTop.jpg");
+	bushTextureID = loadTexture(texturePathPrefix + "bush.jpg");
 
 	groundHighDepthTextureID = loadTexture("assets/textures/groundHighDepth.png");
 	groundLowDepthTextureID = loadTexture("assets/textures/groundLowDepth.png");
@@ -593,60 +593,103 @@ void initScene()
 	SetUniform1Value(groundShaderProgram, "heightblend_factor", 0.45f);
 
 	quad = new QuadModel(vec3(2.0f, 0.7f, 2.0f), vec3(0.0f), vec3(0.3f));
-	cubeBase = new CubeModel(vec3(0.0f, 2.0f, 0.0f), vec3(0.0f), vec3(1.0f));
+	/*cubeBase = new CubeModel(vec3(0.0f, 2.0f, 0.0f), vec3(0.0f), vec3(1.0f));
 
 	cube = new CubeModel(vec3(0.0f, 5.0f, 0.0f), vec3(0.0f, 45.0f, 45.0f), vec3(2.0f));
 	cube2 = new CubeModel(vec3(3.0f, 0.0f, -3.0f), vec3(0.0f), vec3(1.5f));
 	cube3 = new CubeModel(vec3(2.0f, 0.5f, 2.0f), vec3(0.0f), vec3(1.0f));
-	cube5 = new CubeModel(vec3(-3.0f, 0.0f, 3.0f), vec3(0.0f), vec3(2.0f));
+	cube5 = new CubeModel(vec3(-3.0f, 0.0f, 3.0f), vec3(0.0f), vec3(2.0f));*/
 	
 	sphere = new SphereModel(vec3(20.0f), vec3(0.0f), vec3(2.0f));
 	cameraBoundingSphere = new SphereModel(cameraPosition, vec3(0.0f), vec3(1.5));
 	ground = new GroundModel(groundSizeX, groundSizeZ, groundUVTiling);
 
+	// setup all possible item positions within a vector and the shuffle the vector using seed
+	for (int i = 0; i < groundSizeX / 6; i++)
+	{
+		for (int j = 0; j < groundSizeZ / 6; j++)
+		{
+			float xTranslation = float(i) * 6.0f - float(groundSizeX / 2);
+			float zTranslation = float(j) * 6.0f - float(groundSizeZ / 2);
+			float height = randomFloat(5.0f, 3.0f);
+			float yTranslation = ground->returnHeightAtPoint(vec2(xTranslation + float(groundSizeX / 2), zTranslation + float(groundSizeZ / 2))) - 0.5f;
+			treeBase.push_back(new CubeModel(vec3(xTranslation, yTranslation, zTranslation), vec3(0.0f, randomFloat(90.0f, 0.0f), 0.0f), vec3(randomFloat(2.0f, 1.0f), height, randomFloat(2.0f, 1.0f))));
+
+			treeTop.push_back(new SphereModel(vec3(xTranslation, yTranslation + height, zTranslation), vec3(0.0f), vec3(randomFloat(3.0f, 2.0f), randomFloat(4.0f, 2.0f), randomFloat(3.0f, 2.0f))));
+			cout << i << " " << j << endl;
+		}
+	}
+	
+	for (int i = 0; i < groundSizeX / 6; i++)
+	{
+		for (int j = 0; j < groundSizeZ / 6; j++)
+		{
+			float xTranslation = float(i) * 6.0f - float(groundSizeX / 2);
+			float zTranslation = float(j) * 6.0f - float(groundSizeZ / 2);
+			float yTranslation = ground->returnHeightAtPoint(vec2(xTranslation + float(groundSizeX / 2), zTranslation + float(groundSizeZ / 2))) - 0.5f;
+
+			bush.push_back(new SphereModel(vec3(xTranslation, yTranslation, zTranslation), vec3(0.0f), vec3(randomFloat(2.0f, 1.0f), randomFloat(1.0f, 0.5f), randomFloat(2.0f, 1.0f))));
+		}
+	}
+	shuffle(treeBase.begin(), treeBase.end(), std::default_random_engine(seed));
+	shuffle(treeTop.begin(), treeTop.end(), std::default_random_engine(seed));
+	shuffle(bush.begin(), bush.end(), std::default_random_engine(seed));
+
+	// add the items will be rendered to the objects vector
+	for (int i = 0; i < treeCount; i++)
+	{
+		objects.push_back(treeBase.at(i));
+		objects.push_back(treeTop.at(i));
+	}
+
+	for (int i = treeCount; i < treeCount + bushCount; i++)
+	{
+		objects.push_back(bush.at(i));
+	}
+
 	// set coordinates for possible generated item placements into a vector and shuffle the vector using the system clock as the seed
-	for (int i = 0; i < groundSizeX / 2; i++)
-	{
-		randomXPositions.push_back(float(i) * 2.0f);
-	}
-	shuffle(randomXPositions.begin(), randomXPositions.end(), std::default_random_engine(seed));
-	for (int i = 0; i < groundSizeZ / 2; i++)
-	{
-		randomZPositions.push_back(float(i) * 2.0f);
-	}
-	shuffle(randomZPositions.begin(), randomZPositions.end(), std::default_random_engine(seed*2));
+	//for (int i = 0; i < groundSizeX / 3; i++)
+	//{
+	//	randomXPositions.push_back(float(i) * 3.0f);
+	//}
+	//shuffle(randomXPositions.begin(), randomXPositions.end(), std::default_random_engine(seed));
+	//for (int i = 0; i < groundSizeZ / 3; i++)
+	//{
+	//	randomZPositions.push_back(float(i) * 3.0f);
+	//}
+	//shuffle(randomZPositions.begin(), randomZPositions.end(), std::default_random_engine(seed*2));
 
-	// using the shuffled vectors, setup parameters for the randomly generated items
-	int itemsSpawned = 0;
-	for (itemsSpawned; itemsSpawned < treeCount; itemsSpawned++)
-	{
-		float xTranslation = randomXPositions[itemsSpawned % randomXPositions.size()] - float(groundSizeX / 2);
-		float zTranslation = randomZPositions[itemsSpawned % randomZPositions.size()] - float(groundSizeZ / 2);
-		float height = randomFloat(5, 3);
-		float yTranslation = ground->returnHeightAtPoint(vec2(xTranslation + float(groundSizeX / 2), zTranslation + float(groundSizeZ / 2))) -0.5f;
-		treeBase.push_back(new CubeModel(vec3(xTranslation, yTranslation, zTranslation), vec3(0.0f), vec3(randomFloat(2, 1), height, randomFloat(2, 1))));
-		objects.push_back(treeBase.back());
+	//// using the shuffled vectors, setup parameters for the randomly generated items
+	//int itemsSpawned = 0;
+	//for (itemsSpawned; itemsSpawned < treeCount; itemsSpawned++)
+	//{
+	//	float xTranslation = randomXPositions[itemsSpawned % randomXPositions.size()] - float(groundSizeX / 2);
+	//	float zTranslation = randomZPositions[itemsSpawned % randomZPositions.size()] - float(groundSizeZ / 2);
+	//	float height = randomFloat(5.0f, 3.0f);
+	//	float yTranslation = ground->returnHeightAtPoint(vec2(xTranslation + float(groundSizeX / 2), zTranslation + float(groundSizeZ / 2))) -0.5f;
+	//	treeBase.push_back(new CubeModel(vec3(xTranslation, yTranslation, zTranslation), vec3(0.0f), vec3(randomFloat(2.0f, 1.0f), height, randomFloat(2.0f, 1.0f))));
+	//	objects.push_back(treeBase.back());
 
-		treeTop.push_back(new SphereModel(vec3(xTranslation, yTranslation + height, zTranslation), vec3(0.0f), vec3(randomFloat(3, 2), randomFloat(4, 2), randomFloat(3, 2))));
-		objects.push_back(treeTop.back());
-	}
-	for (itemsSpawned; itemsSpawned < bushCount + treeCount; itemsSpawned++)
-	{
-		float xTranslation = randomXPositions[itemsSpawned % randomXPositions.size()] - float(groundSizeX / 2);
-		float zTranslation = randomZPositions[itemsSpawned % randomZPositions.size()] - float(groundSizeZ / 2);
-		float yTranslation = ground->returnHeightAtPoint(vec2(xTranslation + float(groundSizeX / 2), zTranslation + float(groundSizeZ / 2))) - 0.5f;
+	//	treeTop.push_back(new SphereModel(vec3(xTranslation, yTranslation + height, zTranslation), vec3(0.0f), vec3(randomFloat(3.0f, 2.0f), randomFloat(4.0f, 2.0f), randomFloat(3.0f, 2.0f))));
+	//	objects.push_back(treeTop.back());
+	//}
+	//for (itemsSpawned; itemsSpawned < bushCount + treeCount; itemsSpawned++)
+	//{
+	//	float xTranslation = randomXPositions[itemsSpawned % randomXPositions.size()] - float(groundSizeX / 2);
+	//	float zTranslation = randomZPositions[itemsSpawned % randomZPositions.size()] - float(groundSizeZ / 2);
+	//	float yTranslation = ground->returnHeightAtPoint(vec2(xTranslation + float(groundSizeX / 2), zTranslation + float(groundSizeZ / 2))) - 0.5f;
 
-		bush.push_back(new SphereModel(vec3(xTranslation, yTranslation, zTranslation), vec3(0.0f), vec3(randomFloat(3, 1), randomFloat(2, 1), randomFloat(3, 1))));
-		objects.push_back(bush.back());
-	}
+	//	bush.push_back(new SphereModel(vec3(xTranslation, yTranslation, zTranslation), vec3(0.0f), vec3(randomFloat(2.0f, 1.0f), randomFloat(1.0f, 0.5f), randomFloat(2.0f, 1.0f))));
+	//	objects.push_back(bush.back());
+	//}
 
 	quads.push_back(quad);
 
-	objects.push_back(cubeBase);
+	/*objects.push_back(cubeBase);
 	objects.push_back(cube);
 	objects.push_back(cube2);
 	objects.push_back(cube3);
-	objects.push_back(cube5);
+	objects.push_back(cube5);*/
 	objects.push_back(sphere);
 	objects.push_back(ground);
 
@@ -778,10 +821,10 @@ void renderScene(GLuint shaderProgram)
 	glBindVertexArray(cubeVAO);
 
 	//cube->UpdatePosition(vec3(sinf(glfwGetTime()) / 10.0f, 0.0f, 0.0f));
-	cube->Draw(shaderProgram, meshRenderMode);
+	/*cube->Draw(shaderProgram, meshRenderMode);
 	cube2->Draw(shaderProgram, meshRenderMode);
 	cube3->Draw(shaderProgram, meshRenderMode);
-	cube5->Draw(shaderProgram, meshRenderMode);
+	cube5->Draw(shaderProgram, meshRenderMode);*/
 
 	// render treeBases
 	for (int i = 0; i < treeCount; i++)
@@ -789,8 +832,8 @@ void renderScene(GLuint shaderProgram)
 		treeBase.at(i)->Draw(shaderProgram, meshRenderMode);
 	}
 
-	cubeBase->UpdateRotation(vec3(0.0f, 1.0f * dt, 0.0f));
-	cubeBase->Draw(shaderProgram, meshRenderMode);
+	/*cubeBase->UpdateRotation(vec3(0.0f, 1.0f * dt, 0.0f));
+	cubeBase->Draw(shaderProgram, meshRenderMode);*/
 
 	glBindVertexArray(sphereVAO);
 
@@ -845,32 +888,32 @@ void renderScene(GLuint shaderProgram)
 	}
 
 	// render bushes
-	for (int i = 0; i < bushCount; i++)
+	for (int i = treeCount; i < treeCount + bushCount; i++)
 	{
 		bush.at(i)->Draw(shaderProgram, sphereVertexCount, meshRenderMode);
 	}
 
-	glBindVertexArray(quadVAO);
+	//glBindVertexArray(quadVAO);
 
-	if (shaderProgram != shadowShaderProgram)
-	{
-		//cout << "Not in shadow pass.\n";
-		shaderProgram = texturedShaderProgram;
-		glUseProgram(shaderProgram);
+	//if (shaderProgram != shadowShaderProgram)
+	//{
+	//	//cout << "Not in shadow pass.\n";
+	//	shaderProgram = texturedShaderProgram;
+	//	glUseProgram(shaderProgram);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, grassTextureID);
-		GLuint textureLocation = glGetUniformLocation(shaderProgram, "textureSampler");
-		glUniform1i(textureLocation, 0);
+	//	glActiveTexture(GL_TEXTURE0);
+	//	glBindTexture(GL_TEXTURE_2D, grassTextureID);
+	//	GLuint textureLocation = glGetUniformLocation(shaderProgram, "textureSampler");
+	//	glUniform1i(textureLocation, 0);
 
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, grassTextureID);
-		textureLocation = glGetUniformLocation(shaderProgram, "normalSampler");
-		glUniform1i(textureLocation, 2);
-	}
+	//	glActiveTexture(GL_TEXTURE2);
+	//	glBindTexture(GL_TEXTURE_2D, grassTextureID);
+	//	textureLocation = glGetUniformLocation(shaderProgram, "normalSampler");
+	//	glUniform1i(textureLocation, 2);
+	//}
 
-	//quad->UpdateRotation(vec3(0.0f, 0.0f, 1.0f * dt));
-	quad->Draw(shaderProgram, meshRenderMode);
+	////quad->UpdateRotation(vec3(0.0f, 0.0f, 1.0f * dt));
+	//quad->Draw(shaderProgram, meshRenderMode);
 	//// > Base.
 	//float groundCenterX{ 0 - (float)groundSizeX / 2 };
 	//float groundCenterZ{ 0 - (float)groundSizeZ / 2 };
@@ -1033,22 +1076,22 @@ void handleInputs()
 
 	setViewMatrix(viewMatrix);
 
-	// -> Rendering modes.
-	// Press 'P' to change the snowman's rendering mode to points.
-	if (previousPPress == GLFW_RELEASE && glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
-	{
-		meshRenderMode = GL_POINTS;
-	}
-	// Press 'L' to change the snowman's rendering mode to lines.
-	if (previousLPress == GLFW_RELEASE && glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
-	{
-		meshRenderMode = GL_LINE_LOOP;
-	}
-	// Press 'T' to change the snowman's rendering mode to triangles.
-	if (previousTPress == GLFW_RELEASE && glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
-	{
-		meshRenderMode = GL_TRIANGLES;
-	}
+	//// -> Rendering modes.
+	//// Press 'P' to change the world's rendering mode to points.
+	//if (previousPPress == GLFW_RELEASE && glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+	//{
+	//	meshRenderMode = GL_POINTS;
+	//}
+	//// Press 'L' to change the world's rendering mode to lines.
+	//if (previousLPress == GLFW_RELEASE && glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
+	//{
+	//	meshRenderMode = GL_LINE_LOOP;
+	//}
+	//// Press 'T' to change the world's rendering mode to triangles.
+	//if (previousTPress == GLFW_RELEASE && glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
+	//{
+	//	meshRenderMode = GL_TRIANGLES;
+	//}
 
 	// Close the window if Escape is pressed.
 	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -1124,7 +1167,7 @@ void Update(float delta)
 	//}
 }
 
-float randomFloat(int max, int min)
+float randomFloat(float max, float min)
 {
 	return (float(rand()) / float((RAND_MAX)) * max + min);
 }
@@ -1150,18 +1193,12 @@ void userInputRequest()
 	std::cin >> groundSizeX;
 	std::cout << "Please enter the terrain's desired dimension in Z:\n";
 	std::cin >> groundSizeZ;
-	if (groundSizeX >= groundSizeZ)
-	{
-		maxObjCount = groundSizeX / 2;
-	}
-	else
-	{
-		maxObjCount = groundSizeZ / 2;
-	}
+
+	maxObjCount = int(groundSizeX/6) * int(groundSizeZ / 6);
 	do
 	{
 		remainingObjPool = maxObjCount;
-		std::cout << "The object count must not excel a total of: " << maxObjCount << endl;
+		std::cout << "The total count of trees and bushes must not excel a total of: " << maxObjCount << endl;
 		std::cout << "Please enter the number of trees to spawn during terrain generation:\n";
 		std::cin >> treeCount;
 		remainingObjPool -= treeCount;
