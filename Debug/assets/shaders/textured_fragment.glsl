@@ -151,8 +151,11 @@ void main()
 	
 	vec3 allLighting = ambient_colour + lightingMain;
 	
-	vec3 textureColor = texture(textureSampler, fs_in.TexCoords).rgb;
-	vec3 screenColor = colour * textureColor * allLighting;
+	vec4 textureColor = texture(textureSampler, fs_in.TexCoords);
+	if (textureColor.a < 0.01)
+		discard;
+	
+	vec4 screenColor = textureColor * vec4(colour, alpha) * vec4(allLighting, alpha);
 
-	FragColor = vec4(screenColor, alpha);
+	FragColor = screenColor;
 }

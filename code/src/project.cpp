@@ -317,6 +317,7 @@ vec3 gravityVector(0.0f, -0.5f, 0.0f);
 // user set parameters
 int treeCount;
 int bushCount;
+int grassCount;
 
 // random generation parameters
 vector<int> randomXPositions;
@@ -657,24 +658,24 @@ void initScene()
 	ground = new GroundModel(groundSizeX, groundSizeZ, groundUVTiling);
 
 	// setup all possible item positions within a vector and the shuffle the vector using seed
-	for (int i = 0; i < groundSizeX / 6; i++)
+	for (int i = 1; i < (groundSizeX / 6) - 1; i++)
 	{
-		for (int j = 0; j < groundSizeZ / 6; j++)
+		for (int j = 1; j < (groundSizeZ / 6) - 1; j++)
 		{
 			float xTranslation = float(i) * 6.0f - float(groundSizeX / 2);
 			float zTranslation = float(j) * 6.0f - float(groundSizeZ / 2);
 			float height = randomFloat(5.0f, 3.0f);
 			float yTranslation = ground->returnHeightAtPoint(vec2(xTranslation + float(groundSizeX / 2), zTranslation + float(groundSizeZ / 2))) - 0.5f;
-			treeBase.push_back(new CubeModel(vec3(xTranslation, yTranslation, zTranslation), vec3(0.0f, randomFloat(90.0f, 0.0f), 0.0f), vec3(randomFloat(2.0f, 1.0f), height, randomFloat(2.0f, 1.0f))));
+			treeBase.push_back(new CubeModel(vec3(xTranslation, yTranslation, zTranslation), vec3(0.0f, randomFloat(90.0f, 0.0f), 0.0f), vec3(randomFloat(1.5f, 1.0f), height, randomFloat(1.5f, 1.0f))));
 
-			treeTop.push_back(new SphereModel(vec3(xTranslation, yTranslation + height, zTranslation), vec3(0.0f), vec3(randomFloat(3.0f, 2.0f), randomFloat(4.0f, 2.0f), randomFloat(3.0f, 2.0f))));
+			treeTop.push_back(new SphereModel(vec3(xTranslation, yTranslation + height, zTranslation), vec3(0.0f), vec3(randomFloat(1.75f, 1.5f), randomFloat(3.5f, 1.5f), randomFloat(1.75f, 1.5f))));
 			cout << i << " " << j << endl;
 		}
 	}
 	
-	for (int i = 0; i < groundSizeX / 6; i++)
+	for (int i = 1; i < (groundSizeX / 6) - 1; i++)
 	{
-		for (int j = 0; j < groundSizeZ / 6; j++)
+		for (int j = 1; j < (groundSizeZ / 6) - 1; j++)
 		{
 			float xTranslation = float(i) * 6.0f - float(groundSizeX / 2);
 			float zTranslation = float(j) * 6.0f - float(groundSizeZ / 2);
@@ -683,9 +684,23 @@ void initScene()
 			bush.push_back(new SphereModel(vec3(xTranslation, yTranslation, zTranslation), vec3(0.0f), vec3(randomFloat(2.0f, 1.0f), randomFloat(1.0f, 0.5f), randomFloat(2.0f, 1.0f))));
 		}
 	}
+
+	for (int i = 1; i < (groundSizeX) - 1; i++)
+	{
+		for (int j = 1; j < (groundSizeZ) - 1; j++)
+		{
+			float xTranslation = float(i) - float(groundSizeX / 2);
+			float zTranslation = float(j) - float(groundSizeZ / 2);
+			float yTranslation = ground->returnHeightAtPoint(vec2(xTranslation + float(groundSizeX / 2), zTranslation + float(groundSizeZ / 2)));
+
+			quads.push_back(new QuadModel(vec3(xTranslation, yTranslation, zTranslation), vec3(0.0f), vec3(randomFloat(1.0f, 0.5f), randomFloat(1.0f, 0.5f), 1.0f)));
+		}
+	}
+
 	shuffle(treeBase.begin(), treeBase.end(), std::default_random_engine(seed));
 	shuffle(treeTop.begin(), treeTop.end(), std::default_random_engine(seed));
 	shuffle(bush.begin(), bush.end(), std::default_random_engine(seed));
+	shuffle(quads.begin(), quads.end(), std::default_random_engine(seed));
 
 	// add the items will be rendered to the objects vector
 	for (int i = 0; i < treeCount; i++)
@@ -846,22 +861,6 @@ void renderScene(GLuint shaderProgram)
 
 
 	// Render objects.
-	if (shaderProgram != shadowShaderProgram)
-	{
-		//cout << "Not in shadow pass.\n";
-		shaderProgram = texturedShaderProgram;
-		glUseProgram(shaderProgram);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, bark001TextureID);
-		GLuint textureLocation = glGetUniformLocation(shaderProgram, "textureSampler");
-		glUniform1i(textureLocation, 0);
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, bark001NTextureID);
-		textureLocation = glGetUniformLocation(shaderProgram, "normalSampler");
-		glUniform1i(textureLocation, 2);
-	}
 
 	// Binding CUBE vertex array Object
 	glBindVertexArray(cubeVAO);
@@ -869,6 +868,39 @@ void renderScene(GLuint shaderProgram)
 	// render treeBases
 	for (int i = 0; i < treeCount; i++)
 	{
+		//set treeBase texture
+		if (shaderProgram != shadowShaderProgram)
+		{
+			//cout << "Not in shadow pass.\n";
+			shaderProgram = texturedShaderProgram;
+			glUseProgram(shaderProgram);
+
+			glActiveTexture(GL_TEXTURE0);
+
+			srand(seed * (i+1));
+			if (rand() % 2 != 1)
+			{
+				glBindTexture(GL_TEXTURE_2D, bark001TextureID);
+			}
+			else
+			{
+				glBindTexture(GL_TEXTURE_2D, bark012TextureID);
+			}
+			GLuint textureLocation = glGetUniformLocation(shaderProgram, "textureSampler");
+			glUniform1i(textureLocation, 0);
+
+			glActiveTexture(GL_TEXTURE2);
+			if (rand() % 2 != 1)
+			{
+				glBindTexture(GL_TEXTURE_2D, bark001NTextureID);
+			}
+			else
+			{
+				glBindTexture(GL_TEXTURE_2D, bark012NTextureID);
+			}
+			textureLocation = glGetUniformLocation(shaderProgram, "normalSampler");
+			glUniform1i(textureLocation, 2);
+		}
 		treeBase.at(i)->Draw(shaderProgram, meshRenderMode);
 	}
 
@@ -916,27 +948,35 @@ void renderScene(GLuint shaderProgram)
 
 	moon->Draw(shaderProgram, sphereVertexCount, meshRenderMode);
 
-	// set treeTop texture
-	if (shaderProgram != shadowShaderProgram)
-	{
-		//cout << "Not in shadow pass.\n";
-		shaderProgram = texturedShaderProgram;
-		glUseProgram(shaderProgram);
-
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, leaves02TextureID);
-		GLuint textureLocation = glGetUniformLocation(shaderProgram, "textureSampler");
-		glUniform1i(textureLocation, 0);
-
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, groundLowNormalTextureID);
-		textureLocation = glGetUniformLocation(shaderProgram, "normalSampler");
-		glUniform1i(textureLocation, 2);
-	}
-
 	//render treeTops
 	for (int i = 0; i < treeCount; i++)
 	{
+		// set treeTop texture
+		if (shaderProgram != shadowShaderProgram)
+		{
+			//cout << "Not in shadow pass.\n";
+			shaderProgram = texturedShaderProgram;
+			glUseProgram(shaderProgram);
+
+			glActiveTexture(GL_TEXTURE0);
+
+			srand(seed * i);
+			if (rand() % 2 != 1)
+			{
+				glBindTexture(GL_TEXTURE_2D, leaves02TextureID);
+			}
+			else 
+			{
+				glBindTexture(GL_TEXTURE_2D, leaves01TextureID);
+			}
+			GLuint textureLocation = glGetUniformLocation(shaderProgram, "textureSampler");
+			glUniform1i(textureLocation, 0);
+
+			glActiveTexture(GL_TEXTURE2);
+			glBindTexture(GL_TEXTURE_2D, groundLowNormalTextureID);
+			textureLocation = glGetUniformLocation(shaderProgram, "normalSampler");
+			glUniform1i(textureLocation, 2);
+		}
 		treeTop.at(i)->Draw(shaderProgram, sphereVertexCount, meshRenderMode);
 	}
 
@@ -966,6 +1006,7 @@ void renderScene(GLuint shaderProgram)
 	
 	glBindVertexArray(quadVAO);
 
+	//set grass texture
 	if (shaderProgram != shadowShaderProgram)
 	{
 		//cout << "not in shadow pass.\n";
@@ -981,6 +1022,11 @@ void renderScene(GLuint shaderProgram)
 		glBindTexture(GL_TEXTURE_2D, grassTextureID);
 		texturelocation = glGetUniformLocation(shaderProgram, "normalsampler");
 		glUniform1i(texturelocation, 2);
+	}
+	//render grass
+	for (int i = 0; i < grassCount; i++)
+	{
+		quads.at(i)->Draw(shaderProgram, meshRenderMode);
 	}
 
 	//quad->Draw(shaderProgram, meshRenderMode);
@@ -1243,11 +1289,13 @@ void Update(float delta)
 
 }
 
+// return random float
 float randomFloat(float max, float min)
 {
 	return (float(rand()) / float((RAND_MAX)) * max + min);
 }
 
+//acquire user input values
 void userInputRequest()
 {
 	string response;
@@ -1270,8 +1318,33 @@ void userInputRequest()
 	std::cout << "Please enter the terrain's desired dimension in Z:\n";
 	std::cin >> groundSizeZ;
 
-	maxObjCount = int(groundSizeX/6) * int(groundSizeZ / 6);
+	maxObjCount = (int(groundSizeX/6)-2) * (int(groundSizeZ / 6)-2);
+
+	int density;
 	do
+	{
+		std::cout << "Please enter the desired grass density for the world, type 1 for low, 2 for medium, 3 for high density:\n";
+		std::cin >> density;
+		switch (density)
+		{
+		case 1:
+			grassCount = ((groundSizeX - 2) * (groundSizeZ - 2))/7;
+			break;
+		case 2:
+			grassCount = ((groundSizeX - 2) * (groundSizeZ - 2)) / 6;
+			break;
+		case 3:
+			grassCount = ((groundSizeX - 2) * (groundSizeZ - 2)) / 5;
+			break;
+		default:
+			std::cout << "the value you entered is invalid, please try again\n";
+			density = 0;
+			break;
+		}
+	} 
+	while (density == 0);
+	
+		do
 	{
 		remainingObjPool = maxObjCount;
 		std::cout << "The total count of trees and bushes must not excel a total of: " << maxObjCount << endl;
@@ -1283,6 +1356,6 @@ void userInputRequest()
 		std::cin >> bushCount;
 
 	} 
-	while (treeCount > maxObjCount);
+	while (treeCount + bushCount > maxObjCount);
 	
 }
