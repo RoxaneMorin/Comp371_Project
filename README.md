@@ -1,1 +1,1 @@
-Student project of environment generation in OpenGL.
+A simple OpenGL environment generation project done for a Computer Graphics class.
